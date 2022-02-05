@@ -1,6 +1,0 @@
-source;share/fogros2_examples/hook/pythonpath.ps1
-source;share/fogros2_examples/hook/pythonpath.dsv
-source;share/fogros2_examples/hook/pythonpath.sh
-source;share/fogros2_examples/hook/ament_prefix_path.ps1
-source;share/fogros2_examples/hook/ament_prefix_path.dsv
-source;share/fogros2_examples/hook/ament_prefix_path.sh
