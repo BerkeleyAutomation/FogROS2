@@ -1,0 +1,25 @@
+[0.961s] Invoking command in '/opt/ros2_ws/src/fogros2_examples/fogros2_examples': PYTHONPATH=/opt/ros2_ws/src/fogros2_examples/install/fogros2_examples/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../build/fogros2_examples build --build-base /opt/ros2_ws/src/fogros2_examples/build/fogros2_examples/build install --prefix /opt/ros2_ws/src/fogros2_examples/install/fogros2_examples --record /opt/ros2_ws/src/fogros2_examples/build/fogros2_examples/install.log --single-version-externally-managed
+[1.308s] /usr/local/lib/python3.8/dist-packages/setuptools/dist.py:731: UserWarning: Usage of dash-separated 'script-dir' will not be supported in future versions. Please use the underscore name 'script_dir' instead
+[1.308s]   warnings.warn(
+[1.308s] /usr/local/lib/python3.8/dist-packages/setuptools/dist.py:731: UserWarning: Usage of dash-separated 'install-scripts' will not be supported in future versions. Please use the underscore name 'install_scripts' instead
+[1.308s]   warnings.warn(
+[1.342s] running egg_info
+[1.343s] writing ../build/fogros2_examples/fogros2_examples.egg-info/PKG-INFO
+[1.343s] writing dependency_links to ../build/fogros2_examples/fogros2_examples.egg-info/dependency_links.txt
+[1.343s] writing entry points to ../build/fogros2_examples/fogros2_examples.egg-info/entry_points.txt
+[1.343s] writing requirements to ../build/fogros2_examples/fogros2_examples.egg-info/requires.txt
+[1.343s] writing top-level names to ../build/fogros2_examples/fogros2_examples.egg-info/top_level.txt
+[1.349s] reading manifest file '../build/fogros2_examples/fogros2_examples.egg-info/SOURCES.txt'
+[1.349s] running build
+[1.349s] running build_py
+[1.350s] running install
+[1.350s] /usr/local/lib/python3.8/dist-packages/setuptools/command/install.py:34: SetuptoolsDeprecationWarning: setup.py install is deprecated. Use build and pip and other standards-based tools.
+[1.350s]   warnings.warn(
+[1.358s] running install_lib
+[1.359s] copying /opt/ros2_ws/src/fogros2_examples/build/fogros2_examples/build/lib/fogros2_examples/__init__.py -> /opt/ros2_ws/src/fogros2_examples/install/fogros2_examples/lib/python3.8/site-packages/fogros2_examples
+[1.359s] copying /opt/ros2_ws/src/fogros2_examples/build/fogros2_examples/build/lib/fogros2_examples/talker.py -> /opt/ros2_ws/src/fogros2_examples/install/fogros2_examples/lib/python3.8/site-packages/fogros2_examples
+[1.361s] running install_data
+[1.361s] running install_egg_info
+[1.365s] running install_scripts
+[1.393s] Installing talker script to /opt/ros2_ws/src/fogros2_examples/install/fogros2_examples/lib/fogros2_examples
+[1.412s] Invoked command in '/opt/ros2_ws/src/fogros2_examples/fogros2_examples' returned '0': PYTHONPATH=/opt/ros2_ws/src/fogros2_examples/install/fogros2_examples/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../build/fogros2_examples build --build-base /opt/ros2_ws/src/fogros2_examples/build/fogros2_examples/build install --prefix /opt/ros2_ws/src/fogros2_examples/install/fogros2_examples --record /opt/ros2_ws/src/fogros2_examples/build/fogros2_examples/install.log --single-version-externally-managed
