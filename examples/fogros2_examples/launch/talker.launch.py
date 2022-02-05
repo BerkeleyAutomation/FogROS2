@@ -1,11 +1,12 @@
-from launch import LaunchDescription
+from launch import FogROSLaunchDescription
 from launch_ros.actions import Node
 def generate_launch_description():
-    ld = LaunchDescription()
+    ld = FogROSLaunchDescription()
     talker_node = Node(
         package="fogros2_examples",
-        node_executable="talker",
-        output='screen'
+        executable="talker",
+        output='screen',
+        to_cloud = True
     )
     ld.add_action(talker_node)
     return ld
