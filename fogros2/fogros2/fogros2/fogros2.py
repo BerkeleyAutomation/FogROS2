@@ -35,8 +35,8 @@ def main():
     vpn.start()
 
     scp.execute_cmd("sudo apt install wireguard unzip")
-    scp.send_file("/tmp/fogros-local.conf", "/tmp/fogros-local.conf")
-    scp.execute_cmd("sudo cp /tmp/fogros-local.conf /etc/wireguard/wg0.conf && sudo chmod 600 /etc/wireguard/wg0.conf && sudo wg-quick up wg0")
+    scp.send_file("/tmp/fogros-aws.conf", "/tmp/fogros-aws.conf")
+    scp.execute_cmd("sudo cp /tmp/fogros-aws.conf /etc/wireguard/wg0.conf && sudo chmod 600 /etc/wireguard/wg0.conf && sudo wg-quick up wg0")
 
     workspace_path = "/opt/ros2_ws"
     zip_dst = "/tmp/ros_workspace"
