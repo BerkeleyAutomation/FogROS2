@@ -5,11 +5,6 @@ from launch_ros.actions import Node
 import os
 import pickle
 
-# with open("/opt/ros2_ws/src/fogros2/fogros2/test_node", "rb") as f:
-#     node_as_str = f.read()
-# node = pickle.loads(node_as_str)
-# print('Hi from fogros2.')
-
 def generate_launch_description():
     ld = LaunchDescription()
     node_dir = "/opt/ros2_ws/src/fogros2/fogros2"
