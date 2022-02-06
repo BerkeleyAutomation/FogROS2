@@ -23,7 +23,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'talker = fogros2_examples.talker:main'
+            'talker = fogros2_examples.talker:main',
+            'listener = fogros2_examples.listener:main'
         ],
     },
 )
