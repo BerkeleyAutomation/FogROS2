@@ -55,7 +55,7 @@ RUN apt install -y unzip
 RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
 RUN unzip awscliv2.zip
 RUN ./aws/install
-RUN pip3 install boto3
+RUN pip3 install boto3 paramiko scp
 
 ENTRYPOINT ["/ros_entrypoint.sh"]
 
