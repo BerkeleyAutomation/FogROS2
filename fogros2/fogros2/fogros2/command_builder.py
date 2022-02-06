@@ -11,3 +11,6 @@ class CommandBuilder:
         with open(cmd_save_path, "w+") as f:
             f.write(self.command)
         self.logger.info(self.command)
+
+    def append(self):
+        self.command += "ros2 launch fogros2 cloud.launch.py \n"

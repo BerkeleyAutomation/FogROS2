@@ -1,6 +1,6 @@
 
 
-from launch import FogROSLaunchDescription
+from launch import LaunchDescription
 from launch_ros.actions import Node
 import os
 import pickle
@@ -11,7 +11,7 @@ import pickle
 # print('Hi from fogros2.')
 
 def generate_launch_description():
-    ld = FogROSLaunchDescription()
+    ld = LaunchDescription()
     node_dir = "/opt/ros2_ws/src/fogros2/fogros2"
     node_files = [os.path.join(node_dir, file) for file in os.listdir(node_dir) if file.startswith("to_cloud")]
     print(node_files)
