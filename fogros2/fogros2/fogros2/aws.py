@@ -12,7 +12,7 @@ class AWS:
         self.region = region
         self.ec2_instance_type = "t2.medium"
         self.ec2_instance_disk_size = 30 #GB
-        self.aws_ami_image = "ami-0a38b7ce86a7058d8"
+        self.aws_ami_image = "ami-0e988d16ff850b97d"
 
         # key & security group names
         self.uniqueid = str(random.randint(10, 1000))

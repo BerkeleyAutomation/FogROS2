@@ -51,11 +51,11 @@ RUN colcon build --symlink-install
 
 COPY ./ros_entrypoint.sh /
 
-RUN apt install -y unzip
+RUN apt install -y unzip wireguard iproute2
 RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
 RUN unzip awscliv2.zip
 RUN ./aws/install
-RUN pip3 install boto3 paramiko scp
+RUN pip3 install boto3 paramiko scp wgconfig
 
 ENTRYPOINT ["/ros_entrypoint.sh"]
 

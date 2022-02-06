@@ -3,6 +3,7 @@ from launch_ros.actions import Node
 import pickle
 from .aws import AWS
 from .scp import SCP_Client
+from .vpn import VPN
 import logging
 import os
 
@@ -16,27 +17,35 @@ def make_zip_file(dir_name, target_path):
                                base_name = target_path)
 
 def main():
+    launch_new_instance = False
+    if launch_new_instance:
+        aws_instance = AWS()
+        aws_instance.create()
+        ip = aws_instance.get_ip()
+        key_path = aws_instance.get_ssh_key_path()
+        print(ip, key_path)
+    else:
+        ip = "54.219.177.93"
+        key_path = "/opt/ros2_ws/FogROSKEY343.pem"
 
-    # aws_instance = AWS()
-    # aws_instance.create()
-    # ip = aws_instance.get_ip()
-    # key_path = aws_instance.get_ssh_key_path()
+    scp = SCP_Client(ip, key_path)
+
+    vpn = VPN(ip)
+    vpn.make_wireguard_keypair()
+    vpn.start()
+
+    scp.execute_cmd("sudo apt install wireguard unzip")
+    scp.send_file("/tmp/fogros-local.conf", "/tmp/fogros-local.conf")
+    scp.execute_cmd("sudo cp /tmp/fogros-local.conf /etc/wireguard/wg0.conf && sudo chmod 600 /etc/wireguard/wg0.conf && sudo wg-quick up wg0")
 
     workspace_path = "/opt/ros2_ws"
     zip_dst = "/tmp/ros_workspace"
     make_zip_file(workspace_path, zip_dst)
-
-
-    ip = "54.193.186.200"
-    key_path = "/opt/ros2_ws/FogROSKEY602.pem"
-    scp = SCP_Client(ip, key_path)
-    #scp.execute_cmd("echo hello")
-
     scp.execute_cmd("echo removing old workspace")
     scp.execute_cmd("rm -rf ros_workspace.zip ros2_ws")
-
     scp.send_file(zip_dst+".zip", "/home/ubuntu/")
     scp.execute_cmd("unzip /home/ubuntu/ros_workspace.zip")
+
     scp.execute_cmd("source /home/ubuntu/ros2_eloquent/install/setup.bash && cd ~/ros2_ws && colcon build && . /home/ubuntu/ros2_ws/install/setup.bash && ros2 launch fogros2 cloud.launch.py")
 
 
