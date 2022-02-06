@@ -12,7 +12,7 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
-        (os.path.join('share', package_name), glob('cloud_providers/*.py')),
+        ('share/' + package_name, ["fogros2/launch/cloud.launch.py"]),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
