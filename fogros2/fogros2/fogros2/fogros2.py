@@ -29,6 +29,7 @@ def main():
         key_path = "/opt/ros2_ws/FogROSKEY343.pem"
 
     scp = SCP_Client(ip, key_path)
+    scp.connect()
 
     vpn = VPN(ip)
     vpn.make_wireguard_keypair()
