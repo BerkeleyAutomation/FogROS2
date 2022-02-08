@@ -18,11 +18,19 @@ cd /opt/ros2_eloquent
 colcon build --symlink-install
 ```
 
-then run the test examples
+to run aws related functionalities, make sure to use `aws configure`
+to configure the credentials. 
+
+To run the test examples, 
 ```
 cd /opt/ros2_ws/
 colcon build 
 . /opt/ros2_ws/install/setup.bash
-ros2 launch fogros2_examples talker.launch.py
 ros2 run fogros2 fogros2
+```
+Note that I haven't connected the `launch` with the existing 
+FogROS2 launching infrastructure. To update the 
+node that is sent to the cloud, run
+```
+ros2 launch fogros2_examples talker.launch.py
 ```

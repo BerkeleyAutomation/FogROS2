@@ -17,7 +17,7 @@ def make_zip_file(dir_name, target_path):
                                base_name = target_path)
 
 def main():
-    launch_new_instance = False
+    launch_new_instance = True
     if launch_new_instance:
         aws_instance = AWS()
         aws_instance.create()
@@ -46,7 +46,7 @@ def main():
     scp.send_file(zip_dst+".zip", "/home/ubuntu/")
     scp.execute_cmd("unzip /home/ubuntu/ros_workspace.zip")
 
-    scp.execute_cmd("source /home/ubuntu/ros2_eloquent/install/setup.bash && cd ~/ros2_ws && colcon build && . /home/ubuntu/ros2_ws/install/setup.bash && ros2 launch fogros2 cloud.launch.py")
+    scp.execute_cmd('''source /home/ubuntu/ros2_eloquent/install/setup.bash && cd ~/ros2_ws && colcon build && . /home/ubuntu/ros2_ws/install/setup.bash && ros2 launch fogros2 cloud.launch.py''')
 
 
 if __name__ == '__main__':
