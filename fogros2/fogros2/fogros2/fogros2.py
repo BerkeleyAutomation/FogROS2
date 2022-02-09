@@ -19,7 +19,7 @@ def make_zip_file(dir_name, target_path):
                                format = "zip",
                                base_name = target_path)
 
-def main():
+def start():
     launch_new_instance = True
     if launch_new_instance:
         aws_instance = AWS()
@@ -68,6 +68,24 @@ def main():
     cmd_builder.append("ros2 launch fogros2 cloud.launch.py")
     print(cmd_builder.get())
     scp.execute_cmd(cmd_builder.get())
+
+
+def main():
+    import socket
+    HOST = 'localhost'
+    PORT = 65432
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.bind((HOST, PORT))
+        s.listen()
+        conn, addr = s.accept()
+        with conn:
+            print('Connected by', addr)
+            while True:
+                data = conn.recv(1024)
+                if not data:
+                    break
+                conn.sendall(b"ACK")
+                start()
 
 
 if __name__ == '__main__':
