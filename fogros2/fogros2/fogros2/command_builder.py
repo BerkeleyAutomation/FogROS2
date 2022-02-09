@@ -1,7 +1,8 @@
 
 
 import logging
-class CommandBuilder:
+
+class BashBuilder:
     def __init__(self, cmd_save_path = "/opt/ros_ws/cmd.sh"):
         self.cmd_save_path = cmd_save_path
         self.command = ""
@@ -12,8 +13,11 @@ class CommandBuilder:
             f.write(self.command)
         self.logger.info(self.command)
 
-    def build(self):
+    def get(self):
+        return self.command
 
-
-    def build_and_run_fogros_launch_file(self):
-        self.command += "colcon build && . /opt/ros2_ws/install/setup.bash && ros2 launch fogros2 cloud.launch.py \n"
+    def append(self, cmd):
+        if self.command:
+            self.command += " && " + cmd
+        else:
+            self.command = cmd

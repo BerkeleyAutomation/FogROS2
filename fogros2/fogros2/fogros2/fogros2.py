@@ -4,6 +4,9 @@ import pickle
 from .aws import AWS
 from .scp import SCP_Client
 from .vpn import VPN
+from .command_builder import BashBuilder
+from .dds_config_builder import CycloneConfigBuilder
+
 import logging
 import os
 
@@ -24,30 +27,47 @@ def main():
         ip = aws_instance.get_ip()
         key_path = aws_instance.get_ssh_key_path()
         print(ip, key_path)
+        vpn = VPN(ip)
+        vpn.make_wireguard_keypair()
     else:
-        ip = "54.219.177.93"
-        key_path = "/opt/ros2_ws/FogROSKEY343.pem"
+        ip = "13.56.255.152"
+        key_path = "/opt/ros2_ws/FogROSKEY684.pem"
+        # Note that we don't need to make new keypair if we keep the old ones
+        vpn = VPN(ip)
 
     scp = SCP_Client(ip, key_path)
     scp.connect()
 
-    vpn = VPN(ip)
-    vpn.make_wireguard_keypair()
     vpn.start()
 
+    # configure VPN on the cloud
     scp.execute_cmd("sudo apt install wireguard unzip")
     scp.send_file("/tmp/fogros-aws.conf", "/tmp/fogros-aws.conf")
     scp.execute_cmd("sudo cp /tmp/fogros-aws.conf /etc/wireguard/wg0.conf && sudo chmod 600 /etc/wireguard/wg0.conf && sudo wg-quick up wg0")
 
+    # configure DDS
+    cyclone_builder = CycloneConfigBuilder(["10.0.0.2"])
+    cyclone_builder.generate_config_file()
+    scp.send_file("/tmp/cyclonedds.xml", "~/cyclonedds.xml")
+
+    # configure ROS env
     workspace_path = "/opt/ros2_ws"
     zip_dst = "/tmp/ros_workspace"
     make_zip_file(workspace_path, zip_dst)
     scp.execute_cmd("echo removing old workspace")
     scp.execute_cmd("rm -rf ros_workspace.zip ros2_ws")
     scp.send_file(zip_dst+".zip", "/home/ubuntu/")
-    scp.execute_cmd("unzip /home/ubuntu/ros_workspace.zip")
+    scp.execute_cmd("unzip -q /home/ubuntu/ros_workspace.zip")
+    scp.execute_cmd("echo successfully extracted new workspace")
 
-    scp.execute_cmd('''source /home/ubuntu/ros2_eloquent/install/setup.bash && cd ~/ros2_ws && colcon build && . /home/ubuntu/ros2_ws/install/setup.bash && ros2 launch fogros2 cloud.launch.py''')
+    cmd_builder = BashBuilder()
+    cmd_builder.append("source /home/ubuntu/ros2_eloquent/install/setup.bash")
+    cmd_builder.append("cd ~/ros2_ws && colcon build")
+    cmd_builder.append(". /home/ubuntu/ros2_ws/install/setup.bash")
+    cmd_builder.append(cyclone_builder.env_cmd)
+    cmd_builder.append("ros2 launch fogros2 cloud.launch.py")
+    print(cmd_builder.get())
+    scp.execute_cmd(cmd_builder.get())
 
 
 if __name__ == '__main__':

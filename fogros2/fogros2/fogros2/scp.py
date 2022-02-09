@@ -1,7 +1,8 @@
 
 import paramiko
 from scp import SCPClient
-import logging 
+import logging
+from time import sleep
 
 # ec2 console coloring
 CRED = '\033[91m'
@@ -22,8 +23,9 @@ class SCP_Client():
             try:
                 self.ssh_client.connect(hostname=self.ip, username="ubuntu", pkey=self.ssh_key, look_for_keys=False)
                 keep_trying = False
-            except Exception(e):
-                self.logger.warn("Exception occured when connecting scp" + str(e))
+            except Exception as e:
+                self.logger.warn("Exception occured when connecting scp" + str(e) + ", retrying...")
+                sleep(1)
         self.logger.info("SCP connection succeeds!")
                 
 
