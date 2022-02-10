@@ -1,0 +1,61 @@
+%import common.DIGIT
+%import common.FLOAT
+%import common.INT
+%import common.LETTER
+%import common.WS
+
+IDENTIFIER: LETTER (LETTER | DIGIT | "_" | "-")*
+
+UNQUOTED_STRING: (/[^$]|\$(?!\()|(?<=\\)\$/)+
+UNQUOTED_RSTRING: (/[^ '\\"$\(\)]|(?<=\\)\(|(?<=\\)\)|\$(?!\()|(?<=\\)\$/ | "\\\"" | "\\'" | "\\")+
+
+SINGLE_QUOTED_STRING: (/[^'\\$]|\$(?!\()|(?<=\\)\$/ | "\\'" | "\\")+
+SINGLE_QUOTED_RSTRING: (/[^ '\\$\(\)]|(?<=\\)\(|(?<=\\)\)|\$(?!\()|(?<=\\)\$/ | "\\'" | "\\")+
+
+DOUBLE_QUOTED_STRING: (/[^"\\$]|\$(?!\()|(?<=\\)\$/ | "\\\"" | "\\")+
+DOUBLE_QUOTED_RSTRING: (/[^ "\\$\(\)]|(?<=\\)\(|(?<=\\)\)|\$(?!\()|(?<=\\)\$/ | "\\\"" | "\\")+
+
+single_quoted_part: single_quoted_substitution
+  | SINGLE_QUOTED_RSTRING
+
+single_quoted_value: single_quoted_part+
+
+single_quoted_arguments: single_quoted_value
+  | single_quoted_arguments " " single_quoted_value
+
+single_quoted_substitution: "$" "(" IDENTIFIER (" " single_quoted_arguments)? ")"
+
+single_quoted_fragment: single_quoted_substitution | SINGLE_QUOTED_STRING
+
+single_quoted_template: "'" single_quoted_fragment* "'"
+
+double_quoted_part: double_quoted_substitution
+  | DOUBLE_QUOTED_RSTRING
+
+double_quoted_value: double_quoted_part+
+
+double_quoted_arguments: double_quoted_value
+  | double_quoted_arguments " " double_quoted_value
+
+double_quoted_substitution: "$" "(" IDENTIFIER (" " double_quoted_arguments)? ")"
+
+double_quoted_fragment: double_quoted_substitution | DOUBLE_QUOTED_STRING
+
+double_quoted_template: "\"" double_quoted_fragment* "\""
+
+part: substitution 
+  | UNQUOTED_RSTRING
+
+value: part+
+  | single_quoted_template
+  | double_quoted_template
+
+arguments: value
+  | arguments " " value
+
+substitution: "$" "(" IDENTIFIER (" " arguments)? ")"
+
+fragment: substitution
+  | UNQUOTED_STRING
+
+template: fragment+

@@ -63,3 +63,9 @@ Note a few points that are different from normal launch file:
 2. tag your `Node` with `to_cloud`. FogROS will only push nodes that `to_cloud=True`
 
 
+
+fogros2
+    - fogros2_examples -> examples using FogROS2
+    - fogros2 -> orchestrator of cloud Nodes
+    - fogros2_launch -> ROS 2 launch fork for FogROS2 purposes
+    - fogros2_launch_ros  -> (ROS specific extensions for FogROS2)

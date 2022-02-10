@@ -1,0 +1,6 @@
+__pycache__
+*.pyc
+.DS_Store
+.mypy_cache
+.pytest_cache
+.flake8

@@ -1,0 +1,1 @@
+@echo asd bsd csd
