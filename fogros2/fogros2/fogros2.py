@@ -20,7 +20,6 @@ from .dds_config_builder import CycloneConfigBuilder
 
 import logging
 import os
-
 import shutil
 
 
@@ -44,7 +43,7 @@ def start():
         vpn.make_wireguard_keypair()
     else:
         ip = "13.52.249.171"
-        key_path = "/home/root/fog_ws/FogROSKEY905.pem"
+        key_path = os.getenv("COLCON_PREFIX_PATH") + "/../FogROSKEY905.pem"
         # Note that we don't need to make new keypair if we keep the old ones
         vpn = VPN(ip)
 

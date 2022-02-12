@@ -12,6 +12,7 @@ setup(
         ("share/" + package_name, ["package.xml"]),
         ("share/" + package_name + "/launch", glob("launch/*.launch.py")),
         ("share/" + package_name + "/configs", glob("configs/*.xml")),
+        ("share/" + package_name, ["to_cloud_nodes"]),
     ],
     install_requires=["setuptools"],
     zip_safe=True,

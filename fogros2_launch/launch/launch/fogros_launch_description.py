@@ -22,6 +22,7 @@ from typing import Tuple
 from typing import TYPE_CHECKING
 
 import launch.logging
+import os
 
 from .action import Action
 from .actions import DeclareLaunchArgument
@@ -85,7 +86,9 @@ class FogROSLaunchDescription(LaunchDescriptionEntity):
         #             f.write(dumped_node_str)
         #     else:
         #         print(entity.__class__.__name__)
-        with open("/home/root/fog_ws/src/fogros2/fogros2/fogros2/to_cloud_nodes", "wb+") as f:
+
+        to_cloud_nodes_path = os.getenv("COLCON_PREFIX_PATH") + "/share/fogros2/to_cloud_nodes"
+        with open(to_cloud_nodes_path, "wb+") as f:
             print("to be dumped")
             dumped_node_str = pickle.dumps(self.__to_cloud_entities)
             f.write(dumped_node_str)
