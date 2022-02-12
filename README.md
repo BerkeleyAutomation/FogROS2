@@ -31,6 +31,8 @@ ros2 run fogros2 fogros2
 (on the second terminal), run the robotics applications that need to be "FogROS-ed", 
 ```
 . /home/root/fog_ws/install/setup.bash
+export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp 
+export CYCLONEDDS_URI=file:///home/root/fog_ws/cyclonedds.xml
 ros2 launch fogros2_examples talker.launch.py
 ```
 

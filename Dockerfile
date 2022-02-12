@@ -43,6 +43,7 @@ RUN pip3 install boto3 paramiko scp wgconfig
 RUN mkdir -p /home/root/fog_ws/src
 WORKDIR /home/root/fog_ws/src
 COPY .  /home/root/fog_ws/src/fogros2
+COPY ./fogros2/configs/cyclonedds.xml /home/root/fog_ws
 
 WORKDIR /home/root/fog_ws
 RUN . /opt/ros/rolling/setup.sh && \
