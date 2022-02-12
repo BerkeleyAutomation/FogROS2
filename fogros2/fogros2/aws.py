@@ -1,3 +1,14 @@
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 import boto3
 import random
@@ -5,26 +16,27 @@ import logging
 
 
 class AWS:
-    def __init__(self,
-                 region = "us-west-1",
-                 store_key_path = "/home/root/fog_ws/",
-                 ec2_instance_type = "t2.medium"
-                 ):
+    def __init__(
+        self,
+        region="us-west-1",
+        store_key_path="/home/root/fog_ws/",
+        ec2_instance_type="t2.medium",
+    ):
         self.region = region
         self.ec2_instance_type = ec2_instance_type
-        self.ec2_instance_disk_size = 30 #GB
+        self.ec2_instance_disk_size = 30  # GB
         self.aws_ami_image = "ami-08b3b42af12192fe6"
 
         # key & security group names
         self.uniqueid = str(random.randint(10, 1000))
-        self.ec2_security_group = 'FOGROS_SECURITY_GROUP' + self.uniqueid
+        self.ec2_security_group = "FOGROS_SECURITY_GROUP" + self.uniqueid
         self.ec2_key_name = "FogROSKEY" + self.uniqueid
         self.ssh_key_path = store_key_path + self.ec2_key_name + ".pem"
 
         # aws objects
         self.ec2_instance = None
-        self.ec2_resource_manager = boto3.resource('ec2', self.region)
-        self.ec2_boto3_client = boto3.client('ec2', self.region)
+        self.ec2_resource_manager = boto3.resource("ec2", self.region)
+        self.ec2_boto3_client = boto3.client("ec2", self.region)
 
         # after config
         self.public_ip = None
@@ -51,24 +63,30 @@ class AWS:
 
     def create_security_group(self):
         response = self.ec2_boto3_client.describe_vpcs()
-        vpc_id = response.get('Vpcs', [{}])[0].get('VpcId', '')
+        vpc_id = response.get("Vpcs", [{}])[0].get("VpcId", "")
         try:
-            response = self.ec2_boto3_client.create_security_group(GroupName=self.ec2_security_group,
-                                                 Description='DESCRIPTION',
-                                                 VpcId=vpc_id)
-            security_group_id = response['GroupId']
-            self.logger.info('Security Group Created %s in vpc %s.' % (security_group_id, vpc_id))
+            response = self.ec2_boto3_client.create_security_group(
+                GroupName=self.ec2_security_group,
+                Description="DESCRIPTION",
+                VpcId=vpc_id,
+            )
+            security_group_id = response["GroupId"]
+            self.logger.info(
+                "Security Group Created %s in vpc %s." % (security_group_id, vpc_id)
+            )
 
             data = self.ec2_boto3_client.authorize_security_group_ingress(
                 GroupId=security_group_id,
                 IpPermissions=[
-                    {'IpProtocol': '-1',
-                     'FromPort': 0,
-                     'ToPort': 65535,
-                     'IpRanges': [{'CidrIp': '0.0.0.0/0'}]
-                     }
-                ])
-            self.logger.info('Ingress Successfully Set %s' % data)
+                    {
+                        "IpProtocol": "-1",
+                        "FromPort": 0,
+                        "ToPort": 65535,
+                        "IpRanges": [{"CidrIp": "0.0.0.0/0"}],
+                    }
+                ],
+            )
+            self.logger.info("Ingress Successfully Set %s" % data)
             ec2_security_group_ids = [security_group_id]
         except ClientError as e:
             self.logger.error(e)
@@ -77,7 +95,7 @@ class AWS:
 
     def generate_key_pair(self):
         ec2_keypair = self.ec2_boto3_client.create_key_pair(KeyName=self.ec2_key_name)
-        ec2_priv_key = ec2_keypair['KeyMaterial']
+        ec2_priv_key = ec2_keypair["KeyMaterial"]
         self.logger.info(ec2_priv_key)
 
         with open(self.ssh_key_path, "w+") as f:
@@ -96,16 +114,16 @@ class AWS:
             MaxCount=1,
             InstanceType=self.ec2_instance_type,
             KeyName=self.ec2_key_name,
-            SecurityGroupIds= self.ec2_security_group_ids,
+            SecurityGroupIds=self.ec2_security_group_ids,
             BlockDeviceMappings=[
                 {
-                    'DeviceName': '/dev/sda1',
-                    'Ebs': {
-                        'VolumeSize': self.ec2_instance_disk_size,
-                        'VolumeType': 'standard'
-                    }
+                    "DeviceName": "/dev/sda1",
+                    "Ebs": {
+                        "VolumeSize": self.ec2_instance_disk_size,
+                        "VolumeType": "standard",
+                    },
                 }
-            ]
+            ],
         )
 
         self.logger.info("Have created the instance: ", instances)
@@ -125,4 +143,3 @@ class AWS:
             self.public_ip = instance.public_ip_address
         self.logger.warn("EC2 instance is created with ip address: " + self.public_ip)
         return instance
-
