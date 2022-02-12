@@ -1,0 +1,12 @@
+/**:
+    ros__parameters:
+        param_1_name: 10
+
+/my_ns:
+    my_node:
+        ros__parameters:
+            param_2_name: 20
+
+    my_other_node:
+        ros__parameters:
+            param_3_name: 30

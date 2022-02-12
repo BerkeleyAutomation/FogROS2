@@ -1,11 +1,12 @@
 # FogROS2
 
 # Installation(in Docker)
+Build it:
+```bash
+docker build -t fogros2 .
 ```
-FOGROS_REPO=~/Desktop/FogROS2
-git clone --recurse-submodules https://github.com/BerkeleyAutomation/FogROS2.git {FOGROS_REPO}
-```
-Run the docker by 
+
+Run the docker by:
 ```
 FOGROS_REPO=~/Desktop/FogROS2
 docker run -it --rm \
@@ -61,5 +62,3 @@ Example of launch file can be found in https://github.com/BerkeleyAutomation/Fog
 Note a few points that are different from normal launch file: 
 1. use `FogROSLaunchDescription` instead of `LaunchDescription` class 
 2. tag your `Node` with `to_cloud`. FogROS will only push nodes that `to_cloud=True`
-
-

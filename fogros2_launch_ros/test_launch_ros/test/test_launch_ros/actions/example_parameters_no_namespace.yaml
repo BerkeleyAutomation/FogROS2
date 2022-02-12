@@ -1,0 +1,3 @@
+/test_node_name:
+  ros__parameters:
+    param: 2
