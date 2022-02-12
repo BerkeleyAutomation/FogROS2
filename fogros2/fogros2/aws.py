@@ -20,7 +20,7 @@ class AWS:
         self,
         region="us-west-1",
         store_key_path="/home/root/fog_ws/",
-        ec2_instance_type="t2.medium",
+        ec2_instance_type="t2.micro",
     ):
         self.region = region
         self.ec2_instance_type = ec2_instance_type

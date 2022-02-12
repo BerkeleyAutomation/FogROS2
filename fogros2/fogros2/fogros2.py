@@ -35,7 +35,7 @@ def make_zip_file(dir_name, target_path):
 def start():
     launch_new_instance = False
     if launch_new_instance:
-        aws_instance = AWS()
+        aws_instance = AWS(region="us-west-1", store_key_path="/home/root/fog_ws/", ec2_instance_type="t2.medium")
         aws_instance.create()
         ip = aws_instance.get_ip()
         key_path = aws_instance.get_ssh_key_path()
