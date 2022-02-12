@@ -3,9 +3,11 @@
 <package format="3">
   <name>fogros2_examples</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
-  <maintainer email="root@todo.todo">root</maintainer>
-  <license>TODO: License declaration</license>
+  <description>Examples using FogROS2</description>
+  <author email="kych@berkeley.edu">Kaiyuan (Eric) Chen</author>
+  <author email="v.mayoralv@gmail.com">Víctor Mayoral-Vilches</author>
+  <maintainer email="kych@berkeley.edu">Kaiyuan (Eric) Chen</maintainer>
+  <license>Apache License 2.0</license>
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
