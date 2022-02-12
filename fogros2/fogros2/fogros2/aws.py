@@ -7,12 +7,13 @@ import logging
 class AWS:
     def __init__(self,
                  region = "us-west-1",
-                 store_key_path = "/opt/ros2_ws/",
+                 store_key_path = "/home/root/fog_ws/",
+                 ec2_instance_type = "t2.medium"
                  ):
         self.region = region
-        self.ec2_instance_type = "t2.medium"
+        self.ec2_instance_type = ec2_instance_type
         self.ec2_instance_disk_size = 30 #GB
-        self.aws_ami_image = "ami-0e988d16ff850b97d"
+        self.aws_ami_image = "ami-08b3b42af12192fe6"
 
         # key & security group names
         self.uniqueid = str(random.randint(10, 1000))

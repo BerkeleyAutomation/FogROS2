@@ -20,7 +20,7 @@ def make_zip_file(dir_name, target_path):
                                base_name = target_path)
 
 def start():
-    launch_new_instance = True
+    launch_new_instance = False
     if launch_new_instance:
         aws_instance = AWS()
         aws_instance.create()
@@ -30,8 +30,8 @@ def start():
         vpn = VPN(ip)
         vpn.make_wireguard_keypair()
     else:
-        ip = "13.56.255.152"
-        key_path = "/opt/ros2_ws/FogROSKEY684.pem"
+        ip = "13.52.249.171"
+        key_path = "/home/root/fog_ws/FogROSKEY905.pem"
         # Note that we don't need to make new keypair if we keep the old ones
         vpn = VPN(ip)
 
@@ -41,7 +41,7 @@ def start():
     vpn.start()
 
     # configure VPN on the cloud
-    scp.execute_cmd("sudo apt install wireguard unzip")
+    scp.execute_cmd("sudo apt install -y wireguard unzip")
     scp.send_file("/tmp/fogros-aws.conf", "/tmp/fogros-aws.conf")
     scp.execute_cmd("sudo cp /tmp/fogros-aws.conf /etc/wireguard/wg0.conf && sudo chmod 600 /etc/wireguard/wg0.conf && sudo wg-quick up wg0")
 
@@ -51,19 +51,19 @@ def start():
     scp.send_file("/tmp/cyclonedds.xml", "~/cyclonedds.xml")
 
     # configure ROS env
-    workspace_path = "/opt/ros2_ws"
+    workspace_path = "/home/root/fog_ws"
     zip_dst = "/tmp/ros_workspace"
     make_zip_file(workspace_path, zip_dst)
     scp.execute_cmd("echo removing old workspace")
-    scp.execute_cmd("rm -rf ros_workspace.zip ros2_ws")
+    scp.execute_cmd("rm -rf ros_workspace.zip ros2_ws fog_ws")
     scp.send_file(zip_dst+".zip", "/home/ubuntu/")
     scp.execute_cmd("unzip -q /home/ubuntu/ros_workspace.zip")
     scp.execute_cmd("echo successfully extracted new workspace")
 
     cmd_builder = BashBuilder()
-    cmd_builder.append("source /home/ubuntu/ros2_eloquent/install/setup.bash")
-    cmd_builder.append("cd ~/ros2_ws && colcon build")
-    cmd_builder.append(". /home/ubuntu/ros2_ws/install/setup.bash")
+    cmd_builder.append("source /home/ubuntu/ros2_rolling/install/setup.bash")
+    cmd_builder.append("cd /home/ubuntu/fog_ws && colcon build --merge-install")
+    cmd_builder.append(". /home/ubuntu/fog_ws/install/setup.bash")
     cmd_builder.append(cyclone_builder.env_cmd)
     cmd_builder.append("ros2 launch fogros2 cloud.launch.py")
     print(cmd_builder.get())
