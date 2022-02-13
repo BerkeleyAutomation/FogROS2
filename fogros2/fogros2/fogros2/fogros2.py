@@ -20,7 +20,7 @@ def make_zip_file(dir_name, target_path):
                                base_name = target_path)
 
 def start():
-    launch_new_instance = False
+    launch_new_instance = True
     if launch_new_instance:
         aws_instance = AWS()
         aws_instance.create()
@@ -59,6 +59,7 @@ def start():
     scp.send_file(zip_dst+".zip", "/home/ubuntu/")
     scp.execute_cmd("unzip -q /home/ubuntu/ros_workspace.zip")
     scp.execute_cmd("echo successfully extracted new workspace")
+    scp.send_file("/tmp/to_cloud_nodes", "/tmp/to_cloud_nodes")
 
     cmd_builder = BashBuilder()
     cmd_builder.append("source /home/ubuntu/ros2_rolling/install/setup.bash")
