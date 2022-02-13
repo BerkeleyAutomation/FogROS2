@@ -10,21 +10,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from launch import FogROSLaunchDescription
-from launch_ros.actions import Node
+import logging
 
 
-def generate_launch_description():
-    ld = FogROSLaunchDescription()
-    talker_node = Node(
-        package="fogros2_examples", executable="talker", output="screen", to_cloud=True
-    )
-    listener_node = Node(
-        package="fogros2_examples",
-        executable="listener",
-        output="screen",
-        to_cloud=False,
-    )
-    ld.add_action(talker_node)
-    ld.add_action(listener_node)
-    return ld
+class BashBuilder:
+    def __init__(self, cmd_save_path="/opt/ros_ws/cmd.sh"):
+        self.cmd_save_path = cmd_save_path
+        self.command = ""
+        self.logger = logging.getLogger(__name__)
+
+    def save(self):
+        with open(cmd_save_path, "w+") as f:
+            f.write(self.command)
+        self.logger.info(self.command)
+
+    def get(self):
+        return self.command
+
+    def append(self, cmd):
+        if self.command:
+            self.command += " && " + cmd
+        else:
+            self.command = cmd

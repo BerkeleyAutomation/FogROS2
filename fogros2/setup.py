@@ -2,16 +2,17 @@ from setuptools import setup
 import os
 from glob import glob
 
-package_name = "fogros2_examples"
-
+package_name = "fogros2"
 setup(
     name=package_name,
-    version="0.0.0",
+    version="0.1.0",
     packages=[package_name],
     data_files=[
         ("share/ament_index/resource_index/packages", ["resource/" + package_name]),
         ("share/" + package_name, ["package.xml"]),
-        (os.path.join("share", package_name), glob("launch/*.launch.py")),
+        ("share/" + package_name + "/launch", glob("launch/*.launch.py")),
+        ("share/" + package_name + "/configs", glob("configs/*.xml")),
+        ("share/" + package_name, ["to_cloud_nodes"]),
     ],
     install_requires=["setuptools"],
     zip_safe=True,
@@ -19,13 +20,10 @@ setup(
     author_email="kych@berkeley.edu, v.mayoralv@gmail.com",
     maintainer="Kaiyuan (Eric) Chen",
     maintainer_email="kych@berkeley.edu",
-    description="TODO: Package description",
-    license="TODO: License declaration",
+    description="A ROS 2 extension for the cloud deployment of computational graphs in a cloud-provider agnostic and security-conscius manner.",
+    license="Apache License, Version 2.0",
     tests_require=["pytest"],
     entry_points={
-        "console_scripts": [
-            "talker = fogros2_examples.talker:main",
-            "listener = fogros2_examples.listener:main",
-        ],
+        "console_scripts": ["fogros2 = fogros2.fogros2:main"],
     },
 )
