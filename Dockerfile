@@ -14,7 +14,8 @@ RUN apt update && sudo apt install -y \
   wireguard \
   iproute2 \
   curl \
-  net-tools
+  net-tools \
+  ssh
 
 # install some pip packages needed for testing
 RUN python3 -m pip install -U \
