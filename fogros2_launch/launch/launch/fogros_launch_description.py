@@ -84,7 +84,8 @@ class FogROSLaunchDescription(LaunchDescriptionEntity):
 
 
         machines = [self.__to_cloud_entities[n][0].machine  for n in self.__to_cloud_entities]
-        # vpn = VPN(ip)
+        vpn = VPN()
+        vpn.generate_wg_config_files()
         # vpn.make_wireguard_keypair()
         # create VPN credentials to all of the machines
 

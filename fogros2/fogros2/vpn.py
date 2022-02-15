@@ -18,42 +18,64 @@ import os
 class VPN:
     def __init__(
         self,
-        robot_ip,
-        aws_key_path="/tmp/fogros-aws.conf",
+        cloud_key_path="/tmp/fogros-cloud.conf",
         robot_key_path="/tmp/fogros-local.conf",
     ):
-        self.robot_ip = robot_ip
-        self.aws_key_path = aws_key_path
+        self.cloud_key_path = cloud_key_path
         self.robot_key_path = robot_key_path
 
-    def make_wireguard_keypair(self):
-        ###
-        ### Begin WireGuard Setup
-        ###
-        aws_private_key = wgexec.generate_privatekey()
-        aws_public_key = wgexec.get_publickey(aws_private_key)
-        robot_private_key = wgexec.generate_privatekey()
-        robot_public_key = wgexec.get_publickey(robot_private_key)
+        self.cloud_name_to_pub_key_path = dict()
+        self.cloud_name_to_priv_key_path = dict()
 
-        aws_config = wgconfig.WGConfig(self.aws_key_path)
-        aws_config.add_attr(None, "PrivateKey", aws_private_key)
-        aws_config.add_attr(None, "ListenPort", 51820)
-        aws_config.add_attr(None, "Address", "10.0.0.1/24")
-        aws_config.add_peer(robot_public_key, "# fogROS Robot")
-        aws_config.add_attr(robot_public_key, "AllowedIPs", "10.0.0.2/32")
-        aws_config.write_file()
+        self.robot_private_key = wgexec.generate_privatekey()
+        self.robot_public_key = wgexec.get_publickey(robot_private_key)
 
+
+    def generate_key_pairs(self, machines):
+        """
+        @param machines: List<machine>
+        """
+        for machine in machines:
+            name = machine.get_name()
+            cloud_private_key = wgexec.generate_privatekey()
+            self.cloud_name_to_priv_key_path[name] = cloud_private_key
+            cloud_public_key = wgexec.get_publickey(cloud_private_key)
+            self.cloud_name_to_pub_key_path[name] =cloud_public_key
+
+    def generate_wg_config_files(self, machines):
+        generate_key_pairs(machines)
+
+        # generate cloud configs
+        counter = 2 # start the static ip addr counter from 2
+        for machine in machines:
+            name = machine.get_name()
+            machine_config_pwd = self.cloud_key_path + name
+            machine_priv_key = cloud_name_to_priv_key_path[name]
+            aws_config = wgconfig.WGConfig(machine_config_pwd)
+            aws_config.add_attr(None, "PrivateKey", machine_priv_key)
+            aws_config.add_attr(None, "ListenPort", 51820)
+            aws_config.add_attr(None, "Address", "10.0.0." + str(counter) +"/24")
+            aws_config.add_peer(self.robot_public_key, "# fogROS Robot")
+            aws_config.add_attr(self.robot_public_key, "AllowedIPs", "10.0.0.1/32")
+            aws_config.write_file()
+            counter += 1
+
+        # generate robot configs
         robot_config = wgconfig.WGConfig(self.robot_key_path)
-        robot_config.add_attr(None, "PrivateKey", robot_private_key)
+        robot_config.add_attr(None, "PrivateKey", self.robot_private_key)
         robot_config.add_attr(None, "ListenPort", 51820)
-        robot_config.add_attr(None, "Address", "10.0.0.2/24")
-        robot_config.add_peer(aws_public_key, "# AWS")
-        robot_config.add_attr(aws_public_key, "AllowedIPs", "10.0.0.1/32")
-        robot_config.add_attr(aws_public_key, "Endpoint", f"{self.robot_ip}:51820")
-        robot_config.add_attr(aws_public_key, "PersistentKeepalive", 3)
+        robot_config.add_attr(None, "Address", "10.0.0.1/24")
+        for machine in machines:
+            name = machine.get_name()
+            ip = machine.get_ip()
+            robot_config.add_peer(aws_public_key, "# AWS" + name)
+            robot_config.add_attr(aws_public_key, "AllowedIPs", "10.0.0.2/32")
+            robot_config.add_attr(aws_public_key, "Endpoint", f"{ip}:51820")
+            robot_config.add_attr(aws_public_key, "PersistentKeepalive", 3)
         robot_config.write_file()
 
-    def start(self):
+
+    def start_robot_vpn(self):
         # Copy /tmp/fogros-local.conf to /etc/wireguard/wg0.conf locally.
         # TODO: This needs root. Move this to a separate script with setuid.
         os.system("sudo wg-quick down wg0")
