@@ -10,3 +10,6 @@ class CloudNode(Node):
                  ):
         super().__init__(**kwargs)
         self.machine = machine
+
+    def get_unique_id(self):
+        return self.machine.get_name()

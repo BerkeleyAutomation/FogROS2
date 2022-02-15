@@ -64,20 +64,16 @@ class FogROSLaunchDescription(LaunchDescriptionEntity):
         launch.logging.get_logger().info("init")
         #self.__entities = list(initial_entities) if initial_entities is not None else []
         self.__entities = []
-        self.__to_cloud_entities = []
+        self.__to_cloud_entities = defaultdict(list)
         if initial_entities:
             for entity in initial_entities:
-                if entity.__class__.__name__ == "CloudNode":
-                    self.__to_cloud_entities[entity.name].append(entity)
-                else:
-                    self.__entities.append(entity)
+                self.add_entity_with_filter(entity)
         self.__deprecated_reason = deprecated_reason
 
 
     def visit(self, context: LaunchContext) -> Optional[List[LaunchDescriptionEntity]]:
         """Override visit from LaunchDescriptionEntity to visit contained entities."""
 
-        print("3")
         with open("/tmp/to_cloud_nodes", "wb+") as f:
             print("to be dumped")
             dumped_node_str = pickle.dumps(self.__to_cloud_entities)
@@ -191,17 +187,16 @@ class FogROSLaunchDescription(LaunchDescriptionEntity):
     def add_entity(self, entity: LaunchDescriptionEntity) -> None:
         """Add an entity to the LaunchDescription."""
         #self.__entities.append(entity)
-        print(entity.__class__.__name__)
-        print("1")
+        self.add_entity_with_filter(entity)
+
+
+
+    def add_entity_with_filter(self, entity):
         if entity.__class__.__name__ == "CloudNode":
-            self.__to_cloud_entities[entity.name].append(entity)
+            self.__to_cloud_entities[entity.get_unique_id()].append(entity)
         else:
             self.__entities.append(entity)
-        print("2")
-
-
-
-
+            
     def add_action(self, action: Action) -> None:
         """Add an action to the LaunchDescription."""
         self.add_entity(action)
