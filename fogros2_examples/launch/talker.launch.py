@@ -16,7 +16,7 @@ import fogros2
 
 def generate_launch_description():
     ld = FogROSLaunchDescription()
-    machine1 = None #fogros2.AWS(region="us-west-1", ec2_instance_type="t2.medium").create()
+    machine1 = fogros2.AWS(region="us-west-1", ec2_instance_type="t2.medium")# .create()
 
     talker_node = Node(
         package="fogros2_examples", executable="listener", output="screen")

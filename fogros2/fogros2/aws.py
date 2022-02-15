@@ -19,6 +19,8 @@ class CloudInstance:
         self.scp = None
         self.public_ip = None
         self.ssh_key_path = None
+        self.name = None
+        self.unique_name = None
 
     def create(self):
         raise NotImplementedError("Cloud SuperClass not implemented")
@@ -32,6 +34,9 @@ class CloudInstance:
 
     def get_ip(self):
         return self.public_ip
+
+    def get_name(self):
+        return self.unique_name
 
 
 class AWS(CloudInstance):
@@ -48,9 +53,9 @@ class AWS(CloudInstance):
         self.aws_ami_image = "ami-08b3b42af12192fe6"
 
         # key & security group names
-        self.uniqueid = str(random.randint(10, 1000))
-        self.ec2_security_group = "FOGROS_SECURITY_GROUP" + self.uniqueid
-        self.ec2_key_name = "FogROSKEY" + self.uniqueid
+        self.unique_name = "AWS" + str(random.randint(10, 1000))
+        self.ec2_security_group = "FOGROS_SECURITY_GROUP" + self.unique_name
+        self.ec2_key_name = "FogROSKEY" + self.unique_name
         self.ssh_key_path = store_key_path + self.ec2_key_name + ".pem"
 
         # aws objects

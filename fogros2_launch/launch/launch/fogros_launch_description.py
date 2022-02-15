@@ -34,8 +34,7 @@ if TYPE_CHECKING:
 
 import pickle
 import socket
-HOST = 'localhost'  # The server's hostname or IP address
-PORT = 65432  # The port used by the server
+from collections import defaultdict
 
 class FogROSLaunchDescription(LaunchDescriptionEntity):
     """
@@ -68,16 +67,17 @@ class FogROSLaunchDescription(LaunchDescriptionEntity):
         self.__to_cloud_entities = []
         if initial_entities:
             for entity in initial_entities:
-                if entity.__class__.__name__ == "Node" and entity.to_cloud:
-                    self.__to_cloud_entities += entity
+                if entity.__class__.__name__ == "CloudNode":
+                    self.__to_cloud_entities[entity.name].append(entity)
                 else:
-                    self.__entities += entity
+                    self.__entities.append(entity)
         self.__deprecated_reason = deprecated_reason
 
 
     def visit(self, context: LaunchContext) -> Optional[List[LaunchDescriptionEntity]]:
         """Override visit from LaunchDescriptionEntity to visit contained entities."""
 
+        print("3")
         with open("/tmp/to_cloud_nodes", "wb+") as f:
             print("to be dumped")
             dumped_node_str = pickle.dumps(self.__to_cloud_entities)
@@ -191,10 +191,16 @@ class FogROSLaunchDescription(LaunchDescriptionEntity):
     def add_entity(self, entity: LaunchDescriptionEntity) -> None:
         """Add an entity to the LaunchDescription."""
         #self.__entities.append(entity)
-        if entity.__class__.__name__ == "Node" and entity.to_cloud:
-            self.__to_cloud_entities.append(entity)
+        print(entity.__class__.__name__)
+        print("1")
+        if entity.__class__.__name__ == "CloudNode":
+            self.__to_cloud_entities[entity.name].append(entity)
         else:
             self.__entities.append(entity)
+        print("2")
+
+
+
 
     def add_action(self, action: Action) -> None:
         """Add an action to the LaunchDescription."""
