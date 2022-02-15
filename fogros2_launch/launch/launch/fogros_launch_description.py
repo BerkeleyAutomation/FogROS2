@@ -82,12 +82,25 @@ class FogROSLaunchDescription(LaunchDescriptionEntity):
                 dumped_node_str = pickle.dumps(value)
                 f.write(dumped_node_str)
 
-        # tell remote machine to push the to cloud nodes and wait here until all the nodes are done
-        for machine_name in self.__to_cloud_entities:
-            machine = self.__to_cloud_entities[machine_name][0].machine
+
+        machines = [self.__to_cloud_entities[n][0].machine  for n in self.__to_cloud_entities]
+        # vpn = VPN(ip)
+        # vpn.make_wireguard_keypair()
+        # create VPN credentials to all of the machines
+
+
+        # tell remote machine to push the to cloud nodes and
+        # wait here until all the nodes are done
+        for machine in machines:
+            machine_name = machine.get_name()
             while not machine.get_ready_state():
                 print("Waiting for machine " + machine_name)
                 sleep(1)
+            # machine is ready, # push to_cloud and setup vpn
+            machine.push_to_cloud_nodes()
+            machine.push_and_setup_vpn()
+            machine.configure_DDS()
+
 
 
         if self.__deprecated_reason is not None:

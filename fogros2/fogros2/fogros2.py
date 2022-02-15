@@ -44,37 +44,7 @@ def start():
 
     vpn.start()
 
-    # configure VPN on the cloud
-    scp.execute_cmd("sudo apt install -y wireguard unzip")
-    scp.send_file("/tmp/fogros-aws.conf", "/tmp/fogros-aws.conf")
-    scp.execute_cmd(
-        "sudo cp /tmp/fogros-aws.conf /etc/wireguard/wg0.conf && sudo chmod 600 /etc/wireguard/wg0.conf && sudo wg-quick up wg0"
-    )
 
-    # configure DDS
-    cyclone_builder = CycloneConfigBuilder(["10.0.0.2"])
-    cyclone_builder.generate_config_file()
-    scp.send_file("/tmp/cyclonedds.xml", "~/cyclonedds.xml")
-
-    # configure ROS env
-    workspace_path = "/home/root/fog_ws"
-    zip_dst = "/tmp/ros_workspace"
-    make_zip_file(workspace_path, zip_dst)
-    scp.execute_cmd("echo removing old workspace")
-    scp.execute_cmd("rm -rf ros_workspace.zip ros2_ws fog_ws")
-    scp.send_file(zip_dst + ".zip", "/home/ubuntu/")
-    scp.execute_cmd("unzip -q /home/ubuntu/ros_workspace.zip")
-    scp.execute_cmd("echo successfully extracted new workspace")
-    scp.send_file("/tmp/to_cloud_nodes", "/tmp/to_cloud_nodes")
-
-    cmd_builder = BashBuilder()
-    cmd_builder.append("source /home/ubuntu/ros2_rolling/install/setup.bash")
-    cmd_builder.append("cd /home/ubuntu/fog_ws && colcon build --merge-install")
-    cmd_builder.append(". /home/ubuntu/fog_ws/install/setup.bash")
-    cmd_builder.append(cyclone_builder.env_cmd)
-    cmd_builder.append("ros2 launch fogros2 cloud.launch.py")
-    print(cmd_builder.get())
-    scp.execute_cmd(cmd_builder.get())
 
 
 def main():

@@ -14,6 +14,9 @@ import boto3
 import random
 import logging
 import threading
+from .util import make_zip_file
+from .command_builder import BashBuilder
+from .dds_config_builder import CycloneConfigBuilder
 
 class CloudInstance:
     def __init__(self):
@@ -54,11 +57,51 @@ class CloudInstance:
         self.ready_lock.release()
         return ready
 
+    def install_cloud_dependencies(self):
+        self.scp.execute_cmd("sudo apt install -y wireguard unzip")
+    def push_ros_workspace(self):
+        # configure ROS env
+        workspace_path = os.getenv("COLCON_PREFIX_PATH") + "/../"
+        zip_dst = "/tmp/ros_workspace"
+        make_zip_file(workspace_path, zip_dst)
+        self.scp.execute_cmd("echo removing old workspace")
+        self.scp.execute_cmd("rm -rf ros_workspace.zip ros2_ws fog_ws")
+        self.scp.send_file(zip_dst + ".zip", "/home/ubuntu/")
+        self.scp.execute_cmd("unzip -q /home/ubuntu/ros_workspace.zip")
+        self.scp.execute_cmd("echo successfully extracted new workspace")
+
+    def push_to_cloud_nodes(self):
+        self.scp.send_file("/tmp/to_cloud_" + self.unique_name, "/tmp/to_cloud_nodes")
+
+    def push_and_setup_vpn(self):
+        self.scp.send_file("/tmp/fogros-aws.conf"+ self.unique_name, "/tmp/fogros-aws.conf")
+        scp.execute_cmd(
+            "sudo cp /tmp/fogros-aws.conf /etc/wireguard/wg0.conf && sudo chmod 600 /etc/wireguard/wg0.conf && sudo wg-quick up wg0"
+        )
+
+    def configure_DDS(self):
+        # configure DDS
+        cyclone_builder = CycloneConfigBuilder(["10.0.0.2"])
+        cyclone_builder.generate_config_file()
+        scp.send_file("/tmp/cyclonedds.xml", "~/cyclonedds.xml")
+
+    def launch_cloud_node(self):
+        cmd_builder = BashBuilder()
+        cmd_builder.append("source /home/ubuntu/ros2_rolling/install/setup.bash")
+        cmd_builder.append("cd /home/ubuntu/fog_ws && colcon build --merge-install")
+        cmd_builder.append(". /home/ubuntu/fog_ws/install/setup.bash")
+        cmd_builder.append(cyclone_builder.env_cmd)
+        cmd_builder.append("ros2 launch fogros2 cloud.launch.py")
+        print(cmd_builder.get())
+        scp.execute_cmd(cmd_builder.get())
+
 class RemoteMachine(CloudInstance):
     def __init__(self, ip, ssh_key_path):
         super().__init__()
         self.ip = public_ip
         self.ssh_key_path = ssh_key_path
+        self.unique_name = "REMOTE" + str(random.randint(10, 1000))
+        self.set_ready_state() # assume it to be true
     
     def create(self):
         # since the machine is assumed to be established
@@ -106,6 +149,7 @@ class AWS(CloudInstance):
         # self.create_security_group()
         # self.generate_key_pair()
         # self.create_ec2_instance()
+        # self.install_cloud_dependencies()
         self.set_ready_state()
 
     def get_ssh_key(self):
