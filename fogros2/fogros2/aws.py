@@ -14,14 +14,34 @@ import boto3
 import random
 import logging
 
+class CloudInstance:
+    def __init__(self):
+        self.scp = None
+        self.public_ip = None
+        self.ssh_key_path = None
 
-class AWS:
+    def create(self):
+        raise NotImplementedError("Cloud SuperClass not implemented")
+
+    def connect(self):
+        self.scp = SCP_Client(self.ip, self.ssh_key_path)
+        self.scp.connect()
+
+    def get_ssh_key_path(self):
+        return self.ssh_key_path
+
+    def get_ip(self):
+        return self.public_ip
+
+
+class AWS(CloudInstance):
     def __init__(
         self,
         region="us-west-1",
         store_key_path="/home/root/fog_ws/",
         ec2_instance_type="t2.micro",
     ):
+        super().__init__()
         self.region = region
         self.ec2_instance_type = ec2_instance_type
         self.ec2_instance_disk_size = 30  # GB
@@ -39,7 +59,7 @@ class AWS:
         self.ec2_boto3_client = boto3.client("ec2", self.region)
 
         # after config
-        self.public_ip = None
+
         self.ssh_key = None
         self.ec2_security_group_ids = None
 
@@ -48,15 +68,10 @@ class AWS:
         self.logger.setLevel(logging.WARNING)
 
     def create(self):
+        print("creating EC2 instance")
         self.create_security_group()
         self.generate_key_pair()
         self.create_ec2_instance()
-
-    def get_ip(self):
-        return self.public_ip
-
-    def get_ssh_key_path(self):
-        return self.ssh_key_path
 
     def get_ssh_key(self):
         return self.ssh_key

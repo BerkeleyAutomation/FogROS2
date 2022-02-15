@@ -12,19 +12,17 @@
 
 from launch import FogROSLaunchDescription
 from launch_ros.actions import Node
-
+import fogros2
 
 def generate_launch_description():
     ld = FogROSLaunchDescription()
+    machine1 = None #fogros2.AWS(region="us-west-1", ec2_instance_type="t2.medium").create()
+
     talker_node = Node(
-        package="fogros2_examples", executable="talker", output="screen", to_cloud=True
-    )
-    listener_node = Node(
-        package="fogros2_examples",
-        executable="listener",
-        output="screen",
-        to_cloud=False,
-    )
+        package="fogros2_examples", executable="listener", output="screen")
+    listener_node = fogros2.CloudNode(
+        package="fogros2_examples", executable="talker", output="screen",
+        machine = machine1)
     ld.add_action(talker_node)
     ld.add_action(listener_node)
     return ld

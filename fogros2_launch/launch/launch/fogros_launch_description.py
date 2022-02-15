@@ -77,25 +77,11 @@ class FogROSLaunchDescription(LaunchDescriptionEntity):
 
     def visit(self, context: LaunchContext) -> Optional[List[LaunchDescriptionEntity]]:
         """Override visit from LaunchDescriptionEntity to visit contained entities."""
-        # for entity in self.entities:
-        #     if entity.__class__.__name__ == "Node" and entity.to_cloud:
-        #         print("to the cloud")
-        #         dumped_node_str = pickle.dumps(entity)
-        #         with open("/opt/ros2_ws/src/fogros2/fogros2/test_node", "wb+") as f:
-        #             f.write(dumped_node_str)
-        #     else:
-        #         print(entity.__class__.__name__)
+
         with open("/tmp/to_cloud_nodes", "wb+") as f:
             print("to be dumped")
             dumped_node_str = pickle.dumps(self.__to_cloud_entities)
             f.write(dumped_node_str)
-
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            s.connect((HOST, PORT))
-            s.sendall(b'Hello, world')
-            data = s.recv(1024)
-
-        print('Received', repr(data))
 
         if self.__deprecated_reason is not None:
             if 'current_launch_file_path' in context.get_locals_as_dict():

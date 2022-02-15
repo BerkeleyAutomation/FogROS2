@@ -10,4 +10,5 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from . import aws
+from .aws import AWS
+from .cloud_node import CloudNode

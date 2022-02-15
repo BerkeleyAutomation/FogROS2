@@ -1,0 +1,12 @@
+
+
+from launch_ros.actions import Node
+
+
+class CloudNode(Node):
+    def __init__(self,
+                 machine,
+                 **kwargs
+                 ):
+        super().__init__(**kwargs)
+        self.machine = machine
