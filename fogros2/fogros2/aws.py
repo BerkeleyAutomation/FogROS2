@@ -20,7 +20,7 @@ class CloudInstance:
         self.public_ip = None
         self.ssh_key_path = None
         self.name = None
-        self.unique_name = None
+        self.unique_name = str(random.randint(10, 1000))
 
     def create(self):
         raise NotImplementedError("Cloud SuperClass not implemented")
@@ -37,6 +37,17 @@ class CloudInstance:
 
     def get_name(self):
         return self.unique_name
+
+class RemoteMachine(CloudInstance):
+    def __init__(self, ip, ssh_key_path):
+        super().__init__()
+        self.ip = public_ip
+        self.ssh_key_path = ssh_key_path
+    
+    def create(self):
+        # since the machine is assumed to be established
+        # no need to create
+        pass
 
 
 class AWS(CloudInstance):
