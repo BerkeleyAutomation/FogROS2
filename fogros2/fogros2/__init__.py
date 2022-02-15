@@ -12,3 +12,4 @@
 
 from .aws import *
 from .cloud_node import CloudNode
+from .vpn import VPN

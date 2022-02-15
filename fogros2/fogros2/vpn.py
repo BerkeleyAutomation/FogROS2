@@ -43,7 +43,7 @@ class VPN:
             self.cloud_name_to_pub_key_path[name] =cloud_public_key
 
     def generate_wg_config_files(self, machines):
-        generate_key_pairs(machines)
+        self.generate_key_pairs(machines)
 
         # generate cloud configs
         counter = 2 # start the static ip addr counter from 2

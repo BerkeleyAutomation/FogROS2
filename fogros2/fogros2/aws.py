@@ -17,6 +17,8 @@ import threading
 from .util import make_zip_file
 from .command_builder import BashBuilder
 from .dds_config_builder import CycloneConfigBuilder
+from .scp import SCP_Client
+import os
 
 class CloudInstance:
     def __init__(self):
@@ -33,7 +35,7 @@ class CloudInstance:
         raise NotImplementedError("Cloud SuperClass not implemented")
 
     def connect(self):
-        self.scp = SCP_Client(self.ip, self.ssh_key_path)
+        self.scp = SCP_Client(self.public_ip, self.ssh_key_path)
         self.scp.connect()
 
     def get_ssh_key_path(self):
@@ -59,9 +61,11 @@ class CloudInstance:
 
     def install_cloud_dependencies(self):
         self.scp.execute_cmd("sudo apt install -y wireguard unzip")
+
     def push_ros_workspace(self):
         # configure ROS env
-        workspace_path = os.getenv("COLCON_PREFIX_PATH") + "/../"
+        workspace_path = "/home/root/fog_ws" #os.getenv("COLCON_PREFIX_PATH")
+
         zip_dst = "/tmp/ros_workspace"
         make_zip_file(workspace_path, zip_dst)
         self.scp.execute_cmd("echo removing old workspace")
@@ -74,8 +78,8 @@ class CloudInstance:
         self.scp.send_file("/tmp/to_cloud_" + self.unique_name, "/tmp/to_cloud_nodes")
 
     def push_and_setup_vpn(self):
-        self.scp.send_file("/tmp/fogros-aws.conf"+ self.unique_name, "/tmp/fogros-aws.conf")
-        scp.execute_cmd(
+        self.scp.send_file("/tmp/fogros-cloud.conf"+ self.unique_name, "/tmp/fogros-aws.conf")
+        self.scp.execute_cmd(
             "sudo cp /tmp/fogros-aws.conf /etc/wireguard/wg0.conf && sudo chmod 600 /etc/wireguard/wg0.conf && sudo wg-quick up wg0"
         )
 
@@ -83,7 +87,7 @@ class CloudInstance:
         # configure DDS
         cyclone_builder = CycloneConfigBuilder(["10.0.0.2"])
         cyclone_builder.generate_config_file()
-        scp.send_file("/tmp/cyclonedds.xml", "~/cyclonedds.xml")
+        self.scp.send_file("/tmp/cyclonedds.xml", "~/cyclonedds.xml")
 
     def launch_cloud_node(self):
         cmd_builder = BashBuilder()
@@ -93,7 +97,7 @@ class CloudInstance:
         cmd_builder.append(cyclone_builder.env_cmd)
         cmd_builder.append("ros2 launch fogros2 cloud.launch.py")
         print(cmd_builder.get())
-        scp.execute_cmd(cmd_builder.get())
+        self.scp.execute_cmd(cmd_builder.get())
 
 class RemoteMachine(CloudInstance):
     def __init__(self, ip, ssh_key_path):
@@ -146,10 +150,13 @@ class AWS(CloudInstance):
 
     def create(self):
         print("creating EC2 instance")
-        # self.create_security_group()
-        # self.generate_key_pair()
-        # self.create_ec2_instance()
-        # self.install_cloud_dependencies()
+        self.create_security_group()
+        self.generate_key_pair()
+        self.create_ec2_instance()
+        self.connect()
+        self.install_cloud_dependencies()
+        self.push_ros_workspace()
+        #self.push_to_cloud_nodes()
         self.set_ready_state()
 
     def get_ssh_key(self):
