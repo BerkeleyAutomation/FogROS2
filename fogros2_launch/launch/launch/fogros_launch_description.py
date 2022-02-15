@@ -35,6 +35,7 @@ if TYPE_CHECKING:
 import pickle
 import socket
 from collections import defaultdict
+from time import sleep
 
 class FogROSLaunchDescription(LaunchDescriptionEntity):
     """
@@ -74,10 +75,20 @@ class FogROSLaunchDescription(LaunchDescriptionEntity):
     def visit(self, context: LaunchContext) -> Optional[List[LaunchDescriptionEntity]]:
         """Override visit from LaunchDescriptionEntity to visit contained entities."""
 
-        with open("/tmp/to_cloud_nodes", "wb+") as f:
-            print("to be dumped")
-            dumped_node_str = pickle.dumps(self.__to_cloud_entities)
-            f.write(dumped_node_str)
+        # dump the to cloud nodes into different files
+        for key, value in self.__to_cloud_entities.items():
+            with open("/tmp/to_cloud_" + key, "wb+") as f:
+                print(key + "to be dumped")
+                dumped_node_str = pickle.dumps(value)
+                f.write(dumped_node_str)
+
+        # tell remote machine to push the to cloud nodes and wait here until all the nodes are done
+        for machine_name in self.__to_cloud_entities:
+            machine = self.__to_cloud_entities[machine_name][0].machine
+            while not machine.get_ready_state():
+                print("Waiting for machine " + machine_name)
+                sleep(1)
+
 
         if self.__deprecated_reason is not None:
             if 'current_launch_file_path' in context.get_locals_as_dict():

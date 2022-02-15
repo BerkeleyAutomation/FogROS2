@@ -12,7 +12,7 @@ class CloudNode(Node):
         self.machine = machine
 
     def __getstate__(self):
-        # workaround to make pickle not serializing self.machine 
+        # workaround to make pickle not serializing self.machine
         state = self.__dict__.copy()
         del state["machine"]
         return state

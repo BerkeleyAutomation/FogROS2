@@ -13,6 +13,7 @@
 import boto3
 import random
 import logging
+import threading
 
 class CloudInstance:
     def __init__(self):
@@ -21,6 +22,9 @@ class CloudInstance:
         self.ssh_key_path = None
         self.name = None
         self.unique_name = str(random.randint(10, 1000))
+
+        self.ready_lock = threading.Lock()
+        self.ready_state = False
 
     def create(self):
         raise NotImplementedError("Cloud SuperClass not implemented")
@@ -37,6 +41,18 @@ class CloudInstance:
 
     def get_name(self):
         return self.unique_name
+
+    def get_ready_state(self):
+        self.ready_lock.acquire()
+        ready = self.ready_state
+        self.ready_lock.release()
+        return ready
+
+    def set_ready_state(self, ready = True):
+        self.ready_lock.acquire()
+        self.ready_state = ready
+        self.ready_lock.release()
+        return ready
 
 class RemoteMachine(CloudInstance):
     def __init__(self, ip, ssh_key_path):
@@ -83,11 +99,14 @@ class AWS(CloudInstance):
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(logging.WARNING)
 
+        self.create()
+
     def create(self):
         print("creating EC2 instance")
-        self.create_security_group()
-        self.generate_key_pair()
-        self.create_ec2_instance()
+        # self.create_security_group()
+        # self.generate_key_pair()
+        # self.create_ec2_instance()
+        self.set_ready_state()
 
     def get_ssh_key(self):
         return self.ssh_key
