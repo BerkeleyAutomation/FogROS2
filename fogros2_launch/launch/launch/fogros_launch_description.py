@@ -36,7 +36,7 @@ import pickle
 import socket
 from collections import defaultdict
 from time import sleep
-
+import _thread
 
 
 import wgconfig
@@ -163,6 +163,7 @@ class FogROSLaunchDescription(LaunchDescriptionEntity):
         machines = [self.__to_cloud_entities[n][0].machine  for n in self.__to_cloud_entities]
         vpn = VPN()
         vpn.generate_wg_config_files(machines)
+        vpn.start_robot_vpn()
         # vpn.make_wireguard_keypair()
         # create VPN credentials to all of the machines
 
@@ -178,6 +179,7 @@ class FogROSLaunchDescription(LaunchDescriptionEntity):
             machine.push_to_cloud_nodes()
             machine.push_and_setup_vpn()
             machine.configure_DDS()
+            _thread.start_new_thread(machine.launch_cloud_node)
 
 
 

@@ -22,6 +22,7 @@ import os
 
 class CloudInstance:
     def __init__(self):
+        self.cyclone_builder = None
         self.scp = None
         self.public_ip = None
         self.ssh_key_path = None
@@ -61,6 +62,7 @@ class CloudInstance:
 
     def install_cloud_dependencies(self):
         self.scp.execute_cmd("sudo apt install -y wireguard unzip")
+        self.scp.execute_cmd("sudo pip3 install wgconfig boto3 paramiko scp")
 
     def push_ros_workspace(self):
         # configure ROS env
@@ -85,8 +87,8 @@ class CloudInstance:
 
     def configure_DDS(self):
         # configure DDS
-        cyclone_builder = CycloneConfigBuilder(["10.0.0.2"])
-        cyclone_builder.generate_config_file()
+        self.cyclone_builder = CycloneConfigBuilder(["10.0.0.2"])
+        self.cyclone_builder.generate_config_file()
         self.scp.send_file("/tmp/cyclonedds.xml", "~/cyclonedds.xml")
 
     def launch_cloud_node(self):
@@ -94,7 +96,7 @@ class CloudInstance:
         cmd_builder.append("source /home/ubuntu/ros2_rolling/install/setup.bash")
         cmd_builder.append("cd /home/ubuntu/fog_ws && colcon build --merge-install")
         cmd_builder.append(". /home/ubuntu/fog_ws/install/setup.bash")
-        cmd_builder.append(cyclone_builder.env_cmd)
+        cmd_builder.append(self.cyclone_builder.env_cmd)
         cmd_builder.append("ros2 launch fogros2 cloud.launch.py")
         print(cmd_builder.get())
         self.scp.execute_cmd(cmd_builder.get())
