@@ -87,7 +87,7 @@ class CloudInstance:
 
     def configure_DDS(self):
         # configure DDS
-        self.cyclone_builder = CycloneConfigBuilder(["10.0.0.2"])
+        self.cyclone_builder = CycloneConfigBuilder(["10.0.0.1"])
         self.cyclone_builder.generate_config_file()
         self.scp.send_file("/tmp/cyclonedds.xml", "~/cyclonedds.xml")
 

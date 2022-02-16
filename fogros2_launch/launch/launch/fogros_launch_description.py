@@ -36,7 +36,7 @@ import pickle
 import socket
 from collections import defaultdict
 from time import sleep
-import _thread
+from threading import Thread
 
 
 import wgconfig
@@ -155,7 +155,7 @@ class FogROSLaunchDescription(LaunchDescriptionEntity):
         # dump the to cloud nodes into different files
         for key, value in self.__to_cloud_entities.items():
             with open("/tmp/to_cloud_" + key, "wb+") as f:
-                print(key + "to be dumped")
+                print(key + ": to be dumped")
                 dumped_node_str = pickle.dumps(value)
                 f.write(dumped_node_str)
 
@@ -164,7 +164,7 @@ class FogROSLaunchDescription(LaunchDescriptionEntity):
         vpn = VPN()
         vpn.generate_wg_config_files(machines)
         vpn.start_robot_vpn()
-        # vpn.make_wireguard_keypair()
+
         # create VPN credentials to all of the machines
 
 
@@ -179,9 +179,8 @@ class FogROSLaunchDescription(LaunchDescriptionEntity):
             machine.push_to_cloud_nodes()
             machine.push_and_setup_vpn()
             machine.configure_DDS()
-            _thread.start_new_thread(machine.launch_cloud_node)
-
-
+            thread = Thread(target=machine.launch_cloud_node, args=[])
+            thread.start()
 
         if self.__deprecated_reason is not None:
             if 'current_launch_file_path' in context.get_locals_as_dict():
