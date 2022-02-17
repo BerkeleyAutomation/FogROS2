@@ -44,7 +44,7 @@ ent.com/eclipse-cyclonedds/cyclonedds/master/etc/cyclonedds.xsd">
         </General>
         <Discovery>
             <Peers>
-                <Peer address="10.0.0.2"/>
+                <Peer address="10.0.0.1"/>
             </Peers>
             <ParticipantIndex>auto</ParticipantIndex>
         </Discovery>
