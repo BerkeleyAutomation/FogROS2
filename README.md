@@ -104,3 +104,13 @@ Example of launch file can be found in https://github.com/BerkeleyAutomation/Fog
 Note a few points that are different from normal launch file: 
 1. use `FogROSLaunchDescription` instead of `LaunchDescription` class 
 2. tag your `Node` with `to_cloud`. FogROS will only push nodes that `to_cloud=True`
+
+
+## Developer
+
+Here are several commands that one may find it useful when developing: 
+```bash
+
+# starting the second terminal for fogros docker
+docker exec -it $(docker ps | grep fogros2 | awk '{print $1}') /bin/bash
+```

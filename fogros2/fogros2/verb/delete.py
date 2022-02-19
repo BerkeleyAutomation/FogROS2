@@ -2,7 +2,9 @@ from ros2cli.verb import VerbExtension
 import os
 import json
 
-class ListVerb(VerbExtension):
+class DeleteVerb(VerbExtension):
+
+
     def main(self, *, args):
         fogros_working_dir = "/tmp/fogros/"
         instances = os.listdir(fogros_working_dir)

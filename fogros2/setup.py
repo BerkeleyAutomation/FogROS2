@@ -29,6 +29,8 @@ setup(
         ],
         "fogros2.verb": [
             "list = fogros2.verb.list:ListVerb",
+            "delete = fogros2.verb.delete:InfoVerb",
+            "connect = fogros2.verb.connect:SSHVerb",
         ],
     },
 )
