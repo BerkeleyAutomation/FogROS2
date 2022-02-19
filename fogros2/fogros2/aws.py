@@ -157,9 +157,9 @@ class AWS(CloudInstance):
         self.aws_ami_image = ami_image
 
         # key & security group names
-        self.unique_name = "AWS" + str(random.randint(10, 1000))
-        self.ec2_security_group = "FOGROS_SECURITY_GROUP" + self.unique_name
-        self.ec2_key_name = "FogROSKEY" + self.unique_name
+        self.aws_name = "AWS" + str(random.randint(10, 1000))
+        self.ec2_security_group = "FOGROS_SECURITY_GROUP" + self.aws_name
+        self.ec2_key_name = "FogROSKEY" + self.aws_name
         self.ssh_key_path = self.working_dir + self.ec2_key_name + ".pem"
 
         # aws objects

@@ -106,6 +106,23 @@ Note a few points that are different from normal launch file:
 2. tag your `Node` with `to_cloud`. FogROS will only push nodes that `to_cloud=True`
 
 
+## Command Line Interface
+We currently support the following CLIs for easier debugging and development. 
+
+```bash
+# list the existing FogROS instances 
+ros2 fog list
+
+# SSH to the corresponding instance 
+# the -n name can be found by the above list command 
+ros2 fog connect -n 368
+
+# delete the existing FogROS instance 
+ros2 fog delete -n 368 
+# or all of the existing instances 
+ros2 fog delete -a
+```
+
 ## Developer
 
 Here are several commands that one may find it useful when developing: 
