@@ -33,6 +33,7 @@ class CloudInstance:
         os.makedirs(self.working_dir, exist_ok=True)
         self.ready_lock = threading.Lock()
         self.ready_state = False
+        self.cloud_service_provider = None
 
     def create(self):
         raise NotImplementedError("Cloud SuperClass not implemented")
@@ -40,6 +41,7 @@ class CloudInstance:
     def info(self, flush_to_disk = True):
         info_dict = {
             "name": self.unique_name,
+            "cloud_service_provider": self.cloud_service_provider,
             "ros_workspace" : self.ros_workspace,
             "working_dir": self.working_dir,
             "ssh_key_path": self.ssh_key_path,
@@ -53,6 +55,10 @@ class CloudInstance:
     def connect(self):
         self.scp = SCP_Client(self.public_ip, self.ssh_key_path)
         self.scp.connect()
+
+    @staticmethod
+    def delete(instance_name):
+        raise NotImplementedError("Cloud SuperClass not implemented")
 
     def get_ssh_key_path(self):
         return self.ssh_key_path
@@ -129,6 +135,9 @@ class RemoteMachine(CloudInstance):
         # no need to create
         pass
 
+    @staticmethod
+    def delete(instance_name):
+        pass
 
 class AWS(CloudInstance):
     def __init__(
@@ -140,6 +149,8 @@ class AWS(CloudInstance):
             **kwargs
     ):
         super().__init__(**kwargs)
+        self.cloud_service_provider = "AWS"
+
         self.region = region
         self.ec2_instance_type = ec2_instance_type
         self.ec2_instance_disk_size = disk_size  # GB
@@ -277,3 +288,9 @@ class AWS(CloudInstance):
             self.public_ip = instance.public_ip_address
         self.logger.warn("EC2 instance is created with ip address: " + self.public_ip)
         return instance
+
+    @staticmethod
+    def delete(instance_name, region):
+        ec2 = boto3.resource('ec2', region)
+        instance = ec2.Instance(instance_name)
+        print(instance.terminate())
