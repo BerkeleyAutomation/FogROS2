@@ -244,6 +244,7 @@ class AWS(CloudInstance):
 
         with open(self.ssh_key_path, "w+") as f:
             f.write(ec2_priv_key)
+
         self.ssh_key = ec2_priv_key
         return ec2_priv_key
 

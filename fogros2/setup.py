@@ -30,7 +30,7 @@ setup(
         "fogros2.verb": [
             "list = fogros2.verb.list:ListVerb",
             "delete = fogros2.verb.delete:DeleteVerb",
-            "connect = fogros2.verb.connect:SSHVerb",
+            "connect = fogros2.verb.ssh:SSHVerb",
         ],
     },
 )
