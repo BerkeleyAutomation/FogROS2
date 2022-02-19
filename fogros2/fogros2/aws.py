@@ -19,21 +19,36 @@ from .command_builder import BashBuilder
 from .dds_config_builder import CycloneConfigBuilder
 from .scp import SCP_Client
 import os
+import json
 
 class CloudInstance:
-    def __init__(self):
+    def __init__(self, ros_workspace = "/home/root/fog_ws", working_dir_base = "/tmp/fogros/"):
         self.cyclone_builder = None
         self.scp = None
         self.public_ip = None
+        self.ros_workspace = ros_workspace
         self.ssh_key_path = None
-        self.name = None
         self.unique_name = str(random.randint(10, 1000))
-
+        self.working_dir = working_dir_base + "/" +  self.unique_name + "/"
+        os.makedirs(self.working_dir, exist_ok=True)
         self.ready_lock = threading.Lock()
         self.ready_state = False
 
     def create(self):
         raise NotImplementedError("Cloud SuperClass not implemented")
+
+    def info(self, flush_to_disk = True):
+        info_dict = {
+            "name": self.unique_name,
+            "ros_workspace" : self.ros_workspace,
+            "working_dir": self.working_dir,
+            "ssh_key_path": self.ssh_key_path,
+            "public_ip": self.public_ip
+        }
+        if flush_to_disk:
+            with open(self.working_dir + "info", "w+") as f:
+                json.dump(info_dict, f)
+        return info_dict
 
     def connect(self):
         self.scp = SCP_Client(self.public_ip, self.ssh_key_path)
@@ -66,7 +81,7 @@ class CloudInstance:
 
     def push_ros_workspace(self):
         # configure ROS env
-        workspace_path = "/home/root/fog_ws" #os.getenv("COLCON_PREFIX_PATH")
+        workspace_path = self.ros_workspace  #os.getenv("COLCON_PREFIX_PATH")
 
         zip_dst = "/tmp/ros_workspace"
         make_zip_file(workspace_path, zip_dst)
@@ -117,22 +132,24 @@ class RemoteMachine(CloudInstance):
 
 class AWS(CloudInstance):
     def __init__(
-        self,
-        region="us-west-1",
-        store_key_path="/home/root/fog_ws/",
-        ec2_instance_type="t2.micro",
+            self,
+            region="us-west-1",
+            ec2_instance_type="t2.micro",
+            disk_size = 30,
+            ami_image = "ami-08b3b42af12192fe6",
+            **kwargs
     ):
-        super().__init__()
+        super().__init__(**kwargs)
         self.region = region
         self.ec2_instance_type = ec2_instance_type
-        self.ec2_instance_disk_size = 30  # GB
-        self.aws_ami_image = "ami-08b3b42af12192fe6"
+        self.ec2_instance_disk_size = disk_size  # GB
+        self.aws_ami_image = ami_image
 
         # key & security group names
         self.unique_name = "AWS" + str(random.randint(10, 1000))
         self.ec2_security_group = "FOGROS_SECURITY_GROUP" + self.unique_name
         self.ec2_key_name = "FogROSKEY" + self.unique_name
-        self.ssh_key_path = store_key_path + self.ec2_key_name + ".pem"
+        self.ssh_key_path = self.working_dir + self.ec2_key_name + ".pem"
 
         # aws objects
         self.ec2_instance = None
@@ -159,7 +176,20 @@ class AWS(CloudInstance):
         self.install_cloud_dependencies()
         self.push_ros_workspace()
         #self.push_to_cloud_nodes()
+        self.info(flush_to_disk = True)
         self.set_ready_state()
+
+    def info(self, flush_to_disk = True):
+        info_dict = super().info(flush_to_disk)
+        info_dict["ec2_region"] = self.region
+        info_dict["ec2_instance_type"] = self.ec2_instance_type
+        info_dict["disk_size"] = self.ec2_instance_disk_size
+        info_dict["aws_ami_image"] = self.aws_ami_image
+        info_dict["ec2_instance_id"] = self.ec2_instance.instance_id
+        if flush_to_disk:
+            with open(self.working_dir + "info", "w+") as f:
+               json.dump(info_dict, f)
+        return info_dict
 
     def get_ssh_key(self):
         return self.ssh_key
@@ -239,6 +269,7 @@ class AWS(CloudInstance):
         # reload instance object
         instance.reload()
         self.ec2_instance = instance
+        print(self.ec2_instance.instance_id)
         self.public_ip = instance.public_ip_address
         while not self.public_ip:
             instance.reload()
