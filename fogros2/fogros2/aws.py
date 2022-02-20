@@ -157,6 +157,17 @@ class CloudInstance:
         print(cmd_builder.get())
         self.scp.execute_cmd(cmd_builder.get())
 
+    def launch_foxglove(self):
+        self.scp.execute_cmd("sudo snap install docker")
+        self.scp.execute_cmd("sudo snap start docker")
+        self.scp.execute_cmd("sudo docker run --rm -p '8080:8080' ghcr.io/foxglove/studio:latest &")
+
+    def launch_rosbridge(self):
+        self.scp.execute_cmd("source /home/ubuntu/ros2_rolling/install/setup.bash")
+        self.scp.execute_cmd("sudo apt install ros-rolling-rosbridge-suite")
+        self.scp.execute_cmd("ros2 launch rosbridge_server rosbridge_websocket_launch.xml &")
+
+
 class RemoteMachine(CloudInstance):
     def __init__(self, ip, ssh_key_path):
         super().__init__()
@@ -223,6 +234,8 @@ class AWS(CloudInstance):
         self.install_colcon()
         self.install_cloud_dependencies()
         self.push_ros_workspace()
+        self.launch_foxglove()
+        self.launch_rosbridge()
         #self.push_to_cloud_nodes()
         self.info(flush_to_disk = True)
         self.set_ready_state()
