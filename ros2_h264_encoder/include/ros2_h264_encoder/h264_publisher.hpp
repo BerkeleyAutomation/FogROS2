@@ -8,24 +8,32 @@
 #include "rclcpp/rclcpp.hpp"
 #include "h264_msgs/msg/packet.hpp"
 #include "sensor_msgs/msg/image.hpp"
+#include "image_transport/simple_publisher_plugin.hpp"
 
 // Project Includes
 #include "ros2_h264_encoder/ros2_encoder.hpp"
 
-#define MAX_FRAME_RATE_SAMPLES 10
-
-class PacketPublisher : public rclcpp::Node {
+class PacketPublisher : public image_transport::SimplePublisherPlugin<h264_msgs::msg::Packet> {
   public:
-    PacketPublisher(const std::string & image_topic);
+    rclcpp::Logger logger;
+    PacketPublisher() : logger(rclcpp::get_logger("H264Publisher")) {
+    }
+  
+    std::string getTransportName() const override {
+      return "h264";
+    }
+  
+  protected:
+    void publish(const sensor_msgs::msg::Image& message,
+               const PublishFn& publish_fn) const override;
+
+    void advertiseImpl(
+      rclcpp::Node* node,
+      const std::string& base_topic,
+      rmw_qos_profile_t custom_qos) override;
 
   private:
-    int current_frames;
-    rclcpp::Time first_received_timestamp;
-    rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr image_subscriber;
-    rclcpp::Publisher<h264_msgs::msg::Packet>::SharedPtr publisher;
     std::shared_ptr<ROS2Encoder> encoder;
-
-    void on_image_received(sensor_msgs::msg::Image::SharedPtr msg);
 };
  
 

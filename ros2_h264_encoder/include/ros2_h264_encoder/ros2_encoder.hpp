@@ -3,8 +3,10 @@
 // System Includes
 #include <string>
 #include <unordered_map>
+#include <chrono>
 
 // External ROS Includes
+#include "rclcpp/rclcpp.hpp"
 #include "sensor_msgs/msg/image.hpp"
 #include "sensor_msgs/image_encodings.hpp"
 #include "h264_msgs/msg/packet.hpp"
@@ -16,15 +18,15 @@ extern "C"
 #include <libswscale/swscale.h>
 }
 
+#define MAX_FRAME_RATE_SAMPLES 10
+
 class ROS2Encoder {
 public:
-    ROS2Encoder() {
-        
-    }
-    ROS2Encoder(const int width, const int height, const uint32_t fps, const std::string & img_encoding);
+    ROS2Encoder() : logger(rclcpp::get_logger("H264PublisherEncoder")) {}
+    ROS2Encoder(rclcpp::Logger logger);
     ~ROS2Encoder();
-    bool encode_image(sensor_msgs::msg::Image::SharedPtr &msg, h264_msgs::msg::Packet &packet);
-    bool convert_image_to_h264(sensor_msgs::msg::Image::SharedPtr &msg, x264_picture_t* out);
+    bool encode_image(const sensor_msgs::msg::Image &msg, h264_msgs::msg::Packet &packet);
+    bool convert_image_to_h264(const sensor_msgs::msg::Image &msg, x264_picture_t* out);
 
 private:
     // Encoder variables
@@ -36,6 +38,10 @@ private:
     x264_nal_t* nals;
     int i_nals;
     int64_t pts;
+
+    // Topic Properties
+    int current_frames;
+    std::chrono::steady_clock::time_point first_received_timestamp;
 
     // Conversion
     struct SwsContext* conversion_context;
@@ -56,6 +62,9 @@ private:
     }
 
     static const std::unordered_map<std::string, AVPixelFormat> ROS_encoding_to_AV_Pixel_format;
+
+    // ROS
+    rclcpp::Logger logger;
 };
 
 #endif

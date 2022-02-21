@@ -20,39 +20,75 @@ find_package(ament_cmake REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(h264_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(image_transport REQUIRED)
 find_package(pluginlib REQUIRED)
-find_package(PkgConfig)
 
+find_package(PkgConfig)
 pkg_check_modules(PC_SWSCALE REQUIRED libswscale>=5)
 pkg_check_modules(X264 REQUIRED x264)
 
-add_executable(ros2_h264_encoder src/ros2_encoder.cpp src/ros2_encoder_handler.cpp src/h264_publisher.cpp)
-ament_target_dependencies(ros2_h264_encoder sensor_msgs h264_msgs rclcpp)
+include_directories(include)
 
-target_include_directories(ros2_h264_encoder
-  PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:include>)
+add_library(
+  ${PROJECT_NAME} SHARED
+  src/h264_publisher.cpp
+  src/manifest.cpp
+  src/ros2_encoder.cpp
+)
+
+add_executable(
+  h264_encoder_node
+  src/ros2_encoder_handler.cpp
+)
 
 target_link_libraries(
-  ros2_h264_encoder
-  ${PC_SWSCALE_LIBRARIES}
+  ${PROJECT_NAME}
   ${X264_LIBRARIES}
-)    
+  ${PC_SWSCALE_LIBRARIES}
+)
 
+ament_target_dependencies(
+  ${PROJECT_NAME}
+  h264_msgs
+  image_transport
+  rclcpp
+  pluginlib
+  sensor_msgs
+)
+
+ament_target_dependencies(
+  h264_encoder_node
+  h264_msgs
+  image_transport
+  rclcpp
+  pluginlib
+  sensor_msgs
+)
+
+target_link_libraries(
+  h264_encoder_node
+  ${X264_LIBRARIES}
+  ${PC_SWSCALE_LIBRARIES}
+)
+
+# This will load & run linters listed in package.xml
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
-  # the following line skips the linter which checks for copyrights
-  # uncomment the line when a copyright and license is not present in all source files
-  #set(ament_cmake_copyright_FOUND TRUE)
-  # the following line skips cpplint (only works in a git repo)
-  # uncomment the line when this package is not in a git repo
-  #set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
 endif()
 
-install(TARGETS
-  ros2_h264_encoder
-  DESTINATION lib/${PROJECT_NAME})  
+install(
+  TARGETS ${PROJECT_NAME} h264_encoder_node
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib                 # Shared libraries must be in lib
+  RUNTIME DESTINATION lib/${PROJECT_NAME} # Node executables must be in lib/<pkg>
+)
+
+install(
+  DIRECTORY include
+  DESTINATION include
+)
+
+pluginlib_export_plugin_description_file(image_transport h264_plugins.xml)
 
 ament_package()
