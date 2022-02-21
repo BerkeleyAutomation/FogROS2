@@ -34,8 +34,85 @@ if TYPE_CHECKING:
 
 import pickle
 import socket
-HOST = 'localhost'  # The server's hostname or IP address
-PORT = 65432  # The port used by the server
+from collections import defaultdict
+from time import sleep
+from threading import Thread
+
+
+import wgconfig
+import wgconfig.wgexec as wgexec
+import os
+
+
+class VPN:
+    def __init__(
+        self,
+        cloud_key_path="/tmp/fogros-cloud.conf",
+        robot_key_path="/tmp/fogros-local.conf",
+    ):
+        self.cloud_key_path = cloud_key_path
+        self.robot_key_path = robot_key_path
+
+        self.cloud_name_to_pub_key_path = dict()
+        self.cloud_name_to_priv_key_path = dict()
+
+        self.robot_private_key = wgexec.generate_privatekey()
+        self.robot_public_key = wgexec.get_publickey(self.robot_private_key)
+
+
+    def generate_key_pairs(self, machines):
+        """
+        @param machines: List<machine>
+        """
+        for machine in machines:
+            name = machine.get_name()
+            cloud_private_key = wgexec.generate_privatekey()
+            self.cloud_name_to_priv_key_path[name] = cloud_private_key
+            cloud_public_key = wgexec.get_publickey(cloud_private_key)
+            self.cloud_name_to_pub_key_path[name] =cloud_public_key
+
+    def generate_wg_config_files(self, machines):
+        self.generate_key_pairs(machines)
+
+        # generate cloud configs
+        counter = 2 # start the static ip addr counter from 2
+        for machine in machines:
+            name = machine.get_name()
+            machine_config_pwd = self.cloud_key_path + name
+            machine_priv_key = self.cloud_name_to_priv_key_path[name]
+            aws_config = wgconfig.WGConfig(machine_config_pwd)
+            aws_config.add_attr(None, "PrivateKey", machine_priv_key)
+            aws_config.add_attr(None, "ListenPort", 51820)
+            aws_config.add_attr(None, "Address", "10.0.0." + str(counter) +"/24")
+            aws_config.add_peer(self.robot_public_key, "# fogROS Robot")
+            aws_config.add_attr(self.robot_public_key, "AllowedIPs", "10.0.0.1/32")
+            aws_config.write_file()
+            counter += 1
+
+        # generate robot configs
+        robot_config = wgconfig.WGConfig(self.robot_key_path)
+        robot_config.add_attr(None, "PrivateKey", self.robot_private_key)
+        robot_config.add_attr(None, "ListenPort", 51820)
+        robot_config.add_attr(None, "Address", "10.0.0.1/24")
+        for machine in machines:
+            name = machine.get_name()
+            ip = machine.get_ip()
+            cloud_pub_key = self.cloud_name_to_pub_key_path[name]
+            robot_config.add_peer(cloud_pub_key, "# AWS" + name)
+            robot_config.add_attr(cloud_pub_key, "AllowedIPs", "10.0.0.2/32")
+            robot_config.add_attr(cloud_pub_key, "Endpoint", f"{ip}:51820")
+            robot_config.add_attr(cloud_pub_key, "PersistentKeepalive", 3)
+        robot_config.write_file()
+
+
+    def start_robot_vpn(self):
+        # Copy /tmp/fogros-local.conf to /etc/wireguard/wg0.conf locally.
+        # TODO: This needs root. Move this to a separate script with setuid.
+        os.system("sudo wg-quick down wg0")
+        os.system("sudo cp /tmp/fogros-local.conf /etc/wireguard/wg0.conf")
+        os.system("sudo chmod 600 /etc/wireguard/wg0.conf")
+        os.system("sudo wg-quick up wg0")
+
 
 class FogROSLaunchDescription(LaunchDescriptionEntity):
     """
@@ -65,37 +142,45 @@ class FogROSLaunchDescription(LaunchDescriptionEntity):
         launch.logging.get_logger().info("init")
         #self.__entities = list(initial_entities) if initial_entities is not None else []
         self.__entities = []
-        self.__to_cloud_entities = []
+        self.__to_cloud_entities = defaultdict(list)
         if initial_entities:
             for entity in initial_entities:
-                if entity.__class__.__name__ == "Node" and entity.to_cloud:
-                    self.__to_cloud_entities += entity
-                else:
-                    self.__entities += entity
+                self.add_entity_with_filter(entity)
         self.__deprecated_reason = deprecated_reason
 
 
     def visit(self, context: LaunchContext) -> Optional[List[LaunchDescriptionEntity]]:
         """Override visit from LaunchDescriptionEntity to visit contained entities."""
-        # for entity in self.entities:
-        #     if entity.__class__.__name__ == "Node" and entity.to_cloud:
-        #         print("to the cloud")
-        #         dumped_node_str = pickle.dumps(entity)
-        #         with open("/opt/ros2_ws/src/fogros2/fogros2/test_node", "wb+") as f:
-        #             f.write(dumped_node_str)
-        #     else:
-        #         print(entity.__class__.__name__)
-        with open("/tmp/to_cloud_nodes", "wb+") as f:
-            print("to be dumped")
-            dumped_node_str = pickle.dumps(self.__to_cloud_entities)
-            f.write(dumped_node_str)
 
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            s.connect((HOST, PORT))
-            s.sendall(b'Hello, world')
-            data = s.recv(1024)
+        # dump the to cloud nodes into different files
+        for key, value in self.__to_cloud_entities.items():
+            with open("/tmp/to_cloud_" + key, "wb+") as f:
+                print(key + ": to be dumped")
+                dumped_node_str = pickle.dumps(value)
+                f.write(dumped_node_str)
 
-        print('Received', repr(data))
+
+        machines = [self.__to_cloud_entities[n][0].machine  for n in self.__to_cloud_entities]
+        vpn = VPN()
+        vpn.generate_wg_config_files(machines)
+        vpn.start_robot_vpn()
+
+        # create VPN credentials to all of the machines
+
+
+        # tell remote machine to push the to cloud nodes and
+        # wait here until all the nodes are done
+        for machine in machines:
+            machine_name = machine.get_name()
+            while not machine.get_ready_state():
+                print("Waiting for machine " + machine_name)
+                sleep(1)
+            # machine is ready, # push to_cloud and setup vpn
+            machine.push_to_cloud_nodes()
+            machine.push_and_setup_vpn()
+            machine.configure_DDS()
+            thread = Thread(target=machine.launch_cloud_node, args=[])
+            thread.start()
 
         if self.__deprecated_reason is not None:
             if 'current_launch_file_path' in context.get_locals_as_dict():
@@ -205,11 +290,16 @@ class FogROSLaunchDescription(LaunchDescriptionEntity):
     def add_entity(self, entity: LaunchDescriptionEntity) -> None:
         """Add an entity to the LaunchDescription."""
         #self.__entities.append(entity)
-        if entity.__class__.__name__ == "Node" and entity.to_cloud:
-            self.__to_cloud_entities.append(entity)
+        self.add_entity_with_filter(entity)
+
+
+
+    def add_entity_with_filter(self, entity):
+        if entity.__class__.__name__ == "CloudNode":
+            self.__to_cloud_entities[entity.get_unique_id()].append(entity)
         else:
             self.__entities.append(entity)
-
+            
     def add_action(self, action: Action) -> None:
         """Add an action to the LaunchDescription."""
         self.add_entity(action)

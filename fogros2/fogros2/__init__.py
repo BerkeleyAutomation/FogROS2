@@ -10,4 +10,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from . import aws
+from .aws import *
+from .cloud_node import CloudNode
+from .vpn import VPN

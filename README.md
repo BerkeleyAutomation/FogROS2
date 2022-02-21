@@ -61,35 +61,22 @@ docker run -it fogros2
 ## Launch ROS 2 computational graphs in the cloud
 TODO: replace this with fogros2 tooling that's cloud-agnostic. E.g. `ros2 fog configure --aws`, instead of `fogros2`.
 
-### Native
+### Native 
 ```bash
-# terminal1, launch FogROS2 server
-source install/setup.bash
-ros2 run fogros2 fogros2
-
-# terminal2, launch computational graph
 source install/setup.bash
 export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp 
 export CYCLONEDDS_URI=file://$(pwd)/install/share/fogros2/configs/cyclonedds.xml
 ros2 launch fogros2_examples talker.launch.py
 ```
 
-### Docker
+### Docker (Recommended)
 
 First, run `aws configure` and configure the AWS credentials. 
 
-(on the first terminal), run the FogROS server,
-```bash
-# launch the container
-docker run -it --rm --net=host --cap-add=NET_ADMIN fogros2
-source install/setup.bash
-ros2 run fogros2 fogros2
-```
-
-(on the second terminal), run the robotics applications that need to be "FogROS-ed",
+Second, run the robotics applications that need to be "FogROS-ed",
 ```bash
 # connect to running container
-docker exec -it $(docker ps | grep fogros2 | awk '{print $1}') /bin/bash
+docker run -it --rm --net=host --cap-add=NET_ADMIN fogros2
 source install/setup.bash
 export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp 
 export CYCLONEDDS_URI=file://$(pwd)/install/share/fogros2/configs/cyclonedds.xml
@@ -117,3 +104,30 @@ Example of launch file can be found in https://github.com/BerkeleyAutomation/Fog
 Note a few points that are different from normal launch file: 
 1. use `FogROSLaunchDescription` instead of `LaunchDescription` class 
 2. tag your `Node` with `to_cloud`. FogROS will only push nodes that `to_cloud=True`
+
+
+## Command Line Interface
+We currently support the following CLIs for easier debugging and development. 
+
+```bash
+# list the existing FogROS instances 
+ros2 fog list
+
+# SSH to the corresponding instance 
+# the -n name can be found by the above list command 
+ros2 fog connect -n 368
+
+# delete the existing FogROS instance 
+ros2 fog delete -n 368 
+# or all of the existing instances 
+ros2 fog delete -a
+```
+
+## Developer
+
+Here are several commands that one may find it useful when developing: 
+```bash
+
+# starting the second terminal for fogros docker
+docker exec -it $(docker ps | grep fogros2 | awk '{print $1}') /bin/bash
+```

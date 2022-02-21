@@ -1,5 +1,0 @@
-my_ns:
-  my_node:
-    ros__parameters:
-      param_from_file_1: 1
-      param_from_file_2: 'asd'

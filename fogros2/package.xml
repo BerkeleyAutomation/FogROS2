@@ -14,6 +14,8 @@
 
   <depend>boto3</depend>
   <depend>scp</depend>
+  <depend>paramiko</depend>
+  <depend>ros2cli</depend>
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
