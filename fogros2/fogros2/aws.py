@@ -84,6 +84,9 @@ class CloudInstance:
     def install_cloud_dependencies(self):
         self.scp.execute_cmd("sudo apt install -y wireguard unzip")
         self.scp.execute_cmd("sudo pip3 install wgconfig boto3 paramiko scp")
+        
+        # image transport dependencies and H.264 deps
+        self.scp.execute_cmd("sudo apt install -y ros-rolling-image-transport libswscale-dev libx264-dev libavutil-dev libavcodec-dev libavformat-dev libavdevice-dev ros-rolling-camera-calibration-parsers")
 
     def push_ros_workspace(self):
         # configure ROS env
@@ -115,7 +118,7 @@ class CloudInstance:
     def launch_cloud_node(self):
         cmd_builder = BashBuilder()
         cmd_builder.append("source /home/ubuntu/ros2_rolling/install/setup.bash")
-        cmd_builder.append("cd /home/ubuntu/fog_ws && colcon build --merge-install")
+        cmd_builder.append("cd /home/ubuntu/fog_ws && colcon build --merge-install --cmake-clean-cache")
         cmd_builder.append(". /home/ubuntu/fog_ws/install/setup.bash")
         cmd_builder.append(self.cyclone_builder.env_cmd)
         cmd_builder.append("ros2 launch fogros2 cloud.launch.py")

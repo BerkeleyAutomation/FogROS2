@@ -19,7 +19,11 @@ RUN apt update && sudo apt install -y \
   ros-rolling-image-transport \
   libswscale-dev \
   libx264-dev \
-  pkg-config
+  pkg-config \
+  ros-rolling-camera-calibration-parsers \
+  libavutil-dev \
+  libavcodec-dev \
+  libavdevice-dev
 
 # install some pip packages needed for testing
 RUN python3 -m pip install -U \
@@ -53,6 +57,6 @@ COPY ./fogros2/configs/cyclonedds.xml /home/root/fog_ws
 
 WORKDIR /home/root/fog_ws
 RUN . /opt/ros/rolling/setup.sh && \
-      colcon build --merge-install
+      colcon build --merge-install --cmake-clean-cache
 
 CMD ["bash"]
