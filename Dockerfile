@@ -15,7 +15,11 @@ RUN apt update && sudo apt install -y \
   iproute2 \
   curl \
   net-tools \
-  ssh
+  ssh \
+  ros-rolling-image-transport \
+  libswscale-dev \
+  libx264-dev \
+  pkg-config
 
 # install some pip packages needed for testing
 RUN python3 -m pip install -U \
