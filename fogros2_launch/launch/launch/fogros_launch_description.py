@@ -297,8 +297,46 @@ class FogROSLaunchDescription(LaunchDescriptionEntity):
     def add_entity_with_filter(self, entity):
         if entity.__class__.__name__ == "CloudNode":
             self.__to_cloud_entities[entity.get_unique_id()].append(entity)
+            if entity.stream_topics:
+                for stream_topic in entity.stream_topics:
+                    self.add_image_transport_entities(stream_topic[0], stream_topic[1], entity.machine)
         else:
             self.__entities.append(entity)
+    
+    def add_image_transport_entities(self, topic_name, intermediate_transport, machine):
+        from launch_ros.actions import Node
+        import fogros2
+
+        print('Adding decoder!')
+        print('Topic name:', topic_name)
+        print('Transport:', intermediate_transport)
+        decoder_node = fogros2.CloudNode(
+            machine = machine, 
+            package='image_transport', executable='republish', output='screen',
+                name='republish_node', arguments=[
+                    intermediate_transport,  # Input
+                    'raw',  # Output
+                ], remappings=[
+                    ('in/' + intermediate_transport, topic_name + "/" + intermediate_transport),
+                    ('out', topic_name),
+                ])
+
+        print(self.__to_cloud_entities)
+        self.__to_cloud_entities[decoder_node.get_unique_id()].append(decoder_node)
+        print(self.__to_cloud_entities)
+
+        print('Added encoder!')
+        encoder_node = Node(
+            package='image_transport', executable='republish', output='screen',
+                name='republish_node', arguments=[
+                    'raw',  # Input
+                    intermediate_transport,  # Output
+                ], remappings=[
+                    ('in', topic_name),
+                    ('out/' + intermediate_transport, topic_name + "/" + intermediate_transport),
+                ])
+        self.__entities.append(encoder_node)
+        print('Added Streams!')
             
     def add_action(self, action: Action) -> None:
         """Add an action to the LaunchDescription."""
