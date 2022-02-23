@@ -172,10 +172,10 @@ class RemoteMachine(CloudInstance):
 class AWS(CloudInstance):
     def __init__(
             self,
+            ami_image,
             region="us-west-1",
             ec2_instance_type="t2.micro",
             disk_size = 30,
-            ami_image = "ami-01f87c43e618bf8f0",
             **kwargs
     ):
         super().__init__(**kwargs)
