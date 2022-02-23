@@ -22,11 +22,15 @@ import os
 import json
 
 class CloudInstance:
-    def __init__(self, ros_workspace = "/home/root/fog_ws", working_dir_base = "/tmp/fogros/"):
+    def __init__(self, ros_workspace = None, working_dir_base = "/tmp/fogros/"):
         self.cyclone_builder = None
         self.scp = None
         self.public_ip = None
-        self.ros_workspace = ros_workspace
+        if ros_workspace:
+            self.ros_workspace = ros_workspace
+        else:
+            self.ros_workspace = "/".join(os.getenv("COLCON_PREFIX_PATH").split("/")[:-1])
+        print("using ROS workspace: ", self.ros_workspace)
         self.ssh_key_path = None
         self.unique_name = str(random.randint(10, 1000))
         self.working_dir = working_dir_base + "/" +  self.unique_name + "/"
@@ -118,13 +122,14 @@ class CloudInstance:
     def push_ros_workspace(self):
         # configure ROS env
         workspace_path = self.ros_workspace  #os.getenv("COLCON_PREFIX_PATH")
-
+        workspace_folder_name = workspace_path.split("/")[-1]
         zip_dst = "/tmp/ros_workspace"
         make_zip_file(workspace_path, zip_dst)
         self.scp.execute_cmd("echo removing old workspace")
         self.scp.execute_cmd("rm -rf ros_workspace.zip ros2_ws fog_ws")
         self.scp.send_file(zip_dst + ".zip", "/home/ubuntu/")
         self.scp.execute_cmd("unzip -q /home/ubuntu/ros_workspace.zip")
+        self.scp.execute_cmd("mv " + workspace_folder_name + " fog_ws")
         self.scp.execute_cmd("echo successfully extracted new workspace")
 
     def push_to_cloud_nodes(self):

@@ -45,7 +45,6 @@ echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-a
 sudo apt update
 sudo apt install -y ros-rolling-desktop
 
-
 sudo sh -c 'echo "deb [arch=amd64,arm64] http://repo.ros2.org/ubuntu/main `lsb_release -cs` main" > /etc/apt/sources.list.d/ros2-latest.list'
 curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo apt-key add -
 sudo apt update
@@ -54,9 +53,10 @@ sudo apt install -y python3-colcon-common-extensions
 
 Install FogROS dependencies by
 ```
-sudo apt install python3-pip wireguard unzip awscli
-sudo pip3 install wgconfig boto3 paramiko scp awscli
+sudo apt install python3-pip wireguard unzip
+sudo pip3 install wgconfig boto3 paramiko scp
 ```
+
 
 ```bash
 cd <your-ros2-workspace>/src
