@@ -22,11 +22,15 @@ import os
 import json
 
 class CloudInstance:
-    def __init__(self, ros_workspace = "/home/root/fog_ws", working_dir_base = "/tmp/fogros/"):
+    def __init__(self, ros_workspace = None, working_dir_base = "/tmp/fogros/"):
         self.cyclone_builder = None
         self.scp = None
         self.public_ip = None
-        self.ros_workspace = ros_workspace
+        if ros_workspace:
+            self.ros_workspace = ros_workspace
+        else:
+            self.ros_workspace = "/".join(os.getenv("COLCON_PREFIX_PATH").split("/")[:-1])
+        print("using ROS workspace: ", self.ros_workspace)
         self.ssh_key_path = None
         self.unique_name = str(random.randint(10, 1000))
         self.working_dir = working_dir_base + "/" +  self.unique_name + "/"
@@ -83,21 +87,52 @@ class CloudInstance:
 
     def install_cloud_dependencies(self):
         self.scp.execute_cmd("sudo apt install -y wireguard unzip")
+        self.scp.execute_cmd("sudo apt install -y python3-pip")
         self.scp.execute_cmd("sudo pip3 install wgconfig boto3 paramiko scp")
         
         # image transport dependencies and H.264 deps
         self.scp.execute_cmd("sudo apt install -y ros-rolling-image-transport libswscale-dev libx264-dev libavutil-dev libavcodec-dev libavformat-dev libavdevice-dev ros-rolling-camera-calibration-parsers")
 
+    def install_ros(self):
+        # set locale
+        self.scp.execute_cmd("sudo apt update && sudo apt install -y locales")
+        self.scp.execute_cmd("sudo locale-gen en_US en_US.UTF-8")
+        self.scp.execute_cmd("sudo update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8")
+        self.scp.execute_cmd("export LANG=en_US.UTF-8")
+
+        # setup sources
+        self.scp.execute_cmd("sudo apt install -y software-properties-common")
+        self.scp.execute_cmd("sudo add-apt-repository universe")
+        self.scp.execute_cmd("sudo apt update && sudo apt install -y curl gnupg lsb-release")
+        self.scp.execute_cmd("sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg")
+        self.scp.execute_cmd("""echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(source /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null""")
+        
+        # install ros2 packages
+        self.scp.execute_cmd("sudo apt update")
+        self.scp.execute_cmd("sudo apt install -y ros-rolling-desktop")
+
+        # source environment
+        self.scp.execute_cmd("source /opt/ros/rolling/setup.bash")
+
+    def install_colcon(self):
+        # ros2 repository
+        self.scp.execute_cmd("""sudo sh -c 'echo "deb [arch=amd64,arm64] http://repo.ros2.org/ubuntu/main `lsb_release -cs` main" > /etc/apt/sources.list.d/ros2-latest.list'""")
+        self.scp.execute_cmd("curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo apt-key add -")
+
+        self.scp.execute_cmd("sudo apt update")
+        self.scp.execute_cmd("sudo apt install -y python3-colcon-common-extensions")
+
     def push_ros_workspace(self):
         # configure ROS env
         workspace_path = self.ros_workspace  #os.getenv("COLCON_PREFIX_PATH")
-
+        workspace_folder_name = workspace_path.split("/")[-1]
         zip_dst = "/tmp/ros_workspace"
         make_zip_file(workspace_path, zip_dst)
         self.scp.execute_cmd("echo removing old workspace")
         self.scp.execute_cmd("rm -rf ros_workspace.zip ros2_ws fog_ws")
         self.scp.send_file(zip_dst + ".zip", "/home/ubuntu/")
         self.scp.execute_cmd("unzip -q /home/ubuntu/ros_workspace.zip")
+        self.scp.execute_cmd("mv " + workspace_folder_name + " fog_ws")
         self.scp.execute_cmd("echo successfully extracted new workspace")
 
     def push_to_cloud_nodes(self):
@@ -117,7 +152,7 @@ class CloudInstance:
 
     def launch_cloud_node(self):
         cmd_builder = BashBuilder()
-        cmd_builder.append("source /home/ubuntu/ros2_rolling/install/setup.bash")
+        cmd_builder.append("source /opt/ros/rolling/setup.bash")
         cmd_builder.append("cd /home/ubuntu/fog_ws && colcon build --merge-install --cmake-clean-cache")
         cmd_builder.append(". /home/ubuntu/fog_ws/install/setup.bash")
         cmd_builder.append(self.cyclone_builder.env_cmd)
@@ -145,10 +180,10 @@ class RemoteMachine(CloudInstance):
 class AWS(CloudInstance):
     def __init__(
             self,
+            ami_image,
             region="us-west-1",
             ec2_instance_type="t2.micro",
             disk_size = 30,
-            ami_image = "ami-08b3b42af12192fe6",
             **kwargs
     ):
         super().__init__(**kwargs)
@@ -187,6 +222,8 @@ class AWS(CloudInstance):
         self.generate_key_pair()
         self.create_ec2_instance()
         self.connect()
+        self.install_ros()
+        self.install_colcon()
         self.install_cloud_dependencies()
         self.push_ros_workspace()
         #self.push_to_cloud_nodes()

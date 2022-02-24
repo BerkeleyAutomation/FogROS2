@@ -23,7 +23,10 @@ RUN apt update && sudo apt install -y \
   ros-rolling-camera-calibration-parsers \
   libavutil-dev \
   libavcodec-dev \
-  libavdevice-dev
+  libavdevice-dev \
+  ros-rolling-image-transport-plugins \
+  ros-rolling-cv-bridge \
+  libyaml-cpp-dev
 
 # install some pip packages needed for testing
 RUN python3 -m pip install -U \
@@ -42,7 +45,8 @@ RUN python3 -m pip install -U \
   pytest \
   pytest-cov \
   pytest-runner \
-  setuptools
+  setuptools \
+  opencv-python
 
 RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
 RUN unzip awscliv2.zip

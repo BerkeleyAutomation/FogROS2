@@ -328,7 +328,7 @@ class FogROSLaunchDescription(LaunchDescriptionEntity):
         print('Added encoder!')
         encoder_node = Node(
             package='image_transport', executable='republish', output='screen',
-                name='republish_node', arguments=[
+                name='republish_node2', arguments=[
                     'raw',  # Input
                     intermediate_transport,  # Output
                 ], remappings=[
@@ -337,6 +337,7 @@ class FogROSLaunchDescription(LaunchDescriptionEntity):
                 ])
         self.__entities.append(encoder_node)
         print('Added Streams!')
+        print('Encoder in:' + topic_name)
             
     def add_action(self, action: Action) -> None:
         """Add an action to the LaunchDescription."""

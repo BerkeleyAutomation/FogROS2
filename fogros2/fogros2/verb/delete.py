@@ -8,7 +8,7 @@ class DeleteVerb(VerbExtension):
 
     def add_arguments(self, parser, cli_name):
         parser.add_argument(
-            '--all', '-A', action='store_false',  default=False,
+            '--all', '-A', action='store_true',  default=False,
             help="Delete All existing FogROS instances")
         parser.add_argument(
             '--name', '-n',  type=str, nargs=1,
