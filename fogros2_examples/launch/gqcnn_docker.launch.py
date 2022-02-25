@@ -19,8 +19,9 @@ def generate_launch_description():
     machine1 = fogros2.AWS(region="us-west-1", ec2_instance_type="t2.medium", ami_image="ami-09175f2ca3c3dc67c")
 
 
-    machine1.add_docker_container("sudo docker run -d --rm -it keplerc/gqcnn_ros:pj ros2 launch gqcnn_ros client.launch.py")
-    machine1.add_docker_container("sudo docker run --rm -it keplerc/gqcnn_ros:pj ros2 launch gqcnn_ros planner.launch.py")
+    #machine1.add_docker_container("sudo docker run -d --rm -it keplerc/gqcnn_ros:pj ros2 launch gqcnn_ros client.launch.py")
+    machine1.add_docker_container("sudo docker run --net=host --env RMW_IMPLEMENTATION=rmw_cyclonedds_cpp --env CYCLONEDDS_URI=file:///tmp/cyclonedds.xml -v /home/ubuntu/cyclonedds.xml:/tmp/cyclonedds.xml --rm -it keplerc/gqcnn_ros:pj ros2 launch gqcnn_ros planner.launch.py")
+
 
     talker_node = Node(
         package="fogros2_examples", executable="listener", output="screen")
