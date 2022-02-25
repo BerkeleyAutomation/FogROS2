@@ -155,4 +155,6 @@ Here are several commands that one may find it useful when developing:
 
 # starting the second terminal for fogros docker
 docker exec -it $(docker ps | grep fogros2 | awk '{print $1}') /bin/bash
+
+colcon build --merge-install  && ros2 launch fogros2_examples gqcnn_docker.launch.py
 ```
