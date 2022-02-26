@@ -179,6 +179,7 @@ class FogROSLaunchDescription(LaunchDescriptionEntity):
             machine.push_to_cloud_nodes()
             machine.push_and_setup_vpn()
             machine.configure_DDS()
+            machine.launch_cloud_dockers()
             thread = Thread(target=machine.launch_cloud_node, args=[])
             thread.start()
 

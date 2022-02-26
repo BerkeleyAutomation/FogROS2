@@ -38,6 +38,7 @@ class CloudInstance:
         self.ready_lock = threading.Lock()
         self.ready_state = False
         self.cloud_service_provider = None
+        self.dockers = []
 
     def create(self):
         raise NotImplementedError("Cloud SuperClass not implemented")
@@ -86,7 +87,7 @@ class CloudInstance:
         return ready
 
     def install_cloud_dependencies(self):
-        self.scp.execute_cmd("sudo apt install -y wireguard unzip")
+        self.scp.execute_cmd("sudo apt install -y wireguard unzip docker.io")
         self.scp.execute_cmd("sudo apt install -y python3-pip")
         self.scp.execute_cmd("sudo pip3 install wgconfig boto3 paramiko scp")
 
@@ -110,6 +111,10 @@ class CloudInstance:
 
         # source environment
         self.scp.execute_cmd("source /opt/ros/rolling/setup.bash")
+
+        # install and configure rosbridge
+        self.scp.execute_cmd("sudo apt install -y ros-rolling-rosbridge-suite")
+        self.scp.execute_cmd("nohup ros2 launch rosbridge_server rosbridge_websocket_launch.xml > rosbridge.log &")
 
     def install_colcon(self):
         # ros2 repository
@@ -157,15 +162,16 @@ class CloudInstance:
         print(cmd_builder.get())
         self.scp.execute_cmd(cmd_builder.get())
 
-    def launch_foxglove(self):
-        self.scp.execute_cmd("sudo snap install docker")
-        self.scp.execute_cmd("sudo snap start docker")
-        self.scp.execute_cmd("sudo docker run --rm -p '8080:8080' ghcr.io/foxglove/studio:latest &")
+    def add_docker_container(self, cmd):
+        self.dockers.append(cmd)
 
-    def launch_rosbridge(self):
-        self.scp.execute_cmd("source /home/ubuntu/ros2_rolling/install/setup.bash")
-        self.scp.execute_cmd("sudo apt install ros-rolling-rosbridge-suite")
-        self.scp.execute_cmd("ros2 launch rosbridge_server rosbridge_websocket_launch.xml &")
+    def launch_cloud_dockers(self):
+        # launch foxglove docker
+        self.scp.execute_cmd("sudo docker run -d --rm -p '8080:8080' ghcr.io/foxglove/studio:latest")
+
+        # launch user specified dockers
+        for docker_cmd in self.dockers:
+            self.scp.execute_cmd(docker_cmd)
 
 
 class RemoteMachine(CloudInstance):
@@ -234,8 +240,6 @@ class AWS(CloudInstance):
         self.install_colcon()
         self.install_cloud_dependencies()
         self.push_ros_workspace()
-        self.launch_foxglove()
-        self.launch_rosbridge()
         #self.push_to_cloud_nodes()
         self.info(flush_to_disk = True)
         self.set_ready_state()
