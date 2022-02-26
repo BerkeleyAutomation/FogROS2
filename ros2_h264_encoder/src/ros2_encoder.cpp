@@ -6,7 +6,7 @@
 
 const std::unordered_map<std::string, AVPixelFormat> ROS2Encoder::ROS_encoding_to_AV_Pixel_format = ROS2Encoder::create_ROS_encoding_to_AV_Pixel_format();
 
-ROS2Encoder::ROS2Encoder(rclcpp::Logger logger) : pts(0), logger(logger) {
+ROS2Encoder::ROS2Encoder(rclcpp::Logger logger) : pts(0), logger(logger), seq(0) {
     x264_param_default_preset(&params, "veryfast", "zerolatency");
     params.i_threads = 1;
     params.i_fps_den = 1;
@@ -53,6 +53,7 @@ bool ROS2Encoder::encode_image(const sensor_msgs::msg::Image &msg, h264_msgs::ms
         }
         return false;
     }
+    seq++;
     if (convert_image_to_h264(msg, &input)) {
         int frame_size = x264_encoder_encode(encoder, &nals, &i_nals, &input, &output);
         packet.seq = pts;

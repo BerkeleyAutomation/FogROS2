@@ -26,10 +26,13 @@ RUN apt update && sudo apt install -y \
   libavdevice-dev \
   ros-rolling-image-transport-plugins \
   ros-rolling-cv-bridge \
-  libyaml-cpp-dev
+  libyaml-cpp-dev \
+  ssh && 
+rm -rf /var/lib/apt/lists/*
+ 
 
 # install some pip packages needed for testing
-RUN python3 -m pip install -U \
+RUN python3 -m pip install --no-cache-dir -U \
   argcomplete \
   flake8 \
   flake8-blind-except \
@@ -49,7 +52,7 @@ RUN python3 -m pip install -U \
   opencv-python
 
 RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-RUN unzip awscliv2.zip
+RUN unzip awscliv2.zip && rm awscliv2.zip
 RUN ./aws/install
 RUN pip3 install boto3 paramiko scp wgconfig
 

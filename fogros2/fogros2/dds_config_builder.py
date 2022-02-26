@@ -43,8 +43,9 @@ ent.com/eclipse-cyclonedds/cyclonedds/master/etc/cyclonedds.xsd">
             <AllowMulticast>false</AllowMulticast>
         </General>
         <Discovery>
-            <Peers>
+            <Peers>                
                 <Peer address="10.0.0.1"/>
+                <Peer address="10.0.0.2"/>
             </Peers>
             <ParticipantIndex>auto</ParticipantIndex>
         </Discovery>

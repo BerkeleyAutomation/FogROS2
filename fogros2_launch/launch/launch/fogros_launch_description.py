@@ -143,9 +143,11 @@ class FogROSLaunchDescription(LaunchDescriptionEntity):
         #self.__entities = list(initial_entities) if initial_entities is not None else []
         self.__entities = []
         self.__to_cloud_entities = defaultdict(list)
+        self.__streamed_topics = []
         if initial_entities:
             for entity in initial_entities:
                 self.add_entity_with_filter(entity)
+                                
         self.__deprecated_reason = deprecated_reason
 
 
@@ -179,6 +181,7 @@ class FogROSLaunchDescription(LaunchDescriptionEntity):
             machine.push_to_cloud_nodes()
             machine.push_and_setup_vpn()
             machine.configure_DDS()
+            machine.launch_cloud_dockers()
             thread = Thread(target=machine.launch_cloud_node, args=[])
             thread.start()
 
@@ -304,12 +307,13 @@ class FogROSLaunchDescription(LaunchDescriptionEntity):
             self.__entities.append(entity)
     
     def add_image_transport_entities(self, topic_name, intermediate_transport, machine):
+        """Adds image transport nodes to the cloud and robot."""
         from launch_ros.actions import Node
         import fogros2
 
-        print('Adding decoder!')
-        print('Topic name:', topic_name)
-        print('Transport:', intermediate_transport)
+        self.__streamed_topics.append(topic_name)
+        new_cloud_topic_name = topic_name + "/cloud"
+        print(f'Added {intermediate_transport} transport decoder/subscriber for topic {topic_name}')
         decoder_node = fogros2.CloudNode(
             machine = machine, 
             package='image_transport', executable='republish', output='screen',
@@ -318,14 +322,12 @@ class FogROSLaunchDescription(LaunchDescriptionEntity):
                     'raw',  # Output
                 ], remappings=[
                     ('in/' + intermediate_transport, topic_name + "/" + intermediate_transport),
-                    ('out', topic_name),
+                    ('out', new_cloud_topic_name),
                 ])
 
-        print(self.__to_cloud_entities)
         self.__to_cloud_entities[decoder_node.get_unique_id()].append(decoder_node)
-        print(self.__to_cloud_entities)
 
-        print('Added encoder!')
+        print(f'Added {intermediate_transport} transport encoder/publisher for topic {topic_name}')
         encoder_node = Node(
             package='image_transport', executable='republish', output='screen',
                 name='republish_node2', arguments=[
@@ -333,11 +335,9 @@ class FogROSLaunchDescription(LaunchDescriptionEntity):
                     intermediate_transport,  # Output
                 ], remappings=[
                     ('in', topic_name),
-                    ('out/' + intermediate_transport, topic_name + "/" + intermediate_transport),
+                    ('out/' + intermediate_transport, topic_name + "/" + intermediate_transport ),
                 ])
         self.__entities.append(encoder_node)
-        print('Added Streams!')
-        print('Encoder in:' + topic_name)
             
     def add_action(self, action: Action) -> None:
         """Add an action to the LaunchDescription."""

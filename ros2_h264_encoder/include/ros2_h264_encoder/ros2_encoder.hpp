@@ -27,6 +27,9 @@ public:
     ~ROS2Encoder();
     bool encode_image(const sensor_msgs::msg::Image &msg, h264_msgs::msg::Packet &packet);
     bool convert_image_to_h264(const sensor_msgs::msg::Image &msg, x264_picture_t* out);
+    int get_seq() {
+        return seq;
+    }
 
 private:
     // Encoder variables
@@ -38,6 +41,8 @@ private:
     x264_nal_t* nals;
     int i_nals;
     int64_t pts;
+
+    int seq;
 
     // Topic Properties
     int current_frames;

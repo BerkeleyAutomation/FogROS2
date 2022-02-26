@@ -38,6 +38,7 @@ class CloudInstance:
         self.ready_lock = threading.Lock()
         self.ready_state = False
         self.cloud_service_provider = None
+        self.dockers = []
 
     def create(self):
         raise NotImplementedError("Cloud SuperClass not implemented")
@@ -86,12 +87,12 @@ class CloudInstance:
         return ready
 
     def install_cloud_dependencies(self):
-        self.scp.execute_cmd("sudo apt install -y wireguard unzip")
+        self.scp.execute_cmd("sudo apt install -y wireguard unzip docker.io")
         self.scp.execute_cmd("sudo apt install -y python3-pip")
         self.scp.execute_cmd("sudo pip3 install wgconfig boto3 paramiko scp")
         
         # image transport dependencies and H.264 deps
-        self.scp.execute_cmd("sudo apt install -y ros-rolling-image-transport libswscale-dev libx264-dev libavutil-dev libavcodec-dev libavformat-dev libavdevice-dev ros-rolling-camera-calibration-parsers")
+        self.scp.execute_cmd("sudo apt install -y ros-rolling-image-transport ros-rolling-image-transport-plugins libswscale-dev libx264-dev libavutil-dev libavcodec-dev libavformat-dev libavdevice-dev")
 
     def install_ros(self):
         # set locale
@@ -159,6 +160,14 @@ class CloudInstance:
         cmd_builder.append("ros2 launch fogros2 cloud.launch.py")
         print(cmd_builder.get())
         self.scp.execute_cmd(cmd_builder.get())
+
+    def add_docker_container(self, cmd):
+        self.dockers.append(cmd)
+
+    def launch_cloud_dockers(self):
+        for docker_cmd in self.dockers:
+            self.scp.execute_cmd(docker_cmd)
+
 
 class RemoteMachine(CloudInstance):
     def __init__(self, ip, ssh_key_path):
