@@ -1,0 +1,10 @@
+<library path="ros2_h264_encoder">
+    <class
+            name="image_transport/h264_pub"
+            type="PacketPublisher"
+            base_class_type="image_transport::PublisherPlugin">
+        <description>
+            Encodes H.264 video stream using x264.
+        </description>
+    </class>
+</library>

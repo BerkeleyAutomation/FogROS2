@@ -13,11 +13,15 @@ TODO:introduce citation in here before going public
   - [Architecture](#architecture)
   - [Install](#install)
     - [Natively](#natively)
+      - [Install Dependencies](#install-dependencies)
     - [Docker](#docker)
   - [Launch ROS 2 computational graphs in the cloud](#launch-ros-2-computational-graphs-in-the-cloud)
     - [Native](#native)
-    - [Docker](#docker-1)
+    - [Docker (Recommended)](#docker-recommended)
   - [Run your own robotics applications](#run-your-own-robotics-applications)
+  - [Setting Up Automatic Image Transport](#setting-up-automatic-image-transport)
+  - [Command Line Interface](#command-line-interface)
+  - [Developer](#developer)
 
 ## Architecture
 (TODO: describe in here the architecture of FogROS)
@@ -130,6 +134,25 @@ Note a few points that are different from normal launch file:
 1. use `FogROSLaunchDescription` instead of `LaunchDescription` class 
 2. tag your `Node` with `to_cloud`. FogROS will only push nodes that `to_cloud=True`
 
+## Setting Up Automatic Image Transport 
+Step 1: Identify all topics that need to use a compressed transport.
+
+Step 2: In a `fogros2.CloudNode`, add the parameter `stream_topics=[]`, where `stream_topics` is a list of tuples 
+where each tuple is just a pair of `(TOPIC_NAME, TRANSPORT_TYPE)` values. 
+
+`TOPIC_NAME` is the string that represents the name of the topic that publishes `sensor_msgs/Image`
+
+Valid `TRANSPORT_TYPE` values are `compressed`, `theora`, and `raw` if only `iumage-transport` and `image-transport-plugins` are installed on the system. `h264` is another valid `TRANSPORT_TYPE` if step 3 is followed.
+
+Optional Step 3: If using H.264, please also clone the H.264 decoder found [here](https://github.com/clydemcqueen/h264_image_transport) into the workspace's src directory. The current repo only contains the encoder and the full image transport pipeline will not work without the decoder also. 
+
+Example of `stream_topics` argument:
+
+`stream_topics=[('/camera/image_raw', 'h264'), ('/camera2/image_raw', 'compressed')]`
+
+Adding the above argument to a `fogros2.CloudNode` makes the topic `/camera/image_raw` publish using the `h264 image_transport`, and makes the topic `/camera2/image_raw` publish using the `compressed image_transport`.
+
+Please note that all cloud nodes that are expecting raw images will be remapped to `TOPIC_NAME/cloud` to remove any topic naming conflicts. (TODO: Automate remapping)
 
 ## Command Line Interface
 We currently support the following CLIs for easier debugging and development. 
@@ -155,6 +178,4 @@ Here are several commands that one may find it useful when developing:
 
 # starting the second terminal for fogros docker
 docker exec -it $(docker ps | grep fogros2 | awk '{print $1}') /bin/bash
-
-colcon build --merge-install  && ros2 launch fogros2_examples gqcnn_docker.launch.py
 ```

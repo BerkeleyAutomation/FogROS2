@@ -15,8 +15,21 @@ RUN apt update && sudo apt install -y \
   iproute2 \
   curl \
   net-tools \
-  ssh && \
+  ssh \
+  ros-rolling-image-transport \
+  libswscale-dev \
+  libx264-dev \
+  pkg-config \
+  ros-rolling-camera-calibration-parsers \
+  libavutil-dev \
+  libavcodec-dev \
+  libavdevice-dev \
+  ros-rolling-image-transport-plugins \
+  ros-rolling-cv-bridge \
+  libyaml-cpp-dev \
+  ssh && 
 rm -rf /var/lib/apt/lists/*
+ 
 
 # install some pip packages needed for testing
 RUN python3 -m pip install --no-cache-dir -U \
@@ -35,7 +48,8 @@ RUN python3 -m pip install --no-cache-dir -U \
   pytest \
   pytest-cov \
   pytest-runner \
-  setuptools
+  setuptools \
+  opencv-python
 
 RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
 RUN unzip awscliv2.zip && rm awscliv2.zip
@@ -50,6 +64,6 @@ COPY ./fogros2/configs/cyclonedds.xml /home/root/fog_ws
 
 WORKDIR /home/root/fog_ws
 RUN . /opt/ros/rolling/setup.sh && \
-      colcon build --merge-install
+      colcon build --merge-install --cmake-clean-cache
 
 CMD ["bash"]
