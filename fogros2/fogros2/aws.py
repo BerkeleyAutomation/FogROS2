@@ -10,6 +10,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from ipaddress import ip_address
 import boto3
 import random
 import logging
@@ -20,6 +21,7 @@ from .dds_config_builder import CycloneConfigBuilder
 from .scp import SCP_Client
 import os
 import json
+import subprocess
 
 class CloudInstance:
     def __init__(self, ros_workspace = None, working_dir_base = "/tmp/fogros/"):
@@ -115,6 +117,16 @@ class CloudInstance:
         # source environment
         self.scp.execute_cmd("source /opt/ros/rolling/setup.bash")
 
+    def configure_rosbridge(self):
+         # install rosbridge
+        self.scp.execute_cmd("sudo apt install -y ros-rolling-rosbridge-suite")
+
+        # source ros and launch rosbridge through ssh
+        subprocess.call("chmod 400 " + self.ssh_key_path, shell=True)
+        rosbridge_launch_script = 'ssh -o StrictHostKeyChecking=no -i ' + self.ssh_key_path + ' ubuntu@' + self.public_ip + ' "source /opt/ros/rolling/setup.bash && ros2 launch rosbridge_server rosbridge_websocket_launch.xml &"'
+        print(rosbridge_launch_script)
+        subprocess.Popen(rosbridge_launch_script, shell=True)
+
     def install_colcon(self):
         # ros2 repository
         self.scp.execute_cmd("""sudo sh -c 'echo "deb [arch=amd64,arm64] http://repo.ros2.org/ubuntu/main `lsb_release -cs` main" > /etc/apt/sources.list.d/ros2-latest.list'""")
@@ -165,6 +177,10 @@ class CloudInstance:
         self.dockers.append(cmd)
 
     def launch_cloud_dockers(self):
+        # launch foxglove docker
+        self.scp.execute_cmd("sudo docker run -d --rm -p '8080:8080' ghcr.io/foxglove/studio:latest")
+
+        # launch user specified dockers
         for docker_cmd in self.dockers:
             self.scp.execute_cmd(docker_cmd)
 
@@ -232,6 +248,7 @@ class AWS(CloudInstance):
         self.create_ec2_instance()
         self.connect()
         self.install_ros()
+        self.configure_rosbridge()
         self.install_colcon()
         self.install_cloud_dependencies()
         self.push_ros_workspace()
