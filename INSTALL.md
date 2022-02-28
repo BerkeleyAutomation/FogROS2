@@ -1,0 +1,105 @@
+Install FogROS 2 and ROS 2 from Scratch
+---
+
+This is quick start guide for installing FogROS 2 (and ROS 2) and its requisites from scratch (e.g., in a VM).  New contributors to the project can start here.
+
+1. Install Ubuntu 20.04
+
+2. Upgrade
+```bash
+    % sudo apt update
+    % sudo apt upgrade
+```
+
+3. reboot
+
+4. Get UTF-8 locale installed
+
+```
+    % sudo apt install locales
+    % sudo locale-gen en_US en_US.UTF-8
+    % sudo update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
+    % export LANG=en_US.UTF-8
+```
+
+5. Setup sources for ROS 2 (https://docs.ros.org/en/galactic/Installation/Ubuntu-Install-Debians.html)
+
+```
+    % sudo apt update
+    % sudo apt install curl gnupg2 lsb-release
+    % sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key  -o /usr/share/keyrings/ros-archive-keyring.gpg
+    % echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(source /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
+```
+
+6. Install ROS 2 Packages (https://docs.ros.org/en/galactic/Installation/Ubuntu-Install-Debians.html)
+
+```
+    % sudo apt update
+    % sudo apt install ros-galactic-desktop
+```
+
+7. Add env to startup
+
+```
+    % echo "source /opt/ros/galactic/setup.bash" >> ~/.bashrc
+```
+
+8. Choose and set a ROS_DOMAIN_ID (in range 0 to 121)
+
+```
+    % export ROS_DOMAIN_ID=99
+    % echo 'export ROS_DOMAIN_ID=99' >> ~/.bashrc
+```
+9. Install colcon and git
+
+```
+    % sudo apt install python3-colcon-common-extensions
+    % sudo apt install git
+```
+
+10. Create a workspace
+
+```
+    % mkdir -p ~/fog_ws/src
+    % cd ~/fog_ws/src
+```
+
+11. Clone
+
+```
+    % cd ~/fog_ws/src
+    % git clone git@github.com:BerkeleyAutomation/FogROS2.git
+    % cp FogROS2/fogros2/configs/cyclonedds.xml ..
+```
+
+12. Build
+
+```
+    % cd ~/fog_ws
+    % colcon build --merge-install
+```
+
+13. Install AWS CLI and setup credentials
+
+```
+    % sudo apt install awscli
+    % aws configure
+```
+
+14. Install additional dependencies
+
+```
+    % apt install build-essential cmake git python3-colcon-common-extensions python3-pip python3-vcstool wget emacs-nox unzip wireguard iproute2 curl net-tools ssh
+    % apt install emacs-gtk
+    % pip3 install boto3 paramiko scp wgconfig
+```
+   
+15. Run example
+
+```
+    % cd ~/fog_ws
+    % source install/setup.bash
+    % export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp 
+    % export CYCLONEDDS_URI=file://$(pwd)/install/share/fogros2/configs/cyclonedds.xml
+    % ros2 launch fogros2_examples talker.launch.py
+```
