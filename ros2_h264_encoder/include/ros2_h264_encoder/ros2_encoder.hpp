@@ -43,11 +43,7 @@ private:
     int64_t pts;
 
     int seq;
-
-    // Topic Properties
-    int current_frames;
-    std::chrono::steady_clock::time_point first_received_timestamp;
-
+    
     // Conversion
     struct SwsContext* conversion_context;
 

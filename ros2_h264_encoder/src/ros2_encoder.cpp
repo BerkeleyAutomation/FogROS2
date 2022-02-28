@@ -20,18 +20,8 @@ ROS2Encoder::~ROS2Encoder() {
     
 bool ROS2Encoder::encode_image(const sensor_msgs::msg::Image &msg, h264_msgs::msg::Packet &packet) {
     if (!encoder) {
-        if (current_frames < MAX_FRAME_RATE_SAMPLES) {
-            if (current_frames == 0) {
-                first_received_timestamp = std::chrono::steady_clock::now();
-            }
-            current_frames++;
-        } else if (current_frames == MAX_FRAME_RATE_SAMPLES) {
-            current_frames++;
-            std::chrono::steady_clock::time_point end_point = std::chrono::steady_clock::now();
-            uint32_t fps = round(current_frames / ( std::chrono::duration_cast<std::chrono::nanoseconds>(end_point - first_received_timestamp).count() / 1e9));
-            RCLCPP_INFO_STREAM(logger, "Creating encoder with FPS: " << fps << ", image height: " << msg.height << ", image width: " << msg.width << " and encoding " << msg.encoding);
+            RCLCPP_INFO_STREAM(logger, "Creating encoder with image height: " << msg.height << ", image width: " << msg.width << " and encoding " << msg.encoding);
             
-            params.i_fps_num = fps;
             params.i_width = msg.width;
             params.i_height = msg.height;
 
@@ -49,9 +39,7 @@ bool ROS2Encoder::encode_image(const sensor_msgs::msg::Image &msg, h264_msgs::ms
             if (!conversion_context) {
                 RCLCPP_WARN_STREAM(logger, "Failed to get conversion context!");
             }            
-            RCLCPP_INFO_STREAM(logger, "Finished creating encoder with FPS: " << fps << ", image height: " << msg.height << ", image width: " << msg.width << " and encoding " << msg.encoding);
-        }
-        return false;
+            RCLCPP_INFO_STREAM(logger, "Finished creating encoder with FPS image height: " << msg.height << ", image width: " << msg.width << " and encoding " << msg.encoding);
     }
     seq++;
     if (convert_image_to_h264(msg, &input)) {
