@@ -10,6 +10,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from ipaddress import ip_address
 import boto3
 import random
 import logging
@@ -20,6 +21,7 @@ from .dds_config_builder import CycloneConfigBuilder
 from .scp import SCP_Client
 import os
 import json
+import subprocess
 
 class CloudInstance:
     def __init__(self, ros_workspace = None, working_dir_base = "/tmp/fogros/"):
@@ -112,9 +114,15 @@ class CloudInstance:
         # source environment
         self.scp.execute_cmd("source /opt/ros/rolling/setup.bash")
 
-        # install and configure rosbridge
+    def configure_rosbridge(self):
+         # install rosbridge
         self.scp.execute_cmd("sudo apt install -y ros-rolling-rosbridge-suite")
-        self.scp.execute_cmd("nohup ros2 launch rosbridge_server rosbridge_websocket_launch.xml > rosbridge.log &")
+
+        # source ros and launch rosbridge through ssh
+        subprocess.call("chmod 400 " + self.ssh_key_path, shell=True)
+        rosbridge_launch_script = 'ssh -o StrictHostKeyChecking=no -i ' + self.ssh_key_path + ' ubuntu@' + self.public_ip + ' "source /opt/ros/rolling/setup.bash && ros2 launch rosbridge_server rosbridge_websocket_launch.xml &"'
+        print(rosbridge_launch_script)
+        subprocess.Popen(rosbridge_launch_script, shell=True)
 
     def install_colcon(self):
         # ros2 repository
@@ -237,6 +245,7 @@ class AWS(CloudInstance):
         self.create_ec2_instance()
         self.connect()
         self.install_ros()
+        self.configure_rosbridge()
         self.install_colcon()
         self.install_cloud_dependencies()
         self.push_ros_workspace()
