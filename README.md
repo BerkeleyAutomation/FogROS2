@@ -64,6 +64,7 @@ sudo pip3 install wgconfig boto3 paramiko scp awscli
 
 ```bash
 cd <your-ros2-workspace>/src
+git clone https://github.com/clydemcqueen/h264_image_transport # a dependency for image transport
 git clone https://github.com/BerkeleyAutomation/FogROS2
 cd ../
 colcon build --merge-install  # re-build the workspace
