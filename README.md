@@ -58,8 +58,13 @@ sudo apt install -y python3-colcon-common-extensions
 
 Install FogROS dependencies by
 ```
-sudo apt install python3-pip wireguard unzip awscli
-sudo pip3 install wgconfig boto3 paramiko scp awscli
+sudo apt install python3-pip wireguard unzip
+sudo pip3 install wgconfig boto3 paramiko scp 
+
+# install AWS CLI
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
 ```
 
 ```bash
