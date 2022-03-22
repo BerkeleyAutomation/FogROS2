@@ -42,19 +42,21 @@ This is quick start guide for installing FogROS 2 (and ROS 2) and its requisites
 
 ```
     % echo "source /opt/ros/galactic/setup.bash" >> ~/.bashrc
+    % source /opt/ros/galactic/setup.bash
 ```
 
-8. Choose and set a ROS_DOMAIN_ID (in range 0 to 121)
+8. Choose and set a `ROS_DOMAIN_ID` (in range 0 to 121)
 
 ```
     % export ROS_DOMAIN_ID=99
     % echo 'export ROS_DOMAIN_ID=99' >> ~/.bashrc
 ```
-9. Install colcon and git
+9. Install colcon, git, and h.264 dependencies
 
 ```
     % sudo apt install python3-colcon-common-extensions
     % sudo apt install git
+    % sudo apt install libavdevice-dev libavformat-dev libavcodec-dev libavutil-dev libswscale-dev libx264-dev ros-galactic-camera-calibration-parsers
 ```
 
 10. Create a workspace
@@ -68,7 +70,8 @@ This is quick start guide for installing FogROS 2 (and ROS 2) and its requisites
 
 ```
     % cd ~/fog_ws/src
-    % git clone git@github.com:BerkeleyAutomation/FogROS2.git
+    % git clone https://github.com/BerkeleyAutomation/FogROS2.git
+    % git clone https://github.com/clydemcqueen/h264_image_transport.git
     % cp FogROS2/fogros2/configs/cyclonedds.xml ..
 ```
 
