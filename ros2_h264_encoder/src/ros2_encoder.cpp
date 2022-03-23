@@ -6,7 +6,7 @@
 
 const std::unordered_map<std::string, AVPixelFormat> ROS2Encoder::ROS_encoding_to_AV_Pixel_format = ROS2Encoder::create_ROS_encoding_to_AV_Pixel_format();
 
-ROS2Encoder::ROS2Encoder(rclcpp::Logger logger) : pts(0), logger(logger), seq(0) {
+ROS2Encoder::ROS2Encoder(rclcpp::Logger logger) : pts(0), seq(0), logger(logger) {
     x264_param_default_preset(&params, "veryfast", "zerolatency");
     params.i_threads = 1;
     params.i_fps_den = 1;
@@ -59,7 +59,7 @@ bool ROS2Encoder::encode_image(const sensor_msgs::msg::Image &msg, h264_msgs::ms
 }
     
 bool ROS2Encoder::convert_image_to_h264(const sensor_msgs::msg::Image &msg, x264_picture_t* out) {
-    int stride[3] = {msg.width * 3, 0, 0};
+    int stride[3] = {static_cast<int>(msg.width) * 3, 0, 0};
     uint8_t *src[3]= {const_cast<uint8_t *>(&msg.data[0]), NULL, NULL};
     int returnedHeight = sws_scale(conversion_context, src, stride, 0, params.i_height, out->img.plane, out->img.i_stride);
     out->i_pts = pts;

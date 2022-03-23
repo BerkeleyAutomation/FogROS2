@@ -17,6 +17,6 @@ void PacketPublisher::publish(const sensor_msgs::msg::Image& message, const Publ
 void PacketPublisher::advertiseImpl(rclcpp::Node* node, const std::string& base_topic, rmw_qos_profile_t custom_qos) {
     SimplePublisherPlugin::advertiseImpl(node, base_topic, custom_qos);
     logger = node->get_logger();
-    RCLCPP_INFO_STREAM(logger, "Started Encoder");
+    RCLCPP_INFO_STREAM(logger, "Started Encoder!");
     encoder = std::make_shared<ROS2Encoder>(node->get_logger());
 }
