@@ -15,6 +15,8 @@ import boto3
 import random
 import logging
 import threading
+
+from click import launch
 from .util import make_zip_file
 from .command_builder import BashBuilder
 from .dds_config_builder import CycloneConfigBuilder
@@ -24,7 +26,7 @@ import json
 import subprocess
 
 class CloudInstance:
-    def __init__(self, ros_workspace = None, working_dir_base = "/tmp/fogros/"):
+    def __init__(self, ros_workspace = None, working_dir_base = "/tmp/fogros/", launch_foxglove=False):
         self.cyclone_builder = None
         self.scp = None
         self.public_ip = None
@@ -41,6 +43,7 @@ class CloudInstance:
         self.ready_state = False
         self.cloud_service_provider = None
         self.dockers = []
+        self.launch_foxglove = launch_foxglove
 
     def create(self):
         raise NotImplementedError("Cloud SuperClass not implemented")
@@ -114,16 +117,13 @@ class CloudInstance:
         self.scp.execute_cmd("sudo apt update")
         self.scp.execute_cmd("sudo apt install -y ros-rolling-desktop")
 
-        # source environment
-        self.scp.execute_cmd("source /opt/ros/rolling/setup.bash")
-
     def configure_rosbridge(self):
-         # install rosbridge
+        # install rosbridge
         self.scp.execute_cmd("sudo apt install -y ros-rolling-rosbridge-suite")
 
         # source ros and launch rosbridge through ssh
         subprocess.call("chmod 400 " + self.ssh_key_path, shell=True)
-        rosbridge_launch_script = 'ssh -o StrictHostKeyChecking=no -i ' + self.ssh_key_path + ' ubuntu@' + self.public_ip + ' "source /opt/ros/rolling/setup.bash && ros2 launch rosbridge_server rosbridge_websocket_launch.xml &"'
+        rosbridge_launch_script = 'ssh -o StrictHostKeyChecking=no -i ' + self.ssh_key_path + ' ubuntu@' + self.public_ip + ' "cd /home/ubuntu/fog_ws && . /home/ubuntu/fog_ws/install/setup.bash && ' + self.cyclone_builder.env_cmd + ' && ros2 launch rosbridge_server rosbridge_websocket_launch.xml &"'
         print(rosbridge_launch_script)
         subprocess.Popen(rosbridge_launch_script, shell=True)
 
@@ -178,6 +178,7 @@ class CloudInstance:
 
     def launch_cloud_dockers(self):
         # launch foxglove docker
+        self.configure_rosbridge()
         self.scp.execute_cmd("sudo docker run -d --rm -p '8080:8080' ghcr.io/foxglove/studio:latest")
 
         # launch user specified dockers
@@ -248,7 +249,6 @@ class AWS(CloudInstance):
         self.create_ec2_instance()
         self.connect()
         self.install_ros()
-        self.configure_rosbridge()
         self.install_colcon()
         self.install_cloud_dependencies()
         self.push_ros_workspace()

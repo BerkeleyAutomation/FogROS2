@@ -27,7 +27,7 @@ RUN apt update && sudo apt install -y \
   ros-rolling-image-transport-plugins \
   ros-rolling-cv-bridge \
   libyaml-cpp-dev \
-  ssh && 
+  ssh && \
 rm -rf /var/lib/apt/lists/*
  
 
