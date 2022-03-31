@@ -58,12 +58,18 @@ sudo apt install -y python3-colcon-common-extensions
 
 Install FogROS dependencies by
 ```
-sudo apt install python3-pip wireguard unzip awscli
-sudo pip3 install wgconfig boto3 paramiko scp awscli
+sudo apt install python3-pip wireguard unzip
+sudo pip3 install wgconfig boto3 paramiko scp 
+
+# install AWS CLI
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
 ```
 
 ```bash
 cd <your-ros2-workspace>/src
+git clone https://github.com/clydemcqueen/h264_image_transport # a dependency for image transport
 git clone https://github.com/BerkeleyAutomation/FogROS2
 cd ../
 colcon build --merge-install  # re-build the workspace
@@ -179,3 +185,33 @@ Here are several commands that one may find it useful when developing:
 # starting the second terminal for fogros docker
 docker exec -it $(docker ps | grep fogros2 | awk '{print $1}') /bin/bash
 ```
+
+
+## Running Examples: 
+
+#### To run gqcnn
+```
+ros2 launch fogros2_examples gqcnn_docker.launch.py
+```
+and run gqcnn's client: 
+```
+docker run --net=host --env RMW_IMPLEMENTATION=rmw_cyclonedds_cpp --env CYCLONEDDS_URI=file:///tmp/cyclonedds.xml -v $(pwd)/install/share/fogros2/configs/cyclonedds.xml:/tmp/cyclonedds.xml --rm -it keplerc/gqcnn_ros:pj ros2 launch gqcnn_ros client.launch.py
+```
+in ros workspace. 
+
+#### To run vslam
+```
+ros2 launch fogros2_examples vslam.launch.py
+```
+and run vslam's client: 
+```
+docker run --net=host --env RMW_IMPLEMENTATION=rmw_cyclonedds_cpp --env CYCLONEDDS_URI=file:///tmp/cyclonedds.xml -v $(pwd)/install/share/fogros2/configs/cyclonedds.xml:/tmp/cyclonedds.xml --rm -it -v /home/gdpmobile7/rgbd_dataset_freiburg1_xyz:/dataset -v $(pwd)/output:/output mjd3/orbslam-ros ros2 launch orb_slam2_ros orb_slam2_d435_rgbd_client_launch.py dataset:=/dataset compress:=0
+```
+in ros workspace. 
+
+#### TODO
+we mark as a TODO item to streamline the launching process of the client docker. 
+
+
+
+
