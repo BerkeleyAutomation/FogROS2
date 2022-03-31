@@ -39,7 +39,7 @@ fogros2
 
 #### Install Dependencies
 
-Install ROS by 
+Install ROS2 by 
 ```
 sudo apt install -y software-properties-common
 sudo add-apt-repository universe
@@ -56,7 +56,7 @@ sudo apt update
 sudo apt install -y python3-colcon-common-extensions
 ```
 
-Install FogROS dependencies by
+Install FogROS2 dependencies by
 ```
 sudo apt install python3-pip wireguard unzip
 sudo pip3 install wgconfig boto3 paramiko scp 
