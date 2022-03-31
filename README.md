@@ -69,8 +69,7 @@ sudo ./aws/install
 
 ```bash
 cd <your-ros2-workspace>/src
-git clone https://github.com/clydemcqueen/h264_image_transport # a dependency for image transport
-git clone https://github.com/BerkeleyAutomation/FogROS2
+git clone --recurse-submodules https://github.com/BerkeleyAutomation/FogROS2
 cd ../
 colcon build --merge-install  # re-build the workspace
 source install/setup.bash
@@ -79,7 +78,7 @@ source install/setup.bash
 ### Docker
 Alternatively, if your dev. environment is not ready to natively build ROS 2 packages, you can use the Dockerized dev. environment we've put together as follows:
 ```bash
-git clone https://github.com/BerkeleyAutomation/FogROS2
+git clone --recurse-submodules https://github.com/BerkeleyAutomation/FogROS2
 cd FogROS2
 docker build -t fogros2:latest .
 ```
