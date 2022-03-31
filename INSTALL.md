@@ -70,8 +70,7 @@ This is quick start guide for installing FogROS 2 (and ROS 2) and its requisites
 
 ```
     % cd ~/fog_ws/src
-    % git clone https://github.com/BerkeleyAutomation/FogROS2.git
-    % git clone https://github.com/clydemcqueen/h264_image_transport.git
+    % git clone --recurse-submodules https://github.com/BerkeleyAutomation/FogROS2.git
     % cp FogROS2/fogros2/configs/cyclonedds.xml ..
 ```
 
