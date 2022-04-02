@@ -1,4 +1,4 @@
-ARG FROM_IMAGE=ros:rolling
+ARG FROM_IMAGE=ros:galactic
 FROM $FROM_IMAGE
 
 RUN apt update && sudo apt install -y \
@@ -16,19 +16,21 @@ RUN apt update && sudo apt install -y \
   curl \
   net-tools \
   ssh \
-  ros-rolling-image-transport \
+  ros-galactic-image-transport \
   libswscale-dev \
   libx264-dev \
   pkg-config \
-  ros-rolling-camera-calibration-parsers \
+  ros-galactic-camera-calibration-parsers \
   libavutil-dev \
   libavcodec-dev \
   libavdevice-dev \
-  ros-rolling-image-transport-plugins \
-  ros-rolling-cv-bridge \
+  libavformat-dev \
+  ros-galactic-image-transport-plugins \
+  ros-galactic-cv-bridge \
   libyaml-cpp-dev \
-  ssh && 
-rm -rf /var/lib/apt/lists/*
+  ssh 
+
+RUN rm -rf /var/lib/apt/lists/*
  
 
 # install some pip packages needed for testing
@@ -63,7 +65,7 @@ COPY .  /home/root/fog_ws/src/fogros2
 COPY ./fogros2/configs/cyclonedds.xml /home/root/fog_ws
 
 WORKDIR /home/root/fog_ws
-RUN . /opt/ros/rolling/setup.sh && \
+RUN . /opt/ros/galactic/setup.sh && \
       colcon build --merge-install --cmake-clean-cache
 
 CMD ["bash"]
