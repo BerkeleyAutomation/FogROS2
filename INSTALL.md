@@ -96,8 +96,8 @@ This is quick start guide for installing FogROS 2 (and ROS 2) and its requisites
 15. Install additional dependencies
 
 ```
-    % apt install build-essential cmake git python3-colcon-common-extensions python3-pip python3-vcstool wget emacs-nox unzip wireguard iproute2 curl net-tools ssh
-    % apt install emacs-gtk
+    % sudo apt install build-essential cmake git python3-colcon-common-extensions python3-pip python3-vcstool wget emacs-nox unzip wireguard iproute2 curl net-tools ssh
+    % sudo apt install emacs-gtk
     % pip3 install boto3 paramiko scp wgconfig
 ```
    
