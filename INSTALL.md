@@ -45,7 +45,7 @@ This is quick start guide for installing FogROS 2 (and ROS 2) and its requisites
     % source /opt/ros/galactic/setup.bash
 ```
 
-8. Choose and set a `ROS_DOMAIN_ID` (in range 0 to 121)
+8. Choose and set a `ROS_DOMAIN_ID` (in range 0 to 101) (https://docs.ros.org/en/galactic/Concepts/About-Domain-ID.html)
 
 ```
     % export ROS_DOMAIN_ID=99
