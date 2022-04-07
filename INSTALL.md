@@ -11,7 +11,7 @@ This is quick start guide for installing FogROS 2 (and ROS 2) and its requisites
     % sudo apt upgrade
 ```
 
-3. reboot
+3. Reboot
 
 4. Get UTF-8 locale installed
 
