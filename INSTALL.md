@@ -111,4 +111,4 @@ This is quick start guide for installing FogROS 2 (and ROS 2) and its requisites
     % ros2 launch fogros2_examples talker.launch.py
 ```
 
-17. You are done. Refer to our README (https://github.com/BerkeleyAutomation/FogROS2/blob/main/README.md) for additional information including Command Line Interface commmands (https://github.com/BerkeleyAutomation/FogROS2#command-line-interface) and Docker installation (https://github.com/BerkeleyAutomation/FogROS2#docker).
+17. You are done. Refer to our [README](https://github.com/BerkeleyAutomation/FogROS2/blob/main/README.md) for additional information including [Command Line Interface commmands](https://github.com/BerkeleyAutomation/FogROS2#command-line-interface) and [Docker installation](https://github.com/BerkeleyAutomation/FogROS2#docker).
