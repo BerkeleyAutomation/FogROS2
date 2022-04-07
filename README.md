@@ -203,7 +203,7 @@ in ros workspace.
 
 See tutorial walkthrough [here](https://github.com/SimeonOA/orb_slam_2_ros/blob/fogros2/TUTORIAL.md)
 
-Run VSLAM
+Run VSLAM:
 ```
 ros2 launch fogros2_examples vslam.launch.py
 ```
