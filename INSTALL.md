@@ -101,7 +101,7 @@ This is quick start guide for installing FogROS 2 (and ROS 2) and its requisites
     % pip3 install boto3 paramiko scp wgconfig
 ```
    
-16. Run example
+16. Run basic example
 
 ```
     % cd ~/fog_ws
