@@ -63,7 +63,6 @@ This is quick start guide for installing FogROS 2 (and ROS 2) and its requisites
 
 ```
     % mkdir -p ~/fog_ws/src
-    % cd ~/fog_ws/src
 ```
 
 11. Clone
