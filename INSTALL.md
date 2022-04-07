@@ -81,14 +81,19 @@ This is quick start guide for installing FogROS 2 (and ROS 2) and its requisites
     % colcon build --merge-install
 ```
 
-13. Install AWS CLI and setup credentials
+13. Install AWS CLI
 
 ```
     % sudo apt install awscli
+```
+
+14. Configure AWS Basic Settings. To run the next command, you need to have your security credentials, an output format and AWS Region. (https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html)
+
+```
     % aws configure
 ```
 
-14. Install additional dependencies
+15. Install additional dependencies
 
 ```
     % apt install build-essential cmake git python3-colcon-common-extensions python3-pip python3-vcstool wget emacs-nox unzip wireguard iproute2 curl net-tools ssh
@@ -96,7 +101,7 @@ This is quick start guide for installing FogROS 2 (and ROS 2) and its requisites
     % pip3 install boto3 paramiko scp wgconfig
 ```
    
-15. Run example
+16. Run example
 
 ```
     % cd ~/fog_ws
