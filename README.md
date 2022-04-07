@@ -22,6 +22,7 @@ TODO:introduce citation in here before going public
   - [Setting Up Automatic Image Transport](#setting-up-automatic-image-transport)
   - [Command Line Interface](#command-line-interface)
   - [Developer](#developer)
+  - [Running Examples](#running-examples)
 
 ## Architecture
 (TODO: describe in here the architecture of FogROS)
