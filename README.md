@@ -10,7 +10,6 @@ TODO:introduce citation in here before going public
 
 
 - [FogROS2](#fogros2)
-  - [Architecture](#architecture)
   - [Install](#install)
     - [Docker (Recommended)](#docker-recommended)
     - [Natively](#natively)
@@ -26,16 +25,6 @@ TODO:introduce citation in here before going public
       - [To run gqcnn](#to-run-gqcnn)
       - [To run vslam](#to-run-vslam)
       - [TODO](#todo)
-
-## Architecture
-(TODO: describe in here the architecture of FogROS)
-
-fogros2
-    - fogros2_examples -> examples using FogROS2
-    - fogros2 -> orchestrator of cloud Nodes
-    - fogros2_launch -> ROS 2 launch fork for FogROS2 purposes
-    - fogros2_launch_ros  -> (ROS specific extensions for FogROS2)
-
 
 ## Install
 ### Docker (Recommended)
