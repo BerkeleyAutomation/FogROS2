@@ -86,15 +86,6 @@ git clone --recurse-submodules https://github.com/BerkeleyAutomation/FogROS2
 cd FogROS2
 docker build -t fogros2:latest .
 ```
-then, you can run the docker container:
-```bash
-docker run -it fogros2
-# FOGROS_REPO=~/Desktop/FogROS2 
-# docker run -it --rm \
-#    --net=host --cap-add=NET_ADMIN \
-#    -v "${FOGROS_REPO}":/home/root/fog_ws/src/fogros2 \
-#    fogros2 /bin/bash
-```
 
 ## Launch ROS 2 computational graphs in the cloud
 TODO: replace this with fogros2 tooling that's cloud-agnostic. E.g. `ros2 fog configure --aws`, instead of `fogros2`.
@@ -109,7 +100,7 @@ ros2 launch fogros2_examples talker.launch.py
 
 ### Docker (Recommended)
 
-First, run `aws configure` and configure the AWS credentials. 
+First, run `aws configure` and configure the AWS credentials.
 
 Second, run the robotics applications that need to be "FogROS-ed",
 ```bash
