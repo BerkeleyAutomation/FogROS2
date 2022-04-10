@@ -1,5 +1,7 @@
-ARG FROM_IMAGE=ros:galactic
-FROM $FROM_IMAGE
+ARG DISTRO=rolling
+FROM ros:$DISTRO
+
+ARG DISTRO
 
 RUN apt update && sudo apt install -y \
   build-essential \
@@ -16,17 +18,17 @@ RUN apt update && sudo apt install -y \
   curl \
   net-tools \
   ssh \
-  ros-galactic-image-transport \
+  ros-$DISTRO-image-transport \
   libswscale-dev \
   libx264-dev \
   pkg-config \
-  ros-galactic-camera-calibration-parsers \
+  ros-$DISTRO-camera-calibration-parsers \
   libavutil-dev \
   libavcodec-dev \
   libavdevice-dev \
   libavformat-dev \
-  ros-galactic-image-transport-plugins \
-  ros-galactic-cv-bridge \
+  ros-$DISTRO-image-transport-plugins \
+  ros-$DISTRO-cv-bridge \
   libyaml-cpp-dev \
   ssh 
 
@@ -65,7 +67,7 @@ COPY .  /home/root/fog_ws/src/fogros2
 COPY ./fogros2/configs/cyclonedds.xml /home/root/fog_ws
 
 WORKDIR /home/root/fog_ws
-RUN . /opt/ros/galactic/setup.sh && \
+RUN . /opt/ros/$DISTRO/setup.sh && \
       colcon build --merge-install --cmake-clean-cache
 
 CMD ["bash"]
