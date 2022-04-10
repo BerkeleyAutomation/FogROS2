@@ -1,4 +1,4 @@
-ARG DISTRO=rolling
+ARG DISTRO=galactic
 FROM ros:$DISTRO
 
 ARG DISTRO
