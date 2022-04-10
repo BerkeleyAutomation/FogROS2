@@ -87,6 +87,8 @@ cd FogROS2
 docker build -t fogros2:latest .
 ```
 
+(*Note: the Dockerfile is cooked for x86_64. If you're using a workstation with an Arm-based architecture (e.g. an M1), build the container with the `docker build --platform linux/amd64 -t fogros2:latest .`*.)
+
 ## Launch ROS 2 computational graphs in the cloud
 TODO: replace this with fogros2 tooling that's cloud-agnostic. E.g. `ros2 fog configure --aws`, instead of `fogros2`.
 
@@ -100,14 +102,16 @@ ros2 launch fogros2_examples talker.launch.py
 
 ### Docker (Recommended)
 
-First, run `aws configure` and configure the AWS credentials.
+(*Note: the Dockerfile is cooked for x86_64. If you're using a workstation with an Arm-based architecture (e.g. an M1), run the container with the `docker run -it --platform linux/amd64 --rm --net=host --cap-add=NET_ADMIN fogros2`*.)
 
-Second, run the robotics applications that need to be "FogROS-ed",
 ```bash
-# connect to running container
+# launch fogros2 container
 docker run -it --rm --net=host --cap-add=NET_ADMIN fogros2
-source install/setup.bash
-export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp 
+# configure cloud provider CLI wrappers (e.g. AWS)
+aws configure
+# configure environment
+source install/setup.bash  # source fogros2 workspace as an overlay
+export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp  # work with CycloneDDS DDS implementation
 export CYCLONEDDS_URI=file://$(pwd)/install/share/fogros2/configs/cyclonedds.xml
 ros2 launch fogros2_examples talker.launch.py
 ```
