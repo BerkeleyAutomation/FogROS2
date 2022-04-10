@@ -22,7 +22,10 @@ TODO:introduce citation in here before going public
   - [Setting Up Automatic Image Transport](#setting-up-automatic-image-transport)
   - [Command Line Interface](#command-line-interface)
   - [Developer](#developer)
-  - [Running Examples](#running-examples)
+  - [Running Examples:](#running-examples)
+      - [To run gqcnn](#to-run-gqcnn)
+      - [To run vslam](#to-run-vslam)
+      - [TODO](#todo)
 
 ## Architecture
 (TODO: describe in here the architecture of FogROS)
@@ -40,7 +43,7 @@ fogros2
 
 #### Install Dependencies
 
-Install ROS2 by 
+ROS 2 dependencies:
 ```
 sudo apt install -y software-properties-common
 sudo add-apt-repository universe
@@ -57,7 +60,7 @@ sudo apt update
 sudo apt install -y python3-colcon-common-extensions
 ```
 
-Install FogROS2 dependencies by
+FogROS 2 dependencies:
 ```
 sudo apt install python3-pip wireguard unzip
 sudo pip3 install wgconfig boto3 paramiko scp 
@@ -77,7 +80,7 @@ source install/setup.bash
 ```
 
 ### Docker
-Alternatively, if your dev. environment is not ready to natively build ROS 2 packages, you can use the Dockerized dev. environment we've put together as follows:
+Alternatively, you can simplify reproduction using OS virtualization environment with Docker:
 ```bash
 git clone --recurse-submodules https://github.com/BerkeleyAutomation/FogROS2
 cd FogROS2
