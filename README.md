@@ -12,12 +12,12 @@ TODO:introduce citation in here before going public
 - [FogROS2](#fogros2)
   - [Architecture](#architecture)
   - [Install](#install)
+    - [Docker (Recommended)](#docker-recommended)
     - [Natively](#natively)
       - [Install Dependencies](#install-dependencies)
-    - [Docker](#docker)
   - [Launch ROS 2 computational graphs in the cloud](#launch-ros-2-computational-graphs-in-the-cloud)
+    - [Docker (Recommended)](#docker-recommended-1)
     - [Native](#native)
-    - [Docker (Recommended)](#docker-recommended)
   - [Run your own robotics applications](#run-your-own-robotics-applications)
   - [Setting Up Automatic Image Transport](#setting-up-automatic-image-transport)
   - [Command Line Interface](#command-line-interface)
@@ -38,6 +38,16 @@ fogros2
 
 
 ## Install
+### Docker (Recommended)
+Alternatively, you can simplify reproduction using OS virtualization environment with Docker:
+```bash
+git clone --recurse-submodules https://github.com/BerkeleyAutomation/FogROS2
+cd FogROS2
+docker build -t fogros2:latest .
+```
+
+(*Note: the Dockerfile is cooked for x86_64. If you're using a workstation with an Arm-based architecture (e.g. an M1), build the container with the `docker build --platform linux/amd64 -t fogros2:latest .`*.)
+
 ### Natively
 `FogROS2` is actually a ROS meta-package, so you can just fetch it in your favourite workspace, build it, source the workspace as an overlay and start using its capabilities.
 
@@ -79,26 +89,9 @@ colcon build --merge-install  # re-build the workspace
 source install/setup.bash
 ```
 
-### Docker
-Alternatively, you can simplify reproduction using OS virtualization environment with Docker:
-```bash
-git clone --recurse-submodules https://github.com/BerkeleyAutomation/FogROS2
-cd FogROS2
-docker build -t fogros2:latest .
-```
-
-(*Note: the Dockerfile is cooked for x86_64. If you're using a workstation with an Arm-based architecture (e.g. an M1), build the container with the `docker build --platform linux/amd64 -t fogros2:latest .`*.)
 
 ## Launch ROS 2 computational graphs in the cloud
 TODO: replace this with fogros2 tooling that's cloud-agnostic. E.g. `ros2 fog configure --aws`, instead of `fogros2`.
-
-### Native 
-```bash
-source install/setup.bash
-export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp 
-export CYCLONEDDS_URI=file://$(pwd)/install/share/fogros2/configs/cyclonedds.xml
-ros2 launch fogros2_examples talker.launch.py
-```
 
 ### Docker (Recommended)
 
@@ -116,6 +109,13 @@ export CYCLONEDDS_URI=file://$(pwd)/install/share/fogros2/configs/cyclonedds.xml
 ros2 launch fogros2_examples talker.launch.py
 ```
 
+### Native 
+```bash
+source install/setup.bash
+export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp 
+export CYCLONEDDS_URI=file://$(pwd)/install/share/fogros2/configs/cyclonedds.xml
+ros2 launch fogros2_examples talker.launch.py
+```
 
 ## Run your own robotics applications 
 Step 1: Mount your robotics application to docker's folder. 
