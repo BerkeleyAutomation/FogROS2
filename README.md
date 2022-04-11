@@ -10,36 +10,39 @@ TODO:introduce citation in here before going public
 
 
 - [FogROS2](#fogros2)
-  - [Architecture](#architecture)
   - [Install](#install)
+    - [Docker (Recommended)](#docker-recommended)
     - [Natively](#natively)
       - [Install Dependencies](#install-dependencies)
-    - [Docker](#docker)
   - [Launch ROS 2 computational graphs in the cloud](#launch-ros-2-computational-graphs-in-the-cloud)
+    - [Docker (Recommended)](#docker-recommended-1)
     - [Native](#native)
-    - [Docker (Recommended)](#docker-recommended)
   - [Run your own robotics applications](#run-your-own-robotics-applications)
   - [Setting Up Automatic Image Transport](#setting-up-automatic-image-transport)
   - [Command Line Interface](#command-line-interface)
   - [Developer](#developer)
-
-## Architecture
-(TODO: describe in here the architecture of FogROS)
-
-fogros2
-    - fogros2_examples -> examples using FogROS2
-    - fogros2 -> orchestrator of cloud Nodes
-    - fogros2_launch -> ROS 2 launch fork for FogROS2 purposes
-    - fogros2_launch_ros  -> (ROS specific extensions for FogROS2)
-
+  - [Running Examples:](#running-examples)
+      - [To run gqcnn](#to-run-gqcnn)
+      - [To run vslam](#to-run-vslam)
+      - [TODO](#todo)
 
 ## Install
+### Docker (Recommended)
+Alternatively, you can simplify reproduction using OS virtualization environment with Docker:
+```bash
+git clone --recurse-submodules https://github.com/BerkeleyAutomation/FogROS2
+cd FogROS2
+docker build -t fogros2:latest .
+```
+
+(*Note: the Dockerfile is cooked for x86_64. If you're using a workstation with an Arm-based architecture (e.g. an M1), build the container with the `docker build --platform linux/amd64 -t fogros2:latest .`*.)
+
 ### Natively
 `FogROS2` is actually a ROS meta-package, so you can just fetch it in your favourite workspace, build it, source the workspace as an overlay and start using its capabilities.
 
 #### Install Dependencies
 
-Install ROS by 
+ROS 2 dependencies:
 ```
 sudo apt install -y software-properties-common
 sudo add-apt-repository universe
@@ -56,7 +59,7 @@ sudo apt update
 sudo apt install -y python3-colcon-common-extensions
 ```
 
-Install FogROS dependencies by
+FogROS 2 dependencies:
 ```
 sudo apt install python3-pip wireguard unzip
 sudo pip3 install wgconfig boto3 paramiko scp 
@@ -69,32 +72,31 @@ sudo ./aws/install
 
 ```bash
 cd <your-ros2-workspace>/src
-git clone https://github.com/clydemcqueen/h264_image_transport # a dependency for image transport
-git clone https://github.com/BerkeleyAutomation/FogROS2
+git clone --recurse-submodules https://github.com/BerkeleyAutomation/FogROS2
 cd ../
 colcon build --merge-install  # re-build the workspace
 source install/setup.bash
 ```
 
-### Docker
-Alternatively, if your dev. environment is not ready to natively build ROS 2 packages, you can use the Dockerized dev. environment we've put together as follows:
-```bash
-git clone https://github.com/BerkeleyAutomation/FogROS2
-cd FogROS2
-docker build -t fogros2:latest .
-```
-then, you can run the docker container:
-```bash
-docker run -it fogros2
-# FOGROS_REPO=~/Desktop/FogROS2 
-# docker run -it --rm \
-#    --net=host --cap-add=NET_ADMIN \
-#    -v "${FOGROS_REPO}":/home/root/fog_ws/src/fogros2 \
-#    fogros2 /bin/bash
-```
 
 ## Launch ROS 2 computational graphs in the cloud
 TODO: replace this with fogros2 tooling that's cloud-agnostic. E.g. `ros2 fog configure --aws`, instead of `fogros2`.
+
+### Docker (Recommended)
+
+(*Note: the Dockerfile is cooked for x86_64. If you're using a workstation with an Arm-based architecture (e.g. an M1), run the container with the `docker run -it --platform linux/amd64 --rm --net=host --cap-add=NET_ADMIN fogros2`*.)
+
+```bash
+# launch fogros2 container
+docker run -it --rm --net=host --cap-add=NET_ADMIN fogros2
+# configure cloud provider CLI wrappers (e.g. AWS)
+aws configure
+# configure environment
+source install/setup.bash  # source fogros2 workspace as an overlay
+export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp  # work with CycloneDDS DDS implementation
+export CYCLONEDDS_URI=file://$(pwd)/install/share/fogros2/configs/cyclonedds.xml
+ros2 launch fogros2_examples talker.launch.py
+```
 
 ### Native 
 ```bash
@@ -103,21 +105,6 @@ export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
 export CYCLONEDDS_URI=file://$(pwd)/install/share/fogros2/configs/cyclonedds.xml
 ros2 launch fogros2_examples talker.launch.py
 ```
-
-### Docker (Recommended)
-
-First, run `aws configure` and configure the AWS credentials. 
-
-Second, run the robotics applications that need to be "FogROS-ed",
-```bash
-# connect to running container
-docker run -it --rm --net=host --cap-add=NET_ADMIN fogros2
-source install/setup.bash
-export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp 
-export CYCLONEDDS_URI=file://$(pwd)/install/share/fogros2/configs/cyclonedds.xml
-ros2 launch fogros2_examples talker.launch.py
-```
-
 
 ## Run your own robotics applications 
 Step 1: Mount your robotics application to docker's folder. 
@@ -136,7 +123,7 @@ you may also `git clone` your development repo to the docker instead.
 Step 2: Write the FogROSlaunch file
 Example of launch file can be found in https://github.com/BerkeleyAutomation/FogROS2/blob/main/examples/fogros2_examples/launch/talker.launch.py. 
 
-Note a few points that are different from normal launch file: 
+Note a few points that are different from https://github.com/SimeonOA/orb_slam_2_ros/blob/fogros2/TUTORIAL.mdnormal launch file: 
 1. use `FogROSLaunchDescription` instead of `LaunchDescription` class 
 2. tag your `Node` with `to_cloud`. FogROS will only push nodes that `to_cloud=True`
 
@@ -204,6 +191,10 @@ docker run --net=host --env RMW_IMPLEMENTATION=rmw_cyclonedds_cpp --env CYCLONED
 in ros workspace. 
 
 #### To run vslam
+
+See tutorial walkthrough [here](https://github.com/SimeonOA/orb_slam_2_ros/blob/fogros2/TUTORIAL.md)
+
+Run VSLAM:
 ```
 ros2 launch fogros2_examples vslam.launch.py
 ```
@@ -219,7 +210,7 @@ ros2 launch fogros2_examples turtlesim.launch.py
 ```
 Open port 8080 on the ec2 instance's public IPv4 address from the ec2 console to access [FoxGlove Studio](https://foxglove.dev/) and open a connection to rosbridge on port 9090 of the ec2 instance's address. 
 
-<img src="https://foxglove.dev/images/blog/introducing-foxglove-studios-new-data-source-dialog/hero.png" width="50%" height="50%" />
+<img src="https://foxglove.dev/images/blog/introducing-foxglove-studios-new-data-source-dialog/hero.png"/>
 
 Select the Plot panel and the Teleop panel.
 
@@ -231,7 +222,7 @@ In the Plot panel, add /turtle1/pose.x and /turtle1/pose.y as the custom values 
 
 Use the Teleop panel to navigate the turtle around. The plot's values should change as the turtle’s position changes.
 
-<img src="https://foxglove.dev/images/blog/running-your-first-ros-node/plot.png" width="50%" height="50%" />
+<img src="https://foxglove.dev/images/blog/running-your-first-ros-node/plot.png"/>
 
 #### TODO
 we mark as a TODO item to streamline the launching process of the client docker. 
