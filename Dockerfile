@@ -1,4 +1,4 @@
-ARG DISTRO=galactic
+ARG DISTRO=rolling
 FROM ros:$DISTRO
 
 ARG DISTRO
@@ -22,14 +22,12 @@ RUN apt update && sudo apt install -y \
   libswscale-dev \
   libx264-dev \
   pkg-config \
-  ros-$DISTRO-camera-calibration-parsers \
   libavutil-dev \
   libavcodec-dev \
   libavdevice-dev \
   libavformat-dev \
   ros-$DISTRO-image-transport-plugins \
   ros-$DISTRO-cv-bridge \
-  libyaml-cpp-dev \
   ssh 
 
 RUN rm -rf /var/lib/apt/lists/*
