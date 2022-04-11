@@ -181,9 +181,13 @@ ros2 fog delete -a
 
 Here are several commands that one may find it useful when developing: 
 ```bash
-
 # starting the second terminal for fogros docker
 docker exec -it $(docker ps | grep fogros2 | awk '{print $1}') /bin/bash
+
+# source setup.bash and export environment variables in new terminals for debugging
+source install/setup.bash
+export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp 
+export CYCLONEDDS_URI=file://$(pwd)/install/share/fogros2/configs/cyclonedds.xml
 ```
 
 
@@ -208,6 +212,26 @@ and run vslam's client:
 docker run --net=host --env RMW_IMPLEMENTATION=rmw_cyclonedds_cpp --env CYCLONEDDS_URI=file:///tmp/cyclonedds.xml -v $(pwd)/install/share/fogros2/configs/cyclonedds.xml:/tmp/cyclonedds.xml --rm -it -v /home/gdpmobile7/rgbd_dataset_freiburg1_xyz:/dataset -v $(pwd)/output:/output mjd3/orbslam-ros ros2 launch orb_slam2_ros orb_slam2_d435_rgbd_client_launch.py dataset:=/dataset compress:=0
 ```
 in ros workspace. 
+
+#### To run turtlesim
+```
+ros2 launch fogros2_examples turtlesim.launch.py
+```
+Open port 8080 on the ec2 instance's public IPv4 address from the ec2 console to access [FoxGlove Studio](https://foxglove.dev/) and open a connection to rosbridge on port 9090 of the ec2 instance's address. 
+
+<img src="https://foxglove.dev/images/blog/introducing-foxglove-studios-new-data-source-dialog/hero.png" width="50%" height="50%" />
+
+Select the Plot panel and the Teleop panel.
+
+<img src="https://foxglove.dev/images/docs/studio/panels/tab.png" width="25%" height="25%" />
+
+In the Teleop panel, configure the publish topic to /turtle/cmd_vel. 
+
+In the Plot panel, add /turtle1/pose.x and /turtle1/pose.y as the custom values to plot on the x-axis and y-axis, respectively.
+
+Use the Teleop panel to navigate the turtle around. The plot's values should change as the turtle’s position changes.
+
+<img src="https://foxglove.dev/images/blog/running-your-first-ros-node/plot.png" width="50%" height="50%" />
 
 #### TODO
 we mark as a TODO item to streamline the launching process of the client docker. 
