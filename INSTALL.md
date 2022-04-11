@@ -11,7 +11,7 @@ This is quick start guide for installing FogROS 2 (and ROS 2) and its requisites
     % sudo apt upgrade
 ```
 
-3. reboot
+3. Reboot
 
 4. Get UTF-8 locale installed
 
@@ -22,7 +22,7 @@ This is quick start guide for installing FogROS 2 (and ROS 2) and its requisites
     % export LANG=en_US.UTF-8
 ```
 
-5. Setup sources for ROS 2 (https://docs.ros.org/en/galactic/Installation/Ubuntu-Install-Debians.html)
+5. Setup sources for ROS 2 (https://docs.ros.org/en/rolling/Installation/Ubuntu-Install-Debians.html)
 
 ```
     % sudo apt update
@@ -31,21 +31,21 @@ This is quick start guide for installing FogROS 2 (and ROS 2) and its requisites
     % echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(source /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
 ```
 
-6. Install ROS 2 Packages (https://docs.ros.org/en/galactic/Installation/Ubuntu-Install-Debians.html)
+6. Install ROS 2 Packages (https://docs.ros.org/en/rolling/Installation/Ubuntu-Install-Debians.html)
 
 ```
     % sudo apt update
-    % sudo apt install ros-galactic-desktop
+    % sudo apt install ros-rolling-desktop
 ```
 
 7. Add env to startup
 
 ```
-    % echo "source /opt/ros/galactic/setup.bash" >> ~/.bashrc
-    % source /opt/ros/galactic/setup.bash
+    % echo "source /opt/ros/rolling/setup.bash" >> ~/.bashrc
+    % source /opt/ros/rolling/setup.bash
 ```
 
-8. Choose and set a `ROS_DOMAIN_ID` (in range 0 to 121)
+8. Choose and set a `ROS_DOMAIN_ID` (in range 0 to 101) (https://docs.ros.org/en/rolling/Concepts/About-Domain-ID.html)
 
 ```
     % export ROS_DOMAIN_ID=99
@@ -56,22 +56,20 @@ This is quick start guide for installing FogROS 2 (and ROS 2) and its requisites
 ```
     % sudo apt install python3-colcon-common-extensions
     % sudo apt install git
-    % sudo apt install libavdevice-dev libavformat-dev libavcodec-dev libavutil-dev libswscale-dev libx264-dev ros-galactic-camera-calibration-parsers
+    % sudo apt install libavdevice-dev libavformat-dev libavcodec-dev libavutil-dev libswscale-dev libx264-dev ros-rolling-camera-calibration-parsers
 ```
 
 10. Create a workspace
 
 ```
     % mkdir -p ~/fog_ws/src
-    % cd ~/fog_ws/src
 ```
 
 11. Clone
 
 ```
     % cd ~/fog_ws/src
-    % git clone https://github.com/BerkeleyAutomation/FogROS2.git
-    % git clone https://github.com/clydemcqueen/h264_image_transport.git
+    % git clone --recurse-submodules https://github.com/BerkeleyAutomation/FogROS2.git
     % cp FogROS2/fogros2/configs/cyclonedds.xml ..
 ```
 
@@ -82,22 +80,27 @@ This is quick start guide for installing FogROS 2 (and ROS 2) and its requisites
     % colcon build --merge-install
 ```
 
-13. Install AWS CLI and setup credentials
+13. Install AWS CLI
 
 ```
     % sudo apt install awscli
+```
+
+14. Configure AWS Basic Settings. To run the next command, you need to have your security credentials, an output format and AWS Region. (https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html)
+
+```
     % aws configure
 ```
 
-14. Install additional dependencies
+15. Install additional dependencies
 
 ```
-    % apt install build-essential cmake git python3-colcon-common-extensions python3-pip python3-vcstool wget emacs-nox unzip wireguard iproute2 curl net-tools ssh
-    % apt install emacs-gtk
+    % sudo apt install build-essential cmake git python3-colcon-common-extensions python3-pip python3-vcstool wget emacs-nox unzip wireguard iproute2 curl net-tools ssh
+    % sudo apt install emacs-gtk
     % pip3 install boto3 paramiko scp wgconfig
 ```
    
-15. Run example
+16. Run basic example
 
 ```
     % cd ~/fog_ws
@@ -106,3 +109,5 @@ This is quick start guide for installing FogROS 2 (and ROS 2) and its requisites
     % export CYCLONEDDS_URI=file://$(pwd)/install/share/fogros2/configs/cyclonedds.xml
     % ros2 launch fogros2_examples talker.launch.py
 ```
+
+17. You are done. Refer to our [README](https://github.com/BerkeleyAutomation/FogROS2/blob/main/README.md) for additional information including [Command Line Interface commmands](https://github.com/BerkeleyAutomation/FogROS2#command-line-interface) and [Docker installation](https://github.com/BerkeleyAutomation/FogROS2#docker).
