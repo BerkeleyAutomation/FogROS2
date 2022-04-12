@@ -53,7 +53,7 @@ class SCP_Client:
 
     def execute_cmd(self, cmd):
         timeout = 300
-        stdin, stdout, stderr = self.ssh_client.exec_command(cmd, get_pty=True)
+        stdin, stdout, stderr = self.ssh_client.exec_command(cmd, get_pty=False)
         # for line in iter(stdout.readline, ""):
         #     print("ec2 (out): " + CRED + line + CEND, end="")
         # See https://stackoverflow.com/a/32758464
