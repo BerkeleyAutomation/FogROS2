@@ -12,6 +12,7 @@
 
 from ipaddress import ip_address
 import boto3
+import botocore
 import random
 import logging
 import threading
@@ -298,7 +299,7 @@ class AWS(CloudInstance):
             )
             self.logger.info("Ingress Successfully Set %s" % data)
             ec2_security_group_ids = [security_group_id]
-        except ClientError as e:
+        except botocore.exceptions.ClientError as e:
             self.logger.error(e)
         self.logger.warn("security group id is " + str(ec2_security_group_ids))
         self.ec2_security_group_ids = ec2_security_group_ids
