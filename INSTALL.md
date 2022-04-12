@@ -3,7 +3,7 @@ Install FogROS 2 and ROS 2 from Scratch
 
 This is quick start guide for installing FogROS 2 (and ROS 2) and its requisites from scratch (e.g., in a VM).  New contributors to the project can start here.
 
-1. Install Ubuntu 20.04
+1. Install Ubuntu 20.04 or Ubuntu 22.04
 
 2. Upgrade
 ```bash
@@ -69,7 +69,7 @@ This is quick start guide for installing FogROS 2 (and ROS 2) and its requisites
 
 ```
     % cd ~/fog_ws/src
-    % git clone --recurse-submodules https://github.com/BerkeleyAutomation/FogROS2.git
+    % git clone -b humble --recurse-submodules https://github.com/BerkeleyAutomation/FogROS2.git
     % cp FogROS2/fogros2/configs/cyclonedds.xml ..
 ```
 
@@ -99,8 +99,14 @@ This is quick start guide for installing FogROS 2 (and ROS 2) and its requisites
     % sudo apt install emacs-gtk
     % pip3 install boto3 paramiko scp wgconfig
 ```
+
+16. If using Ubuntu 22.04
+
+```
+    % sudo apt install ros-rolling-rmw-cyclonedds-cpp
+```
    
-16. Run basic example
+17. Run basic example
 
 ```
     % cd ~/fog_ws
@@ -110,4 +116,4 @@ This is quick start guide for installing FogROS 2 (and ROS 2) and its requisites
     % ros2 launch fogros2_examples talker.launch.py
 ```
 
-17. You are done. Refer to our [README](https://github.com/BerkeleyAutomation/FogROS2/blob/main/README.md) for additional information including [Command Line Interface commmands](https://github.com/BerkeleyAutomation/FogROS2#command-line-interface) and [Docker installation](https://github.com/BerkeleyAutomation/FogROS2#docker).
+18. You are done. Refer to our [README](https://github.com/BerkeleyAutomation/FogROS2/blob/main/README.md) for additional information including [Command Line Interface commmands](https://github.com/BerkeleyAutomation/FogROS2#command-line-interface) and [Docker installation](https://github.com/BerkeleyAutomation/FogROS2#docker).
