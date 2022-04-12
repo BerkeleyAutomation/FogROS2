@@ -90,37 +90,37 @@ class CloudInstance:
         return ready
 
     def install_cloud_dependencies(self):
-        self.scp.execute_cmd("sudo apt install -y wireguard unzip docker.io")
-        self.scp.execute_cmd("sudo apt install -y python3-pip")
+        self.scp.execute_cmd("sudo apt-get install -y wireguard unzip docker.io")
+        self.scp.execute_cmd("sudo apt-get install -y python3-pip")
         self.scp.execute_cmd("sudo pip3 install wgconfig boto3 paramiko scp")
         
         # image transport dependencies and H.264 deps
-        self.scp.execute_cmd("sudo apt install -y ros-rolling-image-transport ros-rolling-image-transport-plugins libswscale-dev libx264-dev libavutil-dev libavcodec-dev libavformat-dev libavdevice-dev ros-rolling-camera-calibration-parsers")
+        self.scp.execute_cmd("sudo apt-get install -y ros-rolling-image-transport ros-rolling-image-transport-plugins libswscale-dev libx264-dev libavutil-dev libavcodec-dev libavformat-dev libavdevice-dev ros-rolling-camera-calibration-parsers")
 
     def install_ros(self):
         # set locale
-        self.scp.execute_cmd("sudo apt update && sudo apt install -y locales")
+        self.scp.execute_cmd("sudo apt-get update && sudo apt-get install -y locales")
         self.scp.execute_cmd("sudo locale-gen en_US en_US.UTF-8")
         self.scp.execute_cmd("sudo update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8")
         self.scp.execute_cmd("export LANG=en_US.UTF-8")
 
         # setup sources
-        self.scp.execute_cmd("sudo apt install -y software-properties-common")
+        self.scp.execute_cmd("sudo apt-get install -y software-properties-common")
         self.scp.execute_cmd("sudo add-apt-repository universe")
-        self.scp.execute_cmd("sudo apt update && sudo apt install -y curl gnupg lsb-release")
+        self.scp.execute_cmd("sudo apt-get update && sudo apt-get install -y curl gnupg lsb-release")
         self.scp.execute_cmd("sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg")
         self.scp.execute_cmd("""echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(source /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null""")
         
         # install ros2 packages
-        self.scp.execute_cmd("sudo apt update")
-        self.scp.execute_cmd("sudo apt install -y ros-rolling-desktop")
+        self.scp.execute_cmd("sudo apt-get update")
+        self.scp.execute_cmd("sudo apt-get install -y ros-rolling-desktop")
 
         # source environment
         self.scp.execute_cmd("source /opt/ros/rolling/setup.bash")
 
     def configure_rosbridge(self):
          # install rosbridge
-        self.scp.execute_cmd("sudo apt install -y ros-rolling-rosbridge-suite")
+        self.scp.execute_cmd("sudo apt-get install -y ros-rolling-rosbridge-suite")
 
         # source ros and launch rosbridge through ssh
         subprocess.call("chmod 400 " + self.ssh_key_path, shell=True)
@@ -133,8 +133,8 @@ class CloudInstance:
         self.scp.execute_cmd("""sudo sh -c 'echo "deb [arch=amd64,arm64] http://repo.ros2.org/ubuntu/main `lsb_release -cs` main" > /etc/apt/sources.list.d/ros2-latest.list'""")
         self.scp.execute_cmd("curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo apt-key add -")
 
-        self.scp.execute_cmd("sudo apt update")
-        self.scp.execute_cmd("sudo apt install -y python3-colcon-common-extensions")
+        self.scp.execute_cmd("sudo apt-get update")
+        self.scp.execute_cmd("sudo apt-get install -y python3-colcon-common-extensions")
 
     def push_ros_workspace(self):
         # configure ROS env
