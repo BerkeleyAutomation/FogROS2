@@ -94,9 +94,6 @@ class CloudInstance:
         self.scp.execute_cmd("sudo apt-get install -y python3-pip")
         self.scp.execute_cmd("sudo pip3 install wgconfig boto3 paramiko scp")
         
-        # image transport dependencies and H.264 deps
-        self.scp.execute_cmd("sudo apt-get install -y ros-rolling-image-transport ros-rolling-image-transport-plugins libswscale-dev libx264-dev libavutil-dev libavcodec-dev libavformat-dev libavdevice-dev ros-rolling-camera-calibration-parsers")
-
     def install_ros(self):
         # set locale
         self.scp.execute_cmd("sudo apt-get update && sudo apt-get install -y locales")

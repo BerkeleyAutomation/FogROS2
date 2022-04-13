@@ -56,7 +56,6 @@ This is quick start guide for installing FogROS 2 (and ROS 2) and its requisites
 ```
     % sudo apt install python3-colcon-common-extensions
     % sudo apt install git
-    % sudo apt install libavdevice-dev libavformat-dev libavcodec-dev libavutil-dev libswscale-dev libx264-dev ros-rolling-camera-calibration-parsers
 ```
 
 10. Create a workspace

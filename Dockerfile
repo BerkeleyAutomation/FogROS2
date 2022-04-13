@@ -15,20 +15,7 @@ RUN apt update && sudo apt install -y \
   iproute2 \
   curl \
   net-tools \
-  ssh \
-  ros-galactic-image-transport \
-  libswscale-dev \
-  libx264-dev \
-  pkg-config \
-  ros-galactic-camera-calibration-parsers \
-  libavutil-dev \
-  libavcodec-dev \
-  libavdevice-dev \
-  libavformat-dev \
-  ros-galactic-image-transport-plugins \
-  ros-galactic-cv-bridge \
-  libyaml-cpp-dev \
-  ssh 
+  ssh
 
 RUN rm -rf /var/lib/apt/lists/*
  
