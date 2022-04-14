@@ -1,18 +1,16 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="2">
-  <name>launch</name>
-  <version>0.21.0</version>
-  <description>The ROS launch tool.</description>
-
-  <maintainer email="aditya.pande@openrobotics.org">Aditya Pande</maintainer>
-  <maintainer email="michel@ekumenlabs.com">Michel Hidalgo</maintainer>
-
+  <name>fogros2_launch</name>
+  <version>0.1.0</version>
+  <description>
+    ROS 2 launch system extensions for FogROS 2. Launch ROS 2 subgraphs into the cloud easily.
+  </description>
+  <maintainer email="kych@berkeley.edu">Kaiyuan (Eric) Chen</maintainer>
+  <author email="kych@berkeley.edu">Kaiyuan (Eric) Chen</author>
+  <author email="victor@accelerationrobotics.com">Víctor Mayoral-Vilches</author>
   <license>Apache License 2.0</license>
-
-  <author email="dthomas@osrfoundation.org">Dirk Thomas</author>
-  <author email="william@osrfoundation.org">William Woodall</author>
-
+  
   <depend>osrf_pycommon</depend>
 
   <exec_depend>ament_index_python</exec_depend>
