@@ -1,6 +1,6 @@
 # FogROS2
 
-[`FogROS2`](https://github.com/BerkeleyAutomation/FogROS2) extends ROS 2 for the cloud deployment of computational graphs in a security-conscious manner. It allows researchers to easily deploy ROS abstractions across cloud providers with minimal effort, security and correspondingly, securly gain access to additional computing substrates including CPU cores, GPUs, FPGAs or TPUs, as well as pre-deployed software made available by other researchers. To do so, `FogROS2` extends the ROS 2 launch system introducing additional syntax to allow roboticists to specify at launch time which components of their architecture will be deployed to the cloud and which ones on the edge.
+[`FogROS2`](https://github.com/BerkeleyAutomation/FogROS2) extends ROS 2 for cloud deployment of computational graphs in a security-conscious manner. It allows researchers to easily and securely deploy ROS abstractions across cloud providers with minimal effort, thus gaining access to additional computing substrates including CPU cores, GPUs, FPGAs, or TPUs, as well as pre-deployed software made available by other researchers. To do so, `FogROS2` extends the ROS 2 launch system, introducing additional syntax to allow roboticists to specify at launch time which components of their architecture will be deployed to the cloud and which components will be deployed on the edge.
 
 If you find this useful, please cite our work:
 
@@ -22,20 +22,21 @@ TODO:introduce citation in here before going public
   - [Command Line Interface](#command-line-interface)
   - [Developer](#developer)
   - [Running Examples:](#running-examples)
+- [NOTE: (mjd3) These should likely be moved to the examples repo](#note-mjd3-these-should-likely-be-moved-to-the-examples-repo)
       - [To run gqcnn](#to-run-gqcnn)
       - [To run vslam](#to-run-vslam)
       - [TODO](#todo)
 
 ## Install
 ### Docker (Recommended)
-Alternatively, you can simplify reproduction using OS virtualization environment with Docker:
+Alternatively, you can simplify reproduction using an OS virtualization environment with Docker:
 ```bash
-git clone --recurse-submodules https://github.com/BerkeleyAutomation/FogROS2
+git clone https://github.com/BerkeleyAutomation/FogROS2
 cd FogROS2
-docker build -t fogros2:latest .
+docker build -t fogros2 .
 ```
 
-(*Note: the Dockerfile is cooked for x86_64. If you're using a workstation with an Arm-based architecture (e.g. an M1), build the container with the `docker build --platform linux/amd64 -t fogros2:latest .`*.)
+(*Note: the Dockerfile is cooked for x86_64. If you're using a workstation with an Arm-based architecture (e.g. an M1), build the container with the `docker build --platform linux/amd64 -t fogros2 .`*.)
 
 ### Natively
 `FogROS2` is actually a ROS meta-package, so you can just fetch it in your favorite workspace, build it, source the workspace as an overlay and start using its capabilities.
@@ -72,7 +73,7 @@ sudo ./aws/install
 
 ```bash
 cd <your-ros2-workspace>/src
-git clone --recurse-submodules https://github.com/BerkeleyAutomation/FogROS2
+git clone https://github.com/BerkeleyAutomation/FogROS2
 cd ../
 colcon build --merge-install  # re-build the workspace
 source install/setup.bash
@@ -175,6 +176,7 @@ docker exec -it $(docker ps | grep fogros2 | awk '{print $1}') /bin/bash
 
 
 ## Running Examples:
+# NOTE: (mjd3) These should likely be moved to the examples repo
 
 #### To run gqcnn
 ```
