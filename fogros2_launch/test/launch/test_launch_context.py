@@ -16,21 +16,20 @@
 
 import asyncio
 
-from launch import LaunchContext
-
 import pytest
+from launch import LaunchContext
 
 
 def test_launch_context_constructors():
     """Test the constructors for LaunchContext class."""
     LaunchContext()
     LaunchContext(argv=[])
-    LaunchContext(argv=['--arg1', 'value'])
+    LaunchContext(argv=["--arg1", "value"])
 
 
 def test_launch_context_get_argv():
     """Test the getting of argv in the LaunchContext class."""
-    argv = ['a', 'b']
+    argv = ["a", "b"]
     lc = LaunchContext(argv=argv)
     assert lc.argv == argv
 
@@ -61,17 +60,17 @@ def test_launch_context_locals():
 
     assert len(lc.get_locals_as_dict()) == 0
 
-    lc.extend_locals({'foo': 1})
+    lc.extend_locals({"foo": 1})
 
-    assert 'foo' in lc.get_locals_as_dict()
-    assert lc.get_locals_as_dict()['foo'] == 1
+    assert "foo" in lc.get_locals_as_dict()
+    assert lc.get_locals_as_dict()["foo"] == 1
     assert lc.locals.foo == 1
     with pytest.raises(AttributeError):
         lc.locals.foo = 2
 
     lc._push_locals()
     assert lc.locals.foo == 1
-    lc.extend_locals({'foo': 2, 'bar': 3})
+    lc.extend_locals({"foo": 2, "bar": 3})
     assert lc.locals.foo == 2
     assert lc.locals.bar == 3
     lc._pop_locals()
@@ -89,18 +88,18 @@ def test_launch_context_launch_configurations():
 
     assert len(lc.launch_configurations) == 0
 
-    lc.launch_configurations.update({'foo': 1})
+    lc.launch_configurations.update({"foo": 1})
 
-    assert lc.launch_configurations['foo'] == 1
+    assert lc.launch_configurations["foo"] == 1
 
     lc._push_launch_configurations()
-    assert lc.launch_configurations['foo'] == 1
-    lc.launch_configurations.update({'foo': 2, 'bar': 3})
-    assert lc.launch_configurations['foo'] == 2
-    assert lc.launch_configurations['bar'] == 3
+    assert lc.launch_configurations["foo"] == 1
+    lc.launch_configurations.update({"foo": 2, "bar": 3})
+    assert lc.launch_configurations["foo"] == 2
+    assert lc.launch_configurations["bar"] == 3
     lc._pop_launch_configurations()
-    assert lc.launch_configurations['foo'] == 1
-    assert 'bar' not in lc.launch_configurations
+    assert lc.launch_configurations["foo"] == 1
+    assert "bar" not in lc.launch_configurations
 
     with pytest.raises(RuntimeError):
         lc._pop_launch_configurations()
@@ -128,7 +127,7 @@ def test_launch_context_emit_events():
     lc = LaunchContext()
 
     class MockEvent:
-        name = 'MockEvent'
+        name = "MockEvent"
 
     assert lc._event_queue.qsize() == 0
     mock_event = MockEvent()
@@ -148,5 +147,5 @@ def test_launch_context_perform_substitution():
 
     from launch.substitutions import TextSubstitution
 
-    sub = TextSubstitution(text='foo')
-    assert lc.perform_substitution(sub) == 'foo'
+    sub = TextSubstitution(text="foo")
+    assert lc.perform_substitution(sub) == "foo"

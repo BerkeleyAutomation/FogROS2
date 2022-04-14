@@ -25,14 +25,10 @@ def test_visit_all_entities_and_collect_futures_with_future():
     context = LaunchContext()
 
     class MockEntityDescriptionWithFuture(LaunchDescriptionEntity):
-
         def get_asyncio_future(self):
             return asyncio.Future()
 
-    visit_with_future_result = visit_all_entities_and_collect_futures(
-        MockEntityDescriptionWithFuture(),
-        context
-    )
+    visit_with_future_result = visit_all_entities_and_collect_futures(MockEntityDescriptionWithFuture(), context)
     assert 1 == len(visit_with_future_result)
     assert 2 == len(visit_with_future_result[0])
     assert isinstance(visit_with_future_result[0][0], LaunchDescriptionEntity)
@@ -47,10 +43,7 @@ def test_visit_all_entities_and_collect_futures_no_future():
     class MockEntityDescriptionNoFuture(LaunchDescriptionEntity):
         pass
 
-    visit_no_future_result = visit_all_entities_and_collect_futures(
-        MockEntityDescriptionNoFuture(),
-        context
-    )
+    visit_no_future_result = visit_all_entities_and_collect_futures(MockEntityDescriptionNoFuture(), context)
     assert 0 == len(visit_no_future_result)
 
 
@@ -59,7 +52,6 @@ def test_visit_all_entities_and_collect_futures_sub_entities():
     context = LaunchContext()
 
     class MockEntityDescriptionWithFuture(LaunchDescriptionEntity):
-
         def get_asyncio_future(self):
             return asyncio.Future()
 
@@ -67,7 +59,6 @@ def test_visit_all_entities_and_collect_futures_sub_entities():
         pass
 
     class MockEntityDescriptionSubEntities(LaunchDescriptionEntity):
-
         def __init__(self, recurse_count):
             self.__recurse_count = recurse_count
 
@@ -77,15 +68,14 @@ def test_visit_all_entities_and_collect_futures_sub_entities():
         def visit(self, context):
             # Recurse three times
             if self.__recurse_count < 3:
-                return [MockEntityDescriptionWithFuture(),
-                        MockEntityDescriptionNoFuture(),
-                        MockEntityDescriptionSubEntities(self.__recurse_count + 1)]
+                return [
+                    MockEntityDescriptionWithFuture(),
+                    MockEntityDescriptionNoFuture(),
+                    MockEntityDescriptionSubEntities(self.__recurse_count + 1),
+                ]
             return None
 
-    visit_sub_entities_result = visit_all_entities_and_collect_futures(
-        MockEntityDescriptionSubEntities(0),
-        context
-    )
+    visit_sub_entities_result = visit_all_entities_and_collect_futures(MockEntityDescriptionSubEntities(0), context)
     assert 7 == len(visit_sub_entities_result)
     for i in range(0, len(visit_sub_entities_result)):
         future_pair = visit_sub_entities_result[i]

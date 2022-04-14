@@ -16,26 +16,19 @@
 
 import shlex
 import threading
-from typing import Dict
-from typing import Iterable
-from typing import List
-from typing import Optional
-from typing import Text
-
-from .execute_local import ExecuteLocal
+from typing import Dict, Iterable, List, Optional, Text
 
 from ..descriptions import Executable
-from ..frontend import Entity
-from ..frontend import expose_action
-from ..frontend import Parser
+from ..frontend import Entity, Parser, expose_action
 from ..some_substitutions_type import SomeSubstitutionsType
 from ..substitutions import TextSubstitution
+from .execute_local import ExecuteLocal
 
 _global_process_counter_lock = threading.Lock()
 _global_process_counter = 0  # in Python3, this number is unbounded (no rollover)
 
 
-@expose_action('executable')
+@expose_action("executable")
 class ExecuteProcess(ExecuteLocal):
     """
     Action that begins executing a process and sets up event handlers for it.
@@ -126,15 +119,15 @@ class ExecuteProcess(ExecuteLocal):
     """
 
     def __init__(
-            self,
-            *,
-            cmd: Iterable[SomeSubstitutionsType],
-            prefix: Optional[SomeSubstitutionsType] = None,
-            name: Optional[SomeSubstitutionsType] = None,
-            cwd: Optional[SomeSubstitutionsType] = None,
-            env: Optional[Dict[SomeSubstitutionsType, SomeSubstitutionsType]] = None,
-            additional_env: Optional[Dict[SomeSubstitutionsType, SomeSubstitutionsType]] = None,
-            **kwargs
+        self,
+        *,
+        cmd: Iterable[SomeSubstitutionsType],
+        prefix: Optional[SomeSubstitutionsType] = None,
+        name: Optional[SomeSubstitutionsType] = None,
+        cwd: Optional[SomeSubstitutionsType] = None,
+        env: Optional[Dict[SomeSubstitutionsType, SomeSubstitutionsType]] = None,
+        additional_env: Optional[Dict[SomeSubstitutionsType, SomeSubstitutionsType]] = None,
+        **kwargs
     ) -> None:
         """
         Construct an ExecuteProcess action.
@@ -235,16 +228,11 @@ class ExecuteProcess(ExecuteLocal):
             Defaults to 'False'.
         :param: respawn_delay a delay time to relaunch the died process if respawn is 'True'.
         """
-        executable = Executable(cmd=cmd, prefix=prefix, name=name, cwd=cwd, env=env,
-                                additional_env=additional_env)
+        executable = Executable(cmd=cmd, prefix=prefix, name=name, cwd=cwd, env=env, additional_env=additional_env)
         super().__init__(process_description=executable, **kwargs)
 
     @classmethod
-    def _parse_cmdline(
-        cls,
-        cmd: Text,
-        parser: Parser
-    ) -> List[SomeSubstitutionsType]:
+    def _parse_cmdline(cls, cmd: Text, parser: Parser) -> List[SomeSubstitutionsType]:
         """
         Parse text apt for command line execution.
 
@@ -260,6 +248,7 @@ class ExecuteProcess(ExecuteLocal):
             nonlocal arg
             result_args.append(arg)
             arg = []
+
         for sub in parser.parse_substitution(cmd):
             if isinstance(sub, TextSubstitution):
                 tokens = shlex.split(sub.text)
@@ -301,12 +290,7 @@ class ExecuteProcess(ExecuteLocal):
         return result_args
 
     @classmethod
-    def parse(
-        cls,
-        entity: Entity,
-        parser: Parser,
-        ignore: Optional[List[str]] = None
-    ):
+    def parse(cls, entity: Entity, parser: Parser, ignore: Optional[List[str]] = None):
         """
         Return the `ExecuteProcess` action and kwargs for constructing it.
 
@@ -318,58 +302,60 @@ class ExecuteProcess(ExecuteLocal):
         if ignore is None:
             ignore = []
 
-        if 'cmd' not in ignore:
-            kwargs['cmd'] = cls._parse_cmdline(entity.get_attr('cmd'), parser)
+        if "cmd" not in ignore:
+            kwargs["cmd"] = cls._parse_cmdline(entity.get_attr("cmd"), parser)
 
-        if 'cwd' not in ignore:
-            cwd = entity.get_attr('cwd', optional=True)
+        if "cwd" not in ignore:
+            cwd = entity.get_attr("cwd", optional=True)
             if cwd is not None:
-                kwargs['cwd'] = parser.parse_substitution(cwd)
+                kwargs["cwd"] = parser.parse_substitution(cwd)
 
-        if 'name' not in ignore:
-            name = entity.get_attr('name', optional=True)
+        if "name" not in ignore:
+            name = entity.get_attr("name", optional=True)
             if name is not None:
-                kwargs['name'] = parser.parse_substitution(name)
+                kwargs["name"] = parser.parse_substitution(name)
 
-        if 'prefix' not in ignore:
-            prefix = entity.get_attr('launch-prefix', optional=True)
+        if "prefix" not in ignore:
+            prefix = entity.get_attr("launch-prefix", optional=True)
             if prefix is not None:
-                kwargs['prefix'] = parser.parse_substitution(prefix)
+                kwargs["prefix"] = parser.parse_substitution(prefix)
 
-        if 'output' not in ignore:
-            output = entity.get_attr('output', optional=True)
+        if "output" not in ignore:
+            output = entity.get_attr("output", optional=True)
             if output is not None:
-                kwargs['output'] = parser.parse_substitution(output)
+                kwargs["output"] = parser.parse_substitution(output)
 
-        if 'respawn' not in ignore:
-            respawn = entity.get_attr('respawn', data_type=bool, optional=True)
+        if "respawn" not in ignore:
+            respawn = entity.get_attr("respawn", data_type=bool, optional=True)
             if respawn is not None:
-                kwargs['respawn'] = respawn
+                kwargs["respawn"] = respawn
 
-        if 'respawn_delay' not in ignore:
-            respawn_delay = entity.get_attr('respawn_delay', data_type=float, optional=True)
+        if "respawn_delay" not in ignore:
+            respawn_delay = entity.get_attr("respawn_delay", data_type=float, optional=True)
             if respawn_delay is not None:
                 if respawn_delay < 0.0:
                     raise ValueError(
-                        'Attribute respawn_delay of Entity node expected to be '
-                        'a non-negative value but got `{}`'.format(respawn_delay)
+                        "Attribute respawn_delay of Entity node expected to be "
+                        "a non-negative value but got `{}`".format(respawn_delay)
                     )
-                kwargs['respawn_delay'] = respawn_delay
+                kwargs["respawn_delay"] = respawn_delay
 
-        if 'shell' not in ignore:
-            shell = entity.get_attr('shell', data_type=bool, optional=True)
+        if "shell" not in ignore:
+            shell = entity.get_attr("shell", data_type=bool, optional=True)
             if shell is not None:
-                kwargs['shell'] = shell
+                kwargs["shell"] = shell
 
-        if 'additional_env' not in ignore:
+        if "additional_env" not in ignore:
             # Conditions won't be allowed in the `env` tag.
             # If that feature is needed, `set_enviroment_variable` and
             # `unset_enviroment_variable` actions should be used.
-            env = entity.get_attr('env', data_type=List[Entity], optional=True)
+            env = entity.get_attr("env", data_type=List[Entity], optional=True)
             if env is not None:
-                kwargs['additional_env'] = {
-                    tuple(parser.parse_substitution(e.get_attr('name'))):
-                    parser.parse_substitution(e.get_attr('value')) for e in env
+                kwargs["additional_env"] = {
+                    tuple(parser.parse_substitution(e.get_attr("name"))): parser.parse_substitution(
+                        e.get_attr("value")
+                    )
+                    for e in env
                 }
                 for e in env:
                     e.assert_entity_completely_parsed()

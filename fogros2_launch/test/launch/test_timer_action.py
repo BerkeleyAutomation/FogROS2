@@ -27,19 +27,14 @@ def test_multiple_launch_with_timers():
     # ls.run
 
     def generate_launch_description():
-        return launch.LaunchDescription([
-
-            launch.actions.ExecuteProcess(
-                cmd=[sys.executable, '-c', 'while True: pass'],
-            ),
-
-            launch.actions.TimerAction(
-                period=1.,
-                actions=[
-                    launch.actions.Shutdown(reason='Timer expired')
-                ]
-            )
-        ])
+        return launch.LaunchDescription(
+            [
+                launch.actions.ExecuteProcess(
+                    cmd=[sys.executable, "-c", "while True: pass"],
+                ),
+                launch.actions.TimerAction(period=1.0, actions=[launch.actions.Shutdown(reason="Timer expired")]),
+            ]
+        )
 
     ls = launch.LaunchService()
     ls.include_launch_description(generate_launch_description())
@@ -53,9 +48,7 @@ def test_multiple_launch_with_timers():
 
 def _shutdown_listener_factory(reasons_arr):
     return launch.actions.RegisterEventHandler(
-        launch.event_handlers.OnShutdown(
-            on_shutdown=lambda event, context: reasons_arr.append(event)
-        )
+        launch.event_handlers.OnShutdown(on_shutdown=lambda event, context: reasons_arr.append(event))
     )
 
 
@@ -66,90 +59,64 @@ def test_timer_action_sanity_check():
     # and other launch related infrastructure works as expected
     shutdown_reasons = []
 
-    ld = launch.LaunchDescription([
-        launch.actions.ExecuteProcess(
-            cmd=[sys.executable, '-c', 'while True: pass'],
-        ),
-
-        launch.actions.TimerAction(
-            period=1.,
-            actions=[
-                launch.actions.Shutdown(reason='One second timeout')
-            ]
-        ),
-
-        _shutdown_listener_factory(shutdown_reasons),
-    ])
+    ld = launch.LaunchDescription(
+        [
+            launch.actions.ExecuteProcess(
+                cmd=[sys.executable, "-c", "while True: pass"],
+            ),
+            launch.actions.TimerAction(period=1.0, actions=[launch.actions.Shutdown(reason="One second timeout")]),
+            _shutdown_listener_factory(shutdown_reasons),
+        ]
+    )
 
     ls = launch.LaunchService()
     ls.include_launch_description(ld)
     assert 0 == ls.run()
-    assert shutdown_reasons[0].reason == 'One second timeout'
+    assert shutdown_reasons[0].reason == "One second timeout"
 
 
 def test_shutdown_preempts_timers():
     shutdown_reasons = []
 
-    ld = launch.LaunchDescription([
-
-        launch.actions.ExecuteProcess(
-            cmd=[sys.executable, '-c', 'while True: pass'],
-        ),
-
-        launch.actions.TimerAction(
-            period=1.,
-            actions=[
-                launch.actions.Shutdown(reason='fast shutdown')
-            ]
-        ),
-
-        launch.actions.TimerAction(
-            period=2.,
-            actions=[
-                launch.actions.Shutdown(reason='slow shutdown')
-            ]
-        ),
-
-        _shutdown_listener_factory(shutdown_reasons),
-    ])
+    ld = launch.LaunchDescription(
+        [
+            launch.actions.ExecuteProcess(
+                cmd=[sys.executable, "-c", "while True: pass"],
+            ),
+            launch.actions.TimerAction(period=1.0, actions=[launch.actions.Shutdown(reason="fast shutdown")]),
+            launch.actions.TimerAction(period=2.0, actions=[launch.actions.Shutdown(reason="slow shutdown")]),
+            _shutdown_listener_factory(shutdown_reasons),
+        ]
+    )
 
     ls = launch.LaunchService()
     ls.include_launch_description(ld)
     assert 0 == ls.run()
     assert len(shutdown_reasons) == 1
-    assert shutdown_reasons[0].reason == 'fast shutdown'
+    assert shutdown_reasons[0].reason == "fast shutdown"
 
 
 def test_timer_can_block_preemption():
     shutdown_reasons = []
 
-    ld = launch.LaunchDescription([
-
-        launch.actions.ExecuteProcess(
-            cmd=[sys.executable, '-c', 'while True: pass'],
-        ),
-
-        launch.actions.TimerAction(
-            period=1.,
-            actions=[
-                launch.actions.Shutdown(reason='fast shutdown')
-            ]
-        ),
-
-        launch.actions.TimerAction(
-            period=2.,
-            actions=[
-                launch.actions.Shutdown(reason='slow shutdown')
-            ],
-            cancel_on_shutdown=False  # Preempted in test_shutdown_preempts_timers, but not here
-        ),
-
-        _shutdown_listener_factory(shutdown_reasons),
-    ])
+    ld = launch.LaunchDescription(
+        [
+            launch.actions.ExecuteProcess(
+                cmd=[sys.executable, "-c", "while True: pass"],
+            ),
+            launch.actions.TimerAction(period=1.0, actions=[launch.actions.Shutdown(reason="fast shutdown")]),
+            launch.actions.TimerAction(
+                period=2.0,
+                actions=[launch.actions.Shutdown(reason="slow shutdown")],
+                cancel_on_shutdown=False,  # Preempted in test_shutdown_preempts_timers, but not here
+            ),
+            _shutdown_listener_factory(shutdown_reasons),
+        ]
+    )
 
     ls = launch.LaunchService()
     ls.include_launch_description(ld)
     assert 0 == ls.run()
     assert len(shutdown_reasons) == 2  # Should see 'shutdown' event twice because
-    assert shutdown_reasons[0].reason == 'fast shutdown'
-    assert shutdown_reasons[1].reason == 'slow shutdown'
+    assert shutdown_reasons[0].reason == "fast shutdown"
+    assert shutdown_reasons[1].reason == "slow shutdown"

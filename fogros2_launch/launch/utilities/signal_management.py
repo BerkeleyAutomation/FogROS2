@@ -15,17 +15,14 @@
 """Module for signal management functionality."""
 
 import asyncio
-from contextlib import ExitStack
 import os
 import platform
 import signal
 import socket
 import threading
-
-from typing import Callable
-from typing import Optional
+from contextlib import ExitStack
 from typing import Tuple  # noqa: F401
-from typing import Union
+from typing import Callable, Optional, Union
 
 
 class AsyncSafeSignalManager:
@@ -64,10 +61,7 @@ class AsyncSafeSignalManager:
 
     __set_wakeup_fd = signal.set_wakeup_fd  # type: Callable[[int], int]
 
-    def __init__(
-        self,
-        loop: asyncio.AbstractEventLoop
-    ):
+    def __init__(self, loop: asyncio.AbstractEventLoop):
         """
         Instantiate manager.
 
@@ -126,16 +120,14 @@ class AsyncSafeSignalManager:
             # Emulate it.
             self.__background_loop = asyncio.SelectorEventLoop()
             self.__background_loop.add_reader(
-                self.__rsock.fileno(),
-                self.__loop.call_soon_threadsafe,
-                self.__handle_signal)
+                self.__rsock.fileno(), self.__loop.call_soon_threadsafe, self.__handle_signal
+            )
 
             def run_background_loop():
                 asyncio.set_event_loop(self.__background_loop)
                 self.__background_loop.run_forever()
 
-            self.__background_thread = threading.Thread(
-                target=run_background_loop, daemon=True)
+            self.__background_thread = threading.Thread(target=run_background_loop, daemon=True)
             self.__background_thread.start()
 
     def __remove_signal_readers(self):
@@ -169,11 +161,9 @@ class AsyncSafeSignalManager:
             # Overwrite handle at the start of the managers' chain.
             def modified_set_wakeup_fd(signum):
                 if threading.current_thread() is not threading.main_thread():
-                    raise ValueError(
-                        'set_wakeup_fd only works in main'
-                        ' thread of the main interpreter'
-                    )
+                    raise ValueError("set_wakeup_fd only works in main" " thread of the main interpreter")
                 return self.__chain_wakeup_handle(signum)
+
             signal.set_wakeup_fd = modified_set_wakeup_fd
 
     def __unchain(self):
@@ -186,7 +176,7 @@ class AsyncSafeSignalManager:
         if isinstance(prev_wakeup_handle, socket.socket):
             # Detach (Windows) socket and retrieve the raw OS handle.
             prev_wakeup_handle = prev_wakeup_handle.detach()
-        if wakeup_handle != -1 and platform.system() == 'Windows':
+        if wakeup_handle != -1 and platform.system() == "Windows":
             # On Windows, os.write will fail on a WinSock handle. There is no WinSock API
             # in the standard library either. Thus we wrap it in a socket.socket instance.
             try:
@@ -234,7 +224,7 @@ class AsyncSafeSignalManager:
         signum = signal.Signals(signum)
         if handler is not None:
             if not callable(handler):
-                raise ValueError('signal handler must be a callable')
+                raise ValueError("signal handler must be a callable")
             old_handler = self.__handlers.get(signum, None)
             self.__handlers[signum] = handler
         else:

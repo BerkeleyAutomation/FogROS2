@@ -15,24 +15,22 @@
 """Module for the AppendEnvironmentVariable action."""
 
 import os
-from typing import List
-from typing import Union
+from typing import List, Union
 
 from ..action import Action
-from ..frontend import Entity
-from ..frontend import expose_action
-from ..frontend import Parser
+from ..frontend import Entity, Parser, expose_action
 from ..launch_context import LaunchContext
 from ..some_substitutions_type import SomeSubstitutionsType
 from ..substitution import Substitution
-from ..utilities import normalize_to_list_of_substitutions
-from ..utilities import perform_substitutions
-from ..utilities.type_utils import normalize_typed_substitution
-from ..utilities.type_utils import NormalizedValueType
-from ..utilities.type_utils import perform_typed_substitution
+from ..utilities import normalize_to_list_of_substitutions, perform_substitutions
+from ..utilities.type_utils import (
+    NormalizedValueType,
+    normalize_typed_substitution,
+    perform_typed_substitution,
+)
 
 
-@expose_action('append_env')
+@expose_action("append_env")
 class AppendEnvironmentVariable(Action):
     """
     Action that appends to an environment variable if it exists and sets it if it does not.
@@ -75,14 +73,14 @@ class AppendEnvironmentVariable(Action):
     ):
         """Parse an 'append_env' entity."""
         _, kwargs = super().parse(entity, parser)
-        kwargs['name'] = parser.parse_substitution(entity.get_attr('name'))
-        kwargs['value'] = parser.parse_substitution(entity.get_attr('value'))
-        prepend = entity.get_attr('prepend', optional=True, data_type=bool, can_be_str=True)
+        kwargs["name"] = parser.parse_substitution(entity.get_attr("name"))
+        kwargs["value"] = parser.parse_substitution(entity.get_attr("value"))
+        prepend = entity.get_attr("prepend", optional=True, data_type=bool, can_be_str=True)
         if prepend is not None:
-            kwargs['prepend'] = parser.parse_if_substitutions(prepend)
-        separator = entity.get_attr('separator', optional=True)
+            kwargs["prepend"] = parser.parse_if_substitutions(prepend)
+        separator = entity.get_attr("separator", optional=True)
         if separator is not None:
-            kwargs['separator'] = parser.parse_substitution(separator)
+            kwargs["separator"] = parser.parse_substitution(separator)
         return cls, kwargs
 
     @property
@@ -112,10 +110,9 @@ class AppendEnvironmentVariable(Action):
         prepend = perform_typed_substitution(context, self.prepend, bool)
         separator = perform_substitutions(context, self.separator)
         if name in os.environ:
-            os.environ[name] = \
-                os.environ[name] + separator + value \
-                if not prepend \
-                else value + separator + os.environ[name]
+            os.environ[name] = (
+                os.environ[name] + separator + value if not prepend else value + separator + os.environ[name]
+            )
         else:
             os.environ[name] = value
         return None

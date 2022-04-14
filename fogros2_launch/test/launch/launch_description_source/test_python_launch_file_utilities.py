@@ -17,32 +17,32 @@
 import os
 import sys
 
-from launch.launch_description_sources import get_launch_description_from_python_launch_file
-from launch.launch_description_sources import InvalidPythonLaunchFileError
-from launch.launch_description_sources import load_python_launch_file_as_module
-
 import pytest
+from launch.launch_description_sources import (
+    InvalidPythonLaunchFileError,
+    get_launch_description_from_python_launch_file,
+    load_python_launch_file_as_module,
+)
 
 
 def test_load_python_launch_file_as_module():
     """Test load_python_launch_file_as_module()."""
     this_dir = os.path.dirname(os.path.abspath(__file__))
-    module = load_python_launch_file_as_module(os.path.join(this_dir, 'loadable_python_module.py'))
+    module = load_python_launch_file_as_module(os.path.join(this_dir, "loadable_python_module.py"))
     assert sys.executable == module.some_function()
 
     with pytest.raises(FileNotFoundError):
-        module = load_python_launch_file_as_module('does_not_exist')
+        module = load_python_launch_file_as_module("does_not_exist")
 
 
 def test_get_launch_description_from_python_launch_file():
     """Test get_launch_description_from_python_launch_file()."""
     this_dir = os.path.dirname(os.path.abspath(__file__))
-    ld = get_launch_description_from_python_launch_file(os.path.join(this_dir, 'simple.launch.py'))
+    ld = get_launch_description_from_python_launch_file(os.path.join(this_dir, "simple.launch.py"))
     assert 0 == len(ld.entities)
 
     with pytest.raises(InvalidPythonLaunchFileError):
-        ld = get_launch_description_from_python_launch_file(
-            os.path.join(this_dir, 'loadable_python_module.py'))
+        ld = get_launch_description_from_python_launch_file(os.path.join(this_dir, "loadable_python_module.py"))
 
     with pytest.raises(FileNotFoundError):
-        ld = get_launch_description_from_python_launch_file('does_not_exist')
+        ld = get_launch_description_from_python_launch_file("does_not_exist")

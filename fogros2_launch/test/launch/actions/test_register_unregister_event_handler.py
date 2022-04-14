@@ -14,13 +14,9 @@
 
 """Tests for the RegisterEventHandler and UnregisterEventHandler action classes."""
 
-from launch import Action
-from launch import EventHandler
-from launch import LaunchContext
-from launch.actions import RegisterEventHandler
-from launch.actions import UnregisterEventHandler
-
 import pytest
+from launch import Action, EventHandler, LaunchContext
+from launch.actions import RegisterEventHandler, UnregisterEventHandler
 
 
 def test_register_event_handler_constructor():
@@ -63,10 +59,7 @@ def test_register_event_handler_description():
     """Test that describe_sub_entities and describe_conditional_sub_entities methods behave."""
     action = Action()
     action2 = Action()  # Sanity Check - not part of the event handler
-    event_handler = EventHandler(
-        matcher=lambda: True,
-        entities=[action]
-    )
+    event_handler = EventHandler(matcher=lambda: True, entities=[action])
     action_under_test = RegisterEventHandler(event_handler)
     assert action_under_test.describe_sub_entities() == []
 

@@ -15,16 +15,14 @@
 """Module for the LaunchDescriptionSource class."""
 
 import traceback
-from typing import Optional
-from typing import Text
+from typing import Optional, Text
 
 import launch.logging
 
 from .launch_context import LaunchContext
 from .launch_description import LaunchDescription
 from .some_substitutions_type import SomeSubstitutionsType
-from .utilities import normalize_to_list_of_substitutions
-from .utilities import perform_substitutions
+from .utilities import normalize_to_list_of_substitutions, perform_substitutions
 
 
 class LaunchDescriptionSource:
@@ -33,8 +31,8 @@ class LaunchDescriptionSource:
     def __init__(
         self,
         launch_description: Optional[LaunchDescription] = None,
-        location: SomeSubstitutionsType = '<string>',
-        method: str = 'unspecified mechanism from a script',
+        location: SomeSubstitutionsType = "<string>",
+        method: str = "unspecified mechanism from a script",
     ) -> None:
         """
         Create a LaunchDescriptionSource.
@@ -64,32 +62,28 @@ class LaunchDescriptionSource:
             # Try to expand the launch file path and load the launch file with a local context.
             try:
                 context = LaunchContext()
-                expanded_location = \
-                    perform_substitutions(context, self.__location)
+                expanded_location = perform_substitutions(context, self.__location)
                 return self._get_launch_description(expanded_location)
             except Exception as exc:
                 self.__logger.debug(traceback.format_exc())
                 self.__logger.debug(
-                    'Failed to load the launch file without a context: ' + str(exc),
+                    "Failed to load the launch file without a context: " + str(exc),
                 )
         return self.__launch_description
 
     def get_launch_description(self, context: LaunchContext) -> LaunchDescription:
         """Get the LaunchDescription, loading it if necessary."""
         if self.__expanded_location is None:
-            self.__expanded_location = \
-                perform_substitutions(context, self.__location)
+            self.__expanded_location = perform_substitutions(context, self.__location)
         if self.__launch_description is None:
-            self.__launch_description = \
-                self._get_launch_description(self.__expanded_location)
+            self.__launch_description = self._get_launch_description(self.__expanded_location)
         return self.__launch_description
 
     def _get_launch_description(self, location):
         """Get the LaunchDescription from location."""
         if self.__launch_description is None:
             raise RuntimeError(
-                'LaunchDescriptionSource.get_launch_description(): '
-                'called without launch description being set'
+                "LaunchDescriptionSource.get_launch_description(): " "called without launch description being set"
             )
 
     @property
@@ -103,7 +97,7 @@ class LaunchDescriptionSource:
         """
         if self.__expanded_location is None:
             # get_launch_description() has not been called yet
-            return ' + '.join([str(sub) for sub in self.__location])
+            return " + ".join([str(sub) for sub in self.__location])
         return self.__expanded_location
 
     @property

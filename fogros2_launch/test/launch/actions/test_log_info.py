@@ -21,27 +21,27 @@ from launch.utilities import perform_substitutions
 
 def test_log_info_constructors():
     """Test the constructors for LogInfo class."""
-    LogInfo(msg='')
-    LogInfo(msg='foo')
-    LogInfo(msg=['foo', 'bar', 'baz'])
+    LogInfo(msg="")
+    LogInfo(msg="foo")
+    LogInfo(msg=["foo", "bar", "baz"])
 
 
 def test_log_info_methods():
     """Test the methods of the LogInfo class."""
     launch_context = LaunchContext()
 
-    log_info = LogInfo(msg='')
-    assert perform_substitutions(launch_context, log_info.msg) == ''
+    log_info = LogInfo(msg="")
+    assert perform_substitutions(launch_context, log_info.msg) == ""
 
-    log_info = LogInfo(msg='foo')
-    assert perform_substitutions(launch_context, log_info.msg) == 'foo'
+    log_info = LogInfo(msg="foo")
+    assert perform_substitutions(launch_context, log_info.msg) == "foo"
 
-    log_info = LogInfo(msg=['foo', 'bar', 'baz'])
-    assert perform_substitutions(launch_context, log_info.msg) == 'foobarbaz'
+    log_info = LogInfo(msg=["foo", "bar", "baz"])
+    assert perform_substitutions(launch_context, log_info.msg) == "foobarbaz"
 
 
 def test_log_info_execute():
     """Test the execute (or visit) of the LogInfo class."""
-    log_info = LogInfo(msg='foo')
+    log_info = LogInfo(msg="foo")
     launch_context = LaunchContext()
     assert log_info.visit(launch_context) is None

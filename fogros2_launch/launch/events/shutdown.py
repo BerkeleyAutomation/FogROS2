@@ -22,9 +22,9 @@ from ..event import Event
 class Shutdown(Event):
     """Event that is emitted on shutdown of a launched system."""
 
-    name = 'launch.events.Shutdown'
+    name = "launch.events.Shutdown"
 
-    def __init__(self, *, reason: Text = 'reason not given', due_to_sigint: bool = False) -> None:
+    def __init__(self, *, reason: Text = "reason not given", due_to_sigint: bool = False) -> None:
         """Create a Shutdown event."""
         self.__reason = reason
         self.__due_to_sigint = due_to_sigint

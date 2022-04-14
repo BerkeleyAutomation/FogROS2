@@ -23,7 +23,7 @@ def test_reset_launch_configurations_constructors():
     """Test the constructors for ResetLaunchConfigurations class."""
     ResetLaunchConfigurations()
     ResetLaunchConfigurations({})
-    ResetLaunchConfigurations({'foo': 'FOO', 'bar': 'BAR'})
+    ResetLaunchConfigurations({"foo": "FOO", "bar": "BAR"})
 
 
 def test_reset_launch_configurations_execute():
@@ -32,8 +32,8 @@ def test_reset_launch_configurations_execute():
     # launch_configurations
     lc1 = LaunchContext()
     assert len(lc1.launch_configurations) == 0
-    lc1.launch_configurations['foo'] = 'FOO'
-    lc1.launch_configurations['bar'] = 'BAR'
+    lc1.launch_configurations["foo"] = "FOO"
+    lc1.launch_configurations["bar"] = "BAR"
     assert len(lc1.launch_configurations) == 2
     ResetLaunchConfigurations().visit(lc1)
     assert len(lc1.launch_configurations) == 0
@@ -42,8 +42,8 @@ def test_reset_launch_configurations_execute():
     # launch_configurations = None
     lc2 = LaunchContext()
     assert len(lc2.launch_configurations) == 0
-    lc2.launch_configurations['foo'] = 'FOO'
-    lc2.launch_configurations['bar'] = 'BAR'
+    lc2.launch_configurations["foo"] = "FOO"
+    lc2.launch_configurations["bar"] = "BAR"
     assert len(lc2.launch_configurations) == 2
     ResetLaunchConfigurations(launch_configurations=None).visit(lc2)
     assert len(lc2.launch_configurations) == 0
@@ -52,8 +52,8 @@ def test_reset_launch_configurations_execute():
     # launch_configurations = {}
     lc3 = LaunchContext()
     assert len(lc3.launch_configurations) == 0
-    lc3.launch_configurations['foo'] = 'FOO'
-    lc3.launch_configurations['bar'] = 'BAR'
+    lc3.launch_configurations["foo"] = "FOO"
+    lc3.launch_configurations["bar"] = "BAR"
     assert len(lc3.launch_configurations) == 2
     ResetLaunchConfigurations(launch_configurations={}).visit(lc3)
     assert len(lc3.launch_configurations) == 0
@@ -61,33 +61,33 @@ def test_reset_launch_configurations_execute():
     # Pass through an existing launch configuration
     lc4 = LaunchContext()
     assert len(lc4.launch_configurations) == 0
-    lc4.launch_configurations['foo'] = 'FOO'
-    lc4.launch_configurations['bar'] = 'BAR'
+    lc4.launch_configurations["foo"] = "FOO"
+    lc4.launch_configurations["bar"] = "BAR"
     assert len(lc4.launch_configurations) == 2
-    ResetLaunchConfigurations(launch_configurations={'foo': LaunchConfiguration('foo')}).visit(lc4)
+    ResetLaunchConfigurations(launch_configurations={"foo": LaunchConfiguration("foo")}).visit(lc4)
     assert len(lc4.launch_configurations) == 1
-    assert lc4.launch_configurations['foo'] == 'FOO'
-    assert 'bar' not in lc4.launch_configurations.keys()
+    assert lc4.launch_configurations["foo"] == "FOO"
+    assert "bar" not in lc4.launch_configurations.keys()
 
     # Add a launch configuration that did not exist
     lc5 = LaunchContext()
     assert len(lc5.launch_configurations) == 0
-    lc5.launch_configurations['foo'] = 'FOO'
-    lc5.launch_configurations['bar'] = 'BAR'
+    lc5.launch_configurations["foo"] = "FOO"
+    lc5.launch_configurations["bar"] = "BAR"
     assert len(lc5.launch_configurations) == 2
-    ResetLaunchConfigurations(launch_configurations={'baz': 'BAZ'}).visit(lc5)
+    ResetLaunchConfigurations(launch_configurations={"baz": "BAZ"}).visit(lc5)
     assert len(lc5.launch_configurations) == 1
-    assert lc5.launch_configurations['baz'] == 'BAZ'
-    assert 'foo' not in lc5.launch_configurations.keys()
-    assert 'bar' not in lc5.launch_configurations.keys()
+    assert lc5.launch_configurations["baz"] == "BAZ"
+    assert "foo" not in lc5.launch_configurations.keys()
+    assert "bar" not in lc5.launch_configurations.keys()
 
     # Overwrite an existing launch configuration
     lc6 = LaunchContext()
     assert len(lc6.launch_configurations) == 0
-    lc6.launch_configurations['foo'] = 'FOO'
-    lc6.launch_configurations['bar'] = 'BAR'
+    lc6.launch_configurations["foo"] = "FOO"
+    lc6.launch_configurations["bar"] = "BAR"
     assert len(lc6.launch_configurations) == 2
-    ResetLaunchConfigurations(launch_configurations={'foo': 'OOF'}).visit(lc6)
+    ResetLaunchConfigurations(launch_configurations={"foo": "OOF"}).visit(lc6)
     assert len(lc6.launch_configurations) == 1
-    assert lc6.launch_configurations['foo'] == 'OOF'
-    assert 'bar' not in lc6.launch_configurations.keys()
+    assert lc6.launch_configurations["foo"] == "OOF"
+    assert "bar" not in lc6.launch_configurations.keys()

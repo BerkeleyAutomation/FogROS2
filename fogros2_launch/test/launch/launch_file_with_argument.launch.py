@@ -14,15 +14,14 @@
 
 """Fixture for tests."""
 
-from launch import LaunchDescription
 import launch.actions
+from launch import LaunchDescription
 
 
 def generate_launch_description():
     """Fixture for tests."""
-    return LaunchDescription([
-        launch.actions.DeclareLaunchArgument(
-            'example',
-            default_value='example',
-            description='example argument'),
-    ])
+    return LaunchDescription(
+        [
+            launch.actions.DeclareLaunchArgument("example", default_value="example", description="example argument"),
+        ]
+    )

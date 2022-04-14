@@ -16,14 +16,13 @@
 
 from typing import List
 
-from .invalid_condition_expression_error import InvalidConditionExpressionError
 from ..launch_context import LaunchContext
 from ..substitution import Substitution
 from ..utilities import perform_substitutions
+from .invalid_condition_expression_error import InvalidConditionExpressionError
 
-
-VALID_TRUE_EXPRESSIONS = ['true', '1']
-VALID_FALSE_EXPRESSIONS = ['false', '0']
+VALID_TRUE_EXPRESSIONS = ["true", "1"]
+VALID_FALSE_EXPRESSIONS = ["false", "0"]
 
 
 def evaluate_condition_expression(context: LaunchContext, expression: List[Substitution]) -> bool:
@@ -40,9 +39,9 @@ def evaluate_condition_expression(context: LaunchContext, expression: List[Subst
     """
     expanded_expression = perform_substitutions(context, expression)
     expanded_expression = expanded_expression.strip().lower()
-    if expanded_expression in ['true', '1']:
+    if expanded_expression in ["true", "1"]:
         return True
-    if expanded_expression in ['false', '0']:
+    if expanded_expression in ["false", "0"]:
         return False
     valid_expressions = VALID_TRUE_EXPRESSIONS + VALID_FALSE_EXPRESSIONS
     raise InvalidConditionExpressionError(expanded_expression, expression, valid_expressions)

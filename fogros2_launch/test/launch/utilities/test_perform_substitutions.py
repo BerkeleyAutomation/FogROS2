@@ -14,10 +14,9 @@
 
 """Tests for the perform_substitutions() function."""
 
+import pytest
 from launch import LaunchContext, Substitution
 from launch.utilities import perform_substitutions
-
-import pytest
 
 
 def test_valid_substitutions():
@@ -25,15 +24,14 @@ def test_valid_substitutions():
     context = LaunchContext()
 
     class MockSubstitution(Substitution):
-
         def perform(self, context):
-            return 'Mock substitution'
+            return "Mock substitution"
 
     mock_sub = MockSubstitution()
     sub_mock_sub = perform_substitutions(context, [mock_sub])
-    assert 'Mock substitution' == sub_mock_sub
+    assert "Mock substitution" == sub_mock_sub
     sub_mock_sub_multi = perform_substitutions(context, [mock_sub, mock_sub, mock_sub])
-    assert 'Mock substitutionMock substitutionMock substitution' == sub_mock_sub_multi
+    assert "Mock substitutionMock substitutionMock substitution" == sub_mock_sub_multi
 
 
 def test_invalid_substitutions():
@@ -41,9 +39,8 @@ def test_invalid_substitutions():
     context = LaunchContext()
 
     class MockSubstitution(Substitution):
-
         def perform(self, context):
-            return 'Mock substitution'
+            return "Mock substitution"
 
     mock_sub = MockSubstitution()
     with pytest.raises(TypeError):
@@ -54,7 +51,7 @@ def test_invalid_substitutions():
     with pytest.raises(TypeError):
         perform_substitutions(context, 1)
     with pytest.raises(AttributeError):
-        perform_substitutions(context, 'foo')
+        perform_substitutions(context, "foo")
     with pytest.raises(AttributeError):
         perform_substitutions(context, [1.4142, mock_sub])
     with pytest.raises(AttributeError):

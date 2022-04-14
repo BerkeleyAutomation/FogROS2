@@ -21,19 +21,14 @@ import os
 import re
 import shlex
 import threading
-from typing import Dict
-from typing import Iterable
-from typing import List
-from typing import Optional
-from typing import Tuple
+from typing import Dict, Iterable, List, Optional, Tuple
 
 from ..action import Action
 from ..launch_context import LaunchContext
 from ..some_substitutions_type import SomeSubstitutionsType
 from ..substitution import Substitution
 from ..substitutions import LaunchConfiguration
-from ..utilities import normalize_to_list_of_substitutions
-from ..utilities import perform_substitutions
+from ..utilities import normalize_to_list_of_substitutions, perform_substitutions
 
 _executable_process_counter_lock = threading.Lock()
 _executable_process_counter = 0  # in Python3, this number is unbounded (no rollover)
@@ -43,7 +38,8 @@ class Executable:
     """Describes an executable (usually a single process) which may be run by the launch system."""
 
     def __init__(
-        self, *,
+        self,
+        *,
         cmd: Iterable[SomeSubstitutionsType],
         prefix: Optional[SomeSubstitutionsType] = None,
         name: Optional[SomeSubstitutionsType] = None,
@@ -75,30 +71,29 @@ class Executable:
         :param arguments: list of extra arguments for the executable
         """
         self.__cmd = [normalize_to_list_of_substitutions(x) for x in cmd]
-        self.__cmd += ([] if arguments is None
-                       else [normalize_to_list_of_substitutions(x) for x in arguments])
+        self.__cmd += [] if arguments is None else [normalize_to_list_of_substitutions(x) for x in arguments]
         self.__prefix = normalize_to_list_of_substitutions(
-            LaunchConfiguration('launch-prefix', default='') if prefix is None else prefix
+            LaunchConfiguration("launch-prefix", default="") if prefix is None else prefix
         )
-        self.__prefix_filter = normalize_to_list_of_substitutions(
-            LaunchConfiguration('launch-prefix-filter', default='')
-        ) if prefix is None else None
+        self.__prefix_filter = (
+            normalize_to_list_of_substitutions(LaunchConfiguration("launch-prefix-filter", default=""))
+            if prefix is None
+            else None
+        )
         self.__name = name if name is None else normalize_to_list_of_substitutions(name)
         self.__cwd = cwd if cwd is None else normalize_to_list_of_substitutions(cwd)
         self.__env = None  # type: Optional[List[Tuple[List[Substitution], List[Substitution]]]]
         if env is not None:
             self.__env = []
             for key, value in env.items():
-                self.__env.append((
-                    normalize_to_list_of_substitutions(key),
-                    normalize_to_list_of_substitutions(value)))
+                self.__env.append((normalize_to_list_of_substitutions(key), normalize_to_list_of_substitutions(value)))
         self.__additional_env: Optional[List[Tuple[List[Substitution], List[Substitution]]]] = None
         if additional_env is not None:
             self.__additional_env = []
             for key, value in additional_env.items():
-                self.__additional_env.append((
-                    normalize_to_list_of_substitutions(key),
-                    normalize_to_list_of_substitutions(value)))
+                self.__additional_env.append(
+                    (normalize_to_list_of_substitutions(key), normalize_to_list_of_substitutions(value))
+                )
         self.__arguments = arguments
         self.__final_cmd = None
         self.__final_cwd = None
@@ -181,26 +176,27 @@ class Executable:
         if should_apply_prefix:
             cmd = shlex.split(perform_substitutions(context, self.__prefix)) + cmd
         self.__final_cmd = cmd
-        name = os.path.basename(cmd[0]) if self.__name is None \
-            else perform_substitutions(context, self.__name)
+        name = os.path.basename(cmd[0]) if self.__name is None else perform_substitutions(context, self.__name)
         with _executable_process_counter_lock:
             global _executable_process_counter
             _executable_process_counter += 1
-            self.__final_name = f'{name}-{_executable_process_counter}'
+            self.__final_name = f"{name}-{_executable_process_counter}"
         cwd = None
         if self.__cwd is not None:
-            cwd = ''.join([context.perform_substitution(x) for x in self.__cwd])
+            cwd = "".join([context.perform_substitution(x) for x in self.__cwd])
         self.__final_cwd = cwd
         env = None
         if self.__env is not None:
             env = {}
             for key, value in self.__env:
-                env[''.join([context.perform_substitution(x) for x in key])] = \
-                    ''.join([context.perform_substitution(x) for x in value])
+                env["".join([context.perform_substitution(x) for x in key])] = "".join(
+                    [context.perform_substitution(x) for x in value]
+                )
         if self.__additional_env is not None:
             if env is None:
                 env = dict(os.environ)
             for key, value in self.__additional_env:
-                env[''.join([context.perform_substitution(x) for x in key])] = \
-                    ''.join([context.perform_substitution(x) for x in value])
+                env["".join([context.perform_substitution(x) for x in key])] = "".join(
+                    [context.perform_substitution(x) for x in value]
+                )
         self.__final_env = env

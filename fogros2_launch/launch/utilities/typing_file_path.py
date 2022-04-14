@@ -16,4 +16,4 @@ import os
 import typing
 
 # Type of a filesystem path
-FilePath = typing.TypeVar('FilePath', str, bytes, os.PathLike)
+FilePath = typing.TypeVar("FilePath", str, bytes, os.PathLike)

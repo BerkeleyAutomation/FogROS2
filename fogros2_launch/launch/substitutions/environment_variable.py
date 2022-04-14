@@ -15,19 +15,16 @@
 """Module for the EnvironmentVariable substitution."""
 
 import os
-from typing import Iterable
-from typing import List
-from typing import Optional
-from typing import Text
+from typing import Iterable, List, Optional, Text
 
-from .substitution_failure import SubstitutionFailure
 from ..frontend.expose import expose_substitution
 from ..launch_context import LaunchContext
 from ..some_substitutions_type import SomeSubstitutionsType
 from ..substitution import Substitution
+from .substitution_failure import SubstitutionFailure
 
 
-@expose_substitution('env')
+@expose_substitution("env")
 class EnvironmentVariable(Substitution):
     """
     Substitution that gets an environment variable value as a string.
@@ -39,12 +36,7 @@ class EnvironmentVariable(Substitution):
     different set of environment variables.
     """
 
-    def __init__(
-        self,
-        name: SomeSubstitutionsType,
-        *,
-        default_value: Optional[SomeSubstitutionsType] = None
-    ) -> None:
+    def __init__(self, name: SomeSubstitutionsType, *, default_value: Optional[SomeSubstitutionsType] = None) -> None:
         """
         Construct an enviroment variable substitution.
 
@@ -56,7 +48,10 @@ class EnvironmentVariable(Substitution):
         """
         super().__init__()
 
-        from ..utilities import normalize_to_list_of_substitutions  # import here to avoid loop
+        from ..utilities import (
+            normalize_to_list_of_substitutions,  # import here to avoid loop
+        )
+
         self.__name = normalize_to_list_of_substitutions(name)
         if default_value is not None:
             default_value = normalize_to_list_of_substitutions(default_value)
@@ -66,10 +61,10 @@ class EnvironmentVariable(Substitution):
     def parse(cls, data: Iterable[SomeSubstitutionsType]):
         """Parse `EnviromentVariable` substitution."""
         if len(data) < 1 or len(data) > 2:
-            raise TypeError('env substitution expects 1 or 2 arguments')
-        kwargs = {'name': data[0]}
+            raise TypeError("env substitution expects 1 or 2 arguments")
+        kwargs = {"name": data[0]}
         if len(data) == 2:
-            kwargs['default_value'] = data[1]
+            kwargs["default_value"] = data[1]
         return cls, kwargs
 
     @property
@@ -84,21 +79,17 @@ class EnvironmentVariable(Substitution):
 
     def describe(self) -> Text:
         """Return a description of this substitution as a string."""
-        return 'EnvVar({})'.format(' + '.join([sub.describe() for sub in self.name]))
+        return "EnvVar({})".format(" + ".join([sub.describe() for sub in self.name]))
 
     def perform(self, context: LaunchContext) -> Text:
         """Perform the substitution by looking up the environment variable."""
         from ..utilities import perform_substitutions  # import here to avoid loop
+
         default_value = self.default_value
         if default_value is not None:
             default_value = perform_substitutions(context, self.default_value)
         name = perform_substitutions(context, self.name)
-        value = os.environ.get(
-            name,
-            default_value
-        )
+        value = os.environ.get(name, default_value)
         if value is None:
-            raise SubstitutionFailure(
-                "environment variable '{}' does not exist".format(name)
-            )
+            raise SubstitutionFailure("environment variable '{}' does not exist".format(name))
         return value

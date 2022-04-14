@@ -17,14 +17,13 @@ import launch
 import launch.actions
 import launch.conditions
 import launch.substitutions
-
 import pytest
 
 
 @pytest.fixture(autouse=True)
 def add_imports_to_doctest_namespace(doctest_namespace):
-    doctest_namespace['launch'] = launch
-    doctest_namespace['LaunchDescription'] = launch.LaunchDescription
+    doctest_namespace["launch"] = launch
+    doctest_namespace["LaunchDescription"] = launch.LaunchDescription
     for subpackage in (
         launch.actions,
         launch.conditions,

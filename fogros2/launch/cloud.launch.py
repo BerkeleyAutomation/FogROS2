@@ -10,8 +10,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from launch import LaunchDescription
 import pickle
+
+from launch import LaunchDescription
 
 
 def generate_launch_description():

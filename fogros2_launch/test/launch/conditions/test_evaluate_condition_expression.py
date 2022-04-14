@@ -14,37 +14,38 @@
 
 """Tests for the evaluate_condition_expression utility function."""
 
-from launch.conditions import evaluate_condition_expression
-from launch.conditions import InvalidConditionExpressionError
-from launch.substitutions import TextSubstitution
-
 import pytest
+from launch.conditions import (
+    InvalidConditionExpressionError,
+    evaluate_condition_expression,
+)
+from launch.substitutions import TextSubstitution
 
 
 def test_evaluate_condition_expression():
     """Test common use cases for evaluate_condition_expression()."""
-    class MockLaunchContext:
 
+    class MockLaunchContext:
         def perform_substitution(self, substitution):
             return substitution.perform(self)
 
     lc = MockLaunchContext()
     test_cases = [
-        ('true', True),
-        ('True', True),
-        ('TRUE', True),
-        ('1', True),
-        ('false', False),
-        ('False', False),
-        ('FALSE', False),
-        ('0', False),
+        ("true", True),
+        ("True", True),
+        ("TRUE", True),
+        ("1", True),
+        ("false", False),
+        ("False", False),
+        ("FALSE", False),
+        ("0", False),
     ]
 
     for string, expected in test_cases:
         assert evaluate_condition_expression(lc, [TextSubstitution(text=string)]) is expected
 
     with pytest.raises(InvalidConditionExpressionError):
-        evaluate_condition_expression(lc, [TextSubstitution(text='')])
+        evaluate_condition_expression(lc, [TextSubstitution(text="")])
 
     with pytest.raises(InvalidConditionExpressionError):
-        evaluate_condition_expression(lc, [TextSubstitution(text='typo')])
+        evaluate_condition_expression(lc, [TextSubstitution(text="typo")])

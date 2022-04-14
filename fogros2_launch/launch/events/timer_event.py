@@ -25,9 +25,9 @@ if TYPE_CHECKING:
 class TimerEvent(Event):
     """Event that fires when a TimerAction's period expires."""
 
-    name = 'launch.events.TimerEvent'
+    name = "launch.events.TimerEvent"
 
-    def __init__(self, *, timer_action: 'TimerAction') -> None:
+    def __init__(self, *, timer_action: "TimerAction") -> None:
         """Create a TimerEvent."""
         self.__timer_action = timer_action
 

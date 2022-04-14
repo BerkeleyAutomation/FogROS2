@@ -14,12 +14,7 @@
 
 """Module for LaunchDescription class."""
 
-from typing import Iterable
-from typing import List
-from typing import Optional
-from typing import Text
-from typing import Tuple
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Iterable, List, Optional, Text, Tuple
 
 import launch.logging
 
@@ -28,20 +23,18 @@ from .actions import DeclareLaunchArgument
 from .launch_context import LaunchContext
 from .launch_description_entity import LaunchDescriptionEntity
 
-
 if TYPE_CHECKING:
     from .actions.include_launch_description import IncludeLaunchDescription  # noqa: F401
 
+import os
 import pickle
 import socket
 from collections import defaultdict
-from time import sleep
 from threading import Thread
-
+from time import sleep
 
 import wgconfig
 import wgconfig.wgexec as wgexec
-import os
 
 
 class VPN:
@@ -59,7 +52,6 @@ class VPN:
         self.robot_private_key = wgexec.generate_privatekey()
         self.robot_public_key = wgexec.get_publickey(self.robot_private_key)
 
-
     def generate_key_pairs(self, machines):
         """
         @param machines: List<machine>
@@ -69,13 +61,13 @@ class VPN:
             cloud_private_key = wgexec.generate_privatekey()
             self.cloud_name_to_priv_key_path[name] = cloud_private_key
             cloud_public_key = wgexec.get_publickey(cloud_private_key)
-            self.cloud_name_to_pub_key_path[name] =cloud_public_key
+            self.cloud_name_to_pub_key_path[name] = cloud_public_key
 
     def generate_wg_config_files(self, machines):
         self.generate_key_pairs(machines)
 
         # generate cloud configs
-        counter = 2 # start the static ip addr counter from 2
+        counter = 2  # start the static ip addr counter from 2
         for machine in machines:
             name = machine.get_name()
             machine_config_pwd = self.cloud_key_path + name
@@ -83,7 +75,7 @@ class VPN:
             aws_config = wgconfig.WGConfig(machine_config_pwd)
             aws_config.add_attr(None, "PrivateKey", machine_priv_key)
             aws_config.add_attr(None, "ListenPort", 51820)
-            aws_config.add_attr(None, "Address", "10.0.0." + str(counter) +"/24")
+            aws_config.add_attr(None, "Address", "10.0.0." + str(counter) + "/24")
             aws_config.add_peer(self.robot_public_key, "# fogROS Robot")
             aws_config.add_attr(self.robot_public_key, "AllowedIPs", "10.0.0.1/32")
             aws_config.write_file()
@@ -103,7 +95,6 @@ class VPN:
             robot_config.add_attr(cloud_pub_key, "Endpoint", f"{ip}:51820")
             robot_config.add_attr(cloud_pub_key, "PersistentKeepalive", 3)
         robot_config.write_file()
-
 
     def start_robot_vpn(self):
         # Copy /tmp/fogros-local.conf to /etc/wireguard/wg0.conf locally.
@@ -137,20 +128,19 @@ class FogROSLaunchDescription(LaunchDescriptionEntity):
         self,
         initial_entities: Optional[Iterable[LaunchDescriptionEntity]] = None,
         *,
-        deprecated_reason: Optional[Text] = None
+        deprecated_reason: Optional[Text] = None,
     ) -> None:
         """Create a LaunchDescription."""
         launch.logging.get_logger().info("init")
-        #self.__entities = list(initial_entities) if initial_entities is not None else []
+        # self.__entities = list(initial_entities) if initial_entities is not None else []
         self.__entities = []
         self.__to_cloud_entities = defaultdict(list)
         self.__streamed_topics = []
         if initial_entities:
             for entity in initial_entities:
                 self.add_entity_with_filter(entity)
-                                
-        self.__deprecated_reason = deprecated_reason
 
+        self.__deprecated_reason = deprecated_reason
 
     def visit(self, context: LaunchContext) -> Optional[List[LaunchDescriptionEntity]]:
         """Override visit from LaunchDescriptionEntity to visit contained entities."""
@@ -162,14 +152,11 @@ class FogROSLaunchDescription(LaunchDescriptionEntity):
                 dumped_node_str = pickle.dumps(value)
                 f.write(dumped_node_str)
 
-
-        machines = [self.__to_cloud_entities[n][0].machine  for n in self.__to_cloud_entities]
+        # create VPN credentials to all of the machines
+        machines = [self.__to_cloud_entities[n][0].machine for n in self.__to_cloud_entities]
         vpn = VPN()
         vpn.generate_wg_config_files(machines)
         vpn.start_robot_vpn()
-
-        # create VPN credentials to all of the machines
-
 
         # tell remote machine to push the to cloud nodes and
         # wait here until all the nodes are done
@@ -187,13 +174,13 @@ class FogROSLaunchDescription(LaunchDescriptionEntity):
             thread.start()
 
         if self.__deprecated_reason is not None:
-            if 'current_launch_file_path' in context.get_locals_as_dict():
-                message = 'launch file [{}] is deprecated: {}'.format(
+            if "current_launch_file_path" in context.get_locals_as_dict():
+                message = "launch file [{}] is deprecated: {}".format(
                     context.locals.current_launch_file_path,
                     self.__deprecated_reason,
                 )
             else:
-                message = 'deprecated launch description: {}'.format(self.__deprecated_reason)
+                message = "deprecated launch description: {}".format(self.__deprecated_reason)
             launch.logging.get_logger().warning(message)
         return self.__entities
 
@@ -209,14 +196,13 @@ class FogROSLaunchDescription(LaunchDescriptionEntity):
         for more details.
         """
         return [
-            item[0] for item in
-            self.get_launch_arguments_with_include_launch_description_actions(
-                conditional_inclusion)
+            item[0]
+            for item in self.get_launch_arguments_with_include_launch_description_actions(conditional_inclusion)
         ]
 
     def get_launch_arguments_with_include_launch_description_actions(
         self, conditional_inclusion=False
-    ) -> List[Tuple[DeclareLaunchArgument, List['IncludeLaunchDescription']]]:
+    ) -> List[Tuple[DeclareLaunchArgument, List["IncludeLaunchDescription"]]]:
         """
         Return a list of launch arguments with its associated include launch descriptions actions.
 
@@ -248,8 +234,8 @@ class FogROSLaunchDescription(LaunchDescriptionEntity):
         declaration is used.
         """
         from .actions import IncludeLaunchDescription  # noqa: F811
-        declared_launch_arguments: List[
-            Tuple[DeclareLaunchArgument, List[IncludeLaunchDescription]]] = []
+
+        declared_launch_arguments: List[Tuple[DeclareLaunchArgument, List[IncludeLaunchDescription]]] = []
         from .actions import ResetLaunchConfigurations
 
         def process_entities(entities, *, _conditional_inclusion, nested_ild_actions=None):
@@ -275,12 +261,14 @@ class FogROSLaunchDescription(LaunchDescriptionEntity):
                     process_entities(
                         entity.describe_sub_entities(),
                         _conditional_inclusion=False,
-                        nested_ild_actions=next_nested_ild_actions)
+                        nested_ild_actions=next_nested_ild_actions,
+                    )
                     for conditional_sub_entity in entity.describe_conditional_sub_entities():
                         process_entities(
                             conditional_sub_entity[1],
                             _conditional_inclusion=True,
-                            nested_ild_actions=next_nested_ild_actions)
+                            nested_ild_actions=next_nested_ild_actions,
+                        )
 
         process_entities(self.entities, _conditional_inclusion=conditional_inclusion)
 
@@ -293,10 +281,8 @@ class FogROSLaunchDescription(LaunchDescriptionEntity):
 
     def add_entity(self, entity: LaunchDescriptionEntity) -> None:
         """Add an entity to the LaunchDescription."""
-        #self.__entities.append(entity)
+        # self.__entities.append(entity)
         self.add_entity_with_filter(entity)
-
-
 
     def add_entity_with_filter(self, entity):
         if entity.__class__.__name__ == "CloudNode":
@@ -306,40 +292,51 @@ class FogROSLaunchDescription(LaunchDescriptionEntity):
                     self.add_image_transport_entities(stream_topic[0], stream_topic[1], entity.machine)
         else:
             self.__entities.append(entity)
-    
+
     def add_image_transport_entities(self, topic_name, intermediate_transport, machine):
         """Adds image transport nodes to the cloud and robot."""
         from launch_ros.actions import Node
+
         import fogros2
 
         self.__streamed_topics.append(topic_name)
         new_cloud_topic_name = topic_name + "/cloud"
-        print(f'Added {intermediate_transport} transport decoder/subscriber for topic {topic_name}')
+        print(f"Added {intermediate_transport} transport decoder/subscriber for topic {topic_name}")
         decoder_node = fogros2.CloudNode(
-            machine = machine, 
-            package='image_transport', executable='republish', output='screen',
-                name='republish_node', arguments=[
-                    intermediate_transport,  # Input
-                    'raw',  # Output
-                ], remappings=[
-                    ('in/' + intermediate_transport, topic_name + "/" + intermediate_transport),
-                    ('out', new_cloud_topic_name),
-                ])
+            machine=machine,
+            package="image_transport",
+            executable="republish",
+            output="screen",
+            name="republish_node",
+            arguments=[
+                intermediate_transport,  # Input
+                "raw",  # Output
+            ],
+            remappings=[
+                ("in/" + intermediate_transport, topic_name + "/" + intermediate_transport),
+                ("out", new_cloud_topic_name),
+            ],
+        )
 
         self.__to_cloud_entities[decoder_node.get_unique_id()].append(decoder_node)
 
-        print(f'Added {intermediate_transport} transport encoder/publisher for topic {topic_name}')
+        print(f"Added {intermediate_transport} transport encoder/publisher for topic {topic_name}")
         encoder_node = Node(
-            package='image_transport', executable='republish', output='screen',
-                name='republish_node2', arguments=[
-                    'raw',  # Input
-                    intermediate_transport,  # Output
-                ], remappings=[
-                    ('in', topic_name),
-                    ('out/' + intermediate_transport, topic_name + "/" + intermediate_transport ),
-                ])
+            package="image_transport",
+            executable="republish",
+            output="screen",
+            name="republish_node2",
+            arguments=[
+                "raw",  # Input
+                intermediate_transport,  # Output
+            ],
+            remappings=[
+                ("in", topic_name),
+                ("out/" + intermediate_transport, topic_name + "/" + intermediate_transport),
+            ],
+        )
         self.__entities.append(encoder_node)
-            
+
     def add_action(self, action: Action) -> None:
         """Add an action to the LaunchDescription."""
         self.add_entity(action)

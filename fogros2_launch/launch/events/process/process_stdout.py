@@ -20,7 +20,7 @@ from .process_io import ProcessIO
 class ProcessStdout(ProcessIO):
     """Event emitted when a process generates output on stdout."""
 
-    name = 'launch.events.process.ProcessStdout'
+    name = "launch.events.process.ProcessStdout"
 
     def __init__(self, *, text: bytes, **kwargs) -> None:
         """

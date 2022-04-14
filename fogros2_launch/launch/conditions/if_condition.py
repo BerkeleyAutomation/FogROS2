@@ -16,11 +16,11 @@
 
 from typing import Text
 
-from .evaluate_condition_expression_impl import evaluate_condition_expression
 from ..condition import Condition
 from ..launch_context import LaunchContext
 from ..some_substitutions_type import SomeSubstitutionsType
 from ..utilities import normalize_to_list_of_substitutions
+from .evaluate_condition_expression_impl import evaluate_condition_expression
 
 
 class IfCondition(Condition):

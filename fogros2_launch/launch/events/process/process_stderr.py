@@ -20,7 +20,7 @@ from .process_io import ProcessIO
 class ProcessStderr(ProcessIO):
     """Event emitted when a process generates output on stderr."""
 
-    name = 'launch.events.process.ProcessStderr'
+    name = "launch.events.process.ProcessStderr"
 
     def __init__(self, *, text: bytes, **kwargs) -> None:
         """

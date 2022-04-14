@@ -14,9 +14,8 @@
 
 """Tests for the LaunchDescriptionEntity class."""
 
-from launch import LaunchDescriptionEntity
-
 import pytest
+from launch import LaunchDescriptionEntity
 
 
 def test_launch_description_entity_constructors():
@@ -26,6 +25,7 @@ def test_launch_description_entity_constructors():
 
 def test_launch_description_entity_methods():
     """Test the methods of the LaunchDescriptionEntity class."""
+
     class MockLaunchContext:
         ...
 

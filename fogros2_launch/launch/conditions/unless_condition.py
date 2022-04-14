@@ -16,9 +16,9 @@
 
 from typing import Text
 
-from .if_condition import IfCondition
 from ..launch_context import LaunchContext
 from ..some_substitutions_type import SomeSubstitutionsType
+from .if_condition import IfCondition
 
 
 class UnlessCondition(IfCondition):

@@ -14,8 +14,7 @@
 
 """Module for event_named() function."""
 
-from typing import Callable
-from typing import Text
+from typing import Callable, Text
 
 from ..event import Event
 

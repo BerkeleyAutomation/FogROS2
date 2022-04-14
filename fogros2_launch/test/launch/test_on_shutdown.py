@@ -14,8 +14,7 @@
 
 """Tests for the OnShutdown event handler."""
 
-from unittest.mock import Mock
-from unittest.mock import NonCallableMock
+from unittest.mock import Mock, NonCallableMock
 
 from launch import LaunchContext
 from launch.action import Action
@@ -24,7 +23,8 @@ from launch.events import Shutdown
 from launch.events.process import ProcessStarted
 
 phony_process_started = ProcessStarted(
-    action=Mock(spec=Action), name='PhonyProcessStarted', cmd=['ls'], cwd=None, env=None, pid=1)
+    action=Mock(spec=Action), name="PhonyProcessStarted", cmd=["ls"], cwd=None, env=None, pid=1
+)
 phony_shutdown = Shutdown()
 phony_context = Mock(spec=LaunchContext)
 
@@ -55,7 +55,7 @@ def test_event_added_to_context():
 
     handler = OnShutdown(on_shutdown=Mock())
     handler.handle(phony_shutdown, context)
-    extend_locals_mock.assert_called_once_with({'event': phony_shutdown})
+    extend_locals_mock.assert_called_once_with({"event": phony_shutdown})
     unregister_event_handler_mock.assert_not_called()
 
 

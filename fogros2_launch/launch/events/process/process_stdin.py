@@ -20,7 +20,7 @@ from .process_io import ProcessIO
 class ProcessStdin(ProcessIO):
     """Event emitted when a process needs to handle stdin."""
 
-    name = 'launch.events.process.ProcessStdin'
+    name = "launch.events.process.ProcessStdin"
 
     def __init__(self, *, text: bytes, **kwargs) -> None:
         """

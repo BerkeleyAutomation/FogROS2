@@ -20,7 +20,7 @@ from .running_process_event import RunningProcessEvent
 class ProcessIO(RunningProcessEvent):
     """Event emitted when a process generates output on stdout or stderr, or if stdin is used."""
 
-    name = 'launch.events.process.ProcessIO'
+    name = "launch.events.process.ProcessIO"
 
     def __init__(self, *, text: bytes, fd: int, **kwargs) -> None:
         """

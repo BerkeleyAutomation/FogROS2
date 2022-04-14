@@ -18,4 +18,4 @@
 class Event:
     """Event that can be emitted during runtime of a launched system."""
 
-    name = 'launch.Event'
+    name = "launch.Event"

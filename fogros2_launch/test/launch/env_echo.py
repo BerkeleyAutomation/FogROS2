@@ -20,9 +20,9 @@ def print_env(var_list):
     for var in var_list:
         value = os.getenv(var)
         if value is None:
-            raise EnvironmentError('No such env ' + var)
+            raise EnvironmentError("No such env " + var)
         print(var, value)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     print_env(sys.argv[1:])

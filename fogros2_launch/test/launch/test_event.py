@@ -20,4 +20,4 @@ from launch import Event
 def test_event_constructors():
     """Test the constructors for Event class."""
     event = Event()
-    assert event.name == 'launch.Event'
+    assert event.name == "launch.Event"

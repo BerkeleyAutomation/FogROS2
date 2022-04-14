@@ -33,8 +33,8 @@ def test_shutdown_execute():
 
 def test_shutdown_execute_conditional():
     """Test the conditional execution (or visit) of the Shutdown class."""
-    true_action = Shutdown(condition=IfCondition('True'))
-    false_action = Shutdown(condition=IfCondition('False'))
+    true_action = Shutdown(condition=IfCondition("True"))
+    false_action = Shutdown(condition=IfCondition("False"))
     context = LaunchContext()
 
     assert context._event_queue.qsize() == 0
@@ -48,10 +48,10 @@ def test_shutdown_execute_conditional():
 
 def test_shutdown_reason():
     """Test the execute (or visit) of a Shutdown class that has a reason."""
-    action = Shutdown(reason='test reason')
+    action = Shutdown(reason="test reason")
     context = LaunchContext()
     assert action.visit(context) is None
     assert context._event_queue.qsize() == 1
     event = context._event_queue.get_nowait()
     assert isinstance(event, ShutdownEvent)
-    assert event.reason == 'test reason'
+    assert event.reason == "test reason"

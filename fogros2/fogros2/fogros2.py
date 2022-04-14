@@ -10,17 +10,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from launch_ros.actions import Node
-import pickle
+import os
+
 from .aws import AWS
 from .scp import SCP_Client
 from .vpn import VPN
-from .command_builder import BashBuilder
-from .dds_config_builder import CycloneConfigBuilder
-
-import logging
-import os
-from .util import make_zip_file
 
 
 def start():
@@ -35,7 +29,7 @@ def start():
         vpn.make_wireguard_keypair()
     else:
         ip = "13.52.249.171"
-        key_path = os.getenv("COLCON_PREFIX_PATH") + "/../FogROSKEY905.pem"
+        key_path = os.path.join(os.getenv("COLCON_PREFIX_PATH"), "..", "FogROSKEY905.pem")
         # Note that we don't need to make new keypair if we keep the old ones
         vpn = VPN(ip)
 
@@ -43,8 +37,6 @@ def start():
     scp.connect()
 
     vpn.start()
-
-
 
 
 def main():

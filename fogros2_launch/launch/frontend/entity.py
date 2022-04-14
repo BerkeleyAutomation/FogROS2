@@ -14,13 +14,9 @@
 
 """Module for Entity class."""
 
-from typing import List
-from typing import Optional
-from typing import Text
-from typing import Union
+from typing import List, Optional, Text, Union
 
-from launch.utilities.type_utils import AllowedTypesType
-from launch.utilities.type_utils import AllowedValueType
+from launch.utilities.type_utils import AllowedTypesType, AllowedValueType
 
 
 class Entity:
@@ -32,12 +28,12 @@ class Entity:
         raise NotImplementedError()
 
     @property
-    def parent(self) -> Optional['Entity']:
+    def parent(self) -> Optional["Entity"]:
         """Get Entity parent."""
         raise NotImplementedError()
 
     @property
-    def children(self) -> List['Entity']:
+    def children(self) -> List["Entity"]:
         """Get the Entity's children."""
         raise NotImplementedError()
 
@@ -48,10 +44,7 @@ class Entity:
         data_type: AllowedTypesType = str,
         optional: bool = False,
         can_be_str: bool = True,
-    ) -> Optional[Union[
-        AllowedValueType,
-        List['Entity'],
-    ]]:
+    ) -> Optional[Union[AllowedValueType, List["Entity"],]]:
         """
         Access an attribute of the entity.
 

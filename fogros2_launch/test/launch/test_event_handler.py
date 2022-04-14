@@ -14,12 +14,13 @@
 
 """Tests for the EventHandler class."""
 
-from launch import EventHandler
-from launch import LaunchContext
-from launch import LaunchDescriptionEntity
-from launch import SomeActionsType_types_tuple
-
 import pytest
+from launch import (
+    EventHandler,
+    LaunchContext,
+    LaunchDescriptionEntity,
+    SomeActionsType_types_tuple,
+)
 
 
 def test_event_handler_constructors():
@@ -32,6 +33,7 @@ def test_event_handler_constructors():
 
 def test_event_handler_matches_and_handle():
     """Test the matches and handle methods for the EventHandler class."""
+
     class MockEvent:
         ...
 
@@ -47,6 +49,7 @@ def test_event_handler_matches_and_handle():
 
 def test_event_handler_handle_once():
     """Test the option for handling events once for the EventHandler class."""
+
     class MockEvent:
         ...
 

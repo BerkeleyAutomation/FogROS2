@@ -14,11 +14,9 @@
 
 """Tests for the ThisLaunchFileDir substitution class."""
 
-from launch import LaunchContext
-from launch.substitutions import SubstitutionFailure
-from launch.substitutions import ThisLaunchFileDir
-
 import pytest
+from launch import LaunchContext
+from launch.substitutions import SubstitutionFailure, ThisLaunchFileDir
 
 
 def test_this_launch_file_path():
@@ -33,5 +31,5 @@ def test_this_launch_file_path_methods():
     lc = LaunchContext()
     with pytest.raises(SubstitutionFailure):
         tlfp.perform(lc)
-    lc.extend_locals({'current_launch_file_directory': 'foo'})
-    assert tlfp.perform(lc) == 'foo'
+    lc.extend_locals({"current_launch_file_directory": "foo"})
+    assert tlfp.perform(lc) == "foo"

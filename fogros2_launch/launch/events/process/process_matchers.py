@@ -14,37 +14,37 @@
 
 """Module for standard "process_matchers", which are used with ProcessTargetedEvents."""
 
-from typing import Callable
-from typing import Text
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Callable, Text
 
 if TYPE_CHECKING:
     from ...actions import ExecuteProcess  # noqa: F401
 
 
-def matches_pid(pid: int) -> Callable[['ExecuteProcess'], bool]:
+def matches_pid(pid: int) -> Callable[["ExecuteProcess"], bool]:
     """Return a matcher which matches based on the pid of the process."""
-    def matcher(action: 'ExecuteProcess') -> bool:
+
+    def matcher(action: "ExecuteProcess") -> bool:
         if action.process_details is None:
             # This can happen if the process in the action has not been started.
             return False
-        return action.process_details['pid'] == pid
+        return action.process_details["pid"] == pid
 
     return matcher
 
 
-def matches_name(name: Text) -> Callable[['ExecuteProcess'], bool]:
+def matches_name(name: Text) -> Callable[["ExecuteProcess"], bool]:
     """Return a matcher which matches based on the name of the ExecuteProcess action."""
-    def matcher(action: 'ExecuteProcess') -> bool:
+
+    def matcher(action: "ExecuteProcess") -> bool:
         if action.process_details is None:
             # This can happen if the process in the action has not been started.
             return False
-        return action.process_details['name'] == name
+        return action.process_details["name"] == name
 
     return matcher
 
 
-def matches_executable(executable: Text) -> Callable[['ExecuteProcess'], bool]:
+def matches_executable(executable: Text) -> Callable[["ExecuteProcess"], bool]:
     """
     Return a matcher which matches based on the name of the executable for the process.
 
@@ -52,10 +52,11 @@ def matches_executable(executable: Text) -> Callable[['ExecuteProcess'], bool]:
     str.endswith().
     So, for example, 'ls' would match either 'ls .' or '/usr/bin/ls .'.
     """
-    def matcher(action: 'ExecuteProcess') -> bool:
+
+    def matcher(action: "ExecuteProcess") -> bool:
         if action.process_details is None:
             # This can happen if the process in the action has not been started.
             return False
-        return action.process_details['cmd'][0].endswith(executable)
+        return action.process_details["cmd"][0].endswith(executable)
 
     return matcher

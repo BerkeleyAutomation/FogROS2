@@ -20,14 +20,9 @@ from .running_process_event import RunningProcessEvent
 class ProcessExited(RunningProcessEvent):
     """Event emitted when a process exits."""
 
-    name = 'launch.events.process.ProcessExited'
+    name = "launch.events.process.ProcessExited"
 
-    def __init__(
-        self,
-        *,
-        returncode: int,
-        **kwargs
-    ) -> None:
+    def __init__(self, *, returncode: int, **kwargs) -> None:
         """
         Create a ProcessExited event.
 

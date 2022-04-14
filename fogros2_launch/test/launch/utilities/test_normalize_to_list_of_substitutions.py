@@ -14,14 +14,14 @@
 
 """Tests for the normalize_to_list_of_substitutions() function."""
 
+import pytest
 from launch import Substitution
 from launch.utilities import normalize_to_list_of_substitutions
-
-import pytest
 
 
 def test_valid_substitutions():
     """Test the normalize_to_list_of_substitutions() function with valid input."""
+
     class MockSubstitution(Substitution):
         pass
 
@@ -30,18 +30,18 @@ def test_valid_substitutions():
     assert isinstance(norm_sub, list)
     assert len(norm_sub) == 1
     assert isinstance(norm_sub[0], Substitution)
-    text_sub = 'foo'
+    text_sub = "foo"
     norm_text_sub = normalize_to_list_of_substitutions(text_sub)
     assert isinstance(norm_text_sub, list)
     assert len(norm_text_sub) == 1
     assert isinstance(norm_text_sub[0], Substitution)
-    sub_list = ['bar', MockSubstitution()]
+    sub_list = ["bar", MockSubstitution()]
     norm_sub_list = normalize_to_list_of_substitutions(sub_list)
     assert isinstance(norm_sub_list, list)
     assert len(norm_sub_list) == 2
     assert isinstance(norm_sub_list[0], Substitution)
     assert isinstance(norm_sub_list[1], Substitution)
-    sub_tuple = (MockSubstitution(), '')
+    sub_tuple = (MockSubstitution(), "")
     norm_sub_tuple = normalize_to_list_of_substitutions(sub_tuple)
     assert isinstance(norm_sub_tuple, list)
     assert len(norm_sub_tuple) == 2
@@ -59,6 +59,6 @@ def test_invalid_substitutions():
     with pytest.raises(TypeError):
         normalize_to_list_of_substitutions(1)
     with pytest.raises(TypeError):
-        normalize_to_list_of_substitutions([1.4142, 'bar'])
+        normalize_to_list_of_substitutions([1.4142, "bar"])
     with pytest.raises(TypeError):
-        normalize_to_list_of_substitutions(['foo', ['bar']])
+        normalize_to_list_of_substitutions(["foo", ["bar"]])

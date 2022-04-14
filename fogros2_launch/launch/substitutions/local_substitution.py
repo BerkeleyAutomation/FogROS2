@@ -14,8 +14,7 @@
 
 """Module for the LocalSubstitution substitution."""
 
-from typing import Optional
-from typing import Text
+from typing import Optional, Text
 
 from ..launch_context import LaunchContext
 from ..substitution import Substitution
@@ -29,7 +28,7 @@ class LocalSubstitution(Substitution):
         """Create a LocalSubstitution."""
         super().__init__()
 
-        ensure_argument_type(expression, str, 'expression', 'LocalSubstitution')
+        ensure_argument_type(expression, str, "expression", "LocalSubstitution")
 
         self.__expression = expression
         self.__description = description
@@ -51,4 +50,4 @@ class LocalSubstitution(Substitution):
 
     def perform(self, context: LaunchContext) -> Text:
         """Perform the substitution by retrieving the local variable."""
-        return eval('context.locals.' + self.expression)
+        return eval("context.locals." + self.expression)

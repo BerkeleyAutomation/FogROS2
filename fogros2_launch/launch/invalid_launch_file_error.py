@@ -18,18 +18,16 @@
 class InvalidLaunchFileError(Exception):
     """Exception raised when the given launch file is not valid."""
 
-    def __init__(self, extension='', *, likely_errors=None):
+    def __init__(self, extension="", *, likely_errors=None):
         """Create an InvalidLaunchFileError."""
         self._extension = extension
         self._likely_errors = likely_errors
-        if self._extension == '' or not self._likely_errors:
-            self._error_message = (
-                'The launch file may have a syntax error, or its format is unknown'
-            )
+        if self._extension == "" or not self._likely_errors:
+            self._error_message = "The launch file may have a syntax error, or its format is unknown"
         else:
-            self._error_message = (
-                'Caught exception when trying to load file of format [{}]: {}'
-            ).format(self._extension, self._likely_errors[0])
+            self._error_message = ("Caught exception when trying to load file of format [{}]: {}").format(
+                self._extension, self._likely_errors[0]
+            )
             self.__cause__ = self._likely_errors[0]
 
     def __str__(self):

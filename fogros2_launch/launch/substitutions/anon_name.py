@@ -14,9 +14,7 @@
 
 """Module for the anonymous name substitution."""
 
-from typing import Iterable
-from typing import List
-from typing import Text
+from typing import Iterable, List, Text
 
 from ..frontend import expose_substitution
 from ..launch_context import LaunchContext
@@ -24,7 +22,7 @@ from ..some_substitutions_type import SomeSubstitutionsType
 from ..substitution import Substitution
 
 
-@expose_substitution('anon')
+@expose_substitution("anon")
 class AnonName(Substitution):
     """
     Generates an anonymous id based on name.
@@ -38,14 +36,15 @@ class AnonName(Substitution):
         super().__init__()
 
         from ..utilities import normalize_to_list_of_substitutions
+
         self.__name = normalize_to_list_of_substitutions(name)
 
     @classmethod
     def parse(cls, data: Iterable[SomeSubstitutionsType]):
         """Parse `AnonName` substitution."""
         if len(data) != 1:
-            raise TypeError('anon substitution expects 1 argument')
-        return cls, {'name': data[0]}
+            raise TypeError("anon substitution expects 1 argument")
+        return cls, {"name": data[0]}
 
     @property
     def name(self) -> List[Substitution]:
@@ -54,16 +53,17 @@ class AnonName(Substitution):
 
     def describe(self) -> Text:
         """Return a description of this substitution as a string."""
-        return 'AnonName({})'.format(' + '.join([sub.describe() for sub in self.name]))
+        return "AnonName({})".format(" + ".join([sub.describe() for sub in self.name]))
 
     def perform(self, context: LaunchContext) -> Text:
         """Perform the substitution by creating/getting the anonymous name."""
         from ..utilities import perform_substitutions
+
         name = perform_substitutions(context, self.name)
 
-        if 'anon' not in context.launch_configurations:
-            context.launch_configurations['anon'] = {}
-        anon_context = context.launch_configurations['anon']
+        if "anon" not in context.launch_configurations:
+            context.launch_configurations["anon"] = {}
+        anon_context = context.launch_configurations["anon"]
 
         if name not in anon_context:
             anon_context[name] = self.compute_name(name)
@@ -76,7 +76,8 @@ class AnonName(Substitution):
         import random
         import socket
         import sys
-        name = f'{id_value}_{socket.gethostname()}_{os.getpid()}_{random.randint(0, sys.maxsize)}'
-        name = name.replace('.', '_')
-        name = name.replace('-', '_')
-        return name.replace(':', '_')
+
+        name = f"{id_value}_{socket.gethostname()}_{os.getpid()}_{random.randint(0, sys.maxsize)}"
+        name = name.replace(".", "_")
+        name = name.replace("-", "_")
+        return name.replace(":", "_")

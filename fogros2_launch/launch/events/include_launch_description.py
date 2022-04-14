@@ -21,7 +21,7 @@ from ..launch_description import LaunchDescription
 class IncludeLaunchDescription(Event):
     """Event that can be emitted to cause a LaunchDescription to be included."""
 
-    name = 'launch.events.IncludeLaunchDescription'
+    name = "launch.events.IncludeLaunchDescription"
 
     def __init__(self, launch_description: LaunchDescription) -> None:
         """Create an IncludeLaunchDescription event."""

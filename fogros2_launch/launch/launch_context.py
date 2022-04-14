@@ -16,12 +16,8 @@
 
 import asyncio
 import collections
-from typing import Any
-from typing import Dict
-from typing import Iterable
 from typing import List  # noqa: F401
-from typing import Optional
-from typing import Text
+from typing import Any, Dict, Iterable, Optional, Text
 
 import launch.logging
 
@@ -33,12 +29,7 @@ from .substitution import Substitution
 class LaunchContext:
     """Runtime context used by various launch entities when being visited or executed."""
 
-    def __init__(
-        self,
-        *,
-        argv: Optional[Iterable[Text]] = None,
-        noninteractive: bool = False
-    ) -> None:
+    def __init__(self, *, argv: Optional[Iterable[Text]] = None, noninteractive: bool = False) -> None:
         """
         Create a LaunchContext.
 
@@ -101,7 +92,7 @@ class LaunchContext:
 
     def _pop_locals(self):
         if not self.__locals_stack:
-            raise RuntimeError('locals stack unexpectedly empty')
+            raise RuntimeError("locals stack unexpectedly empty")
         self.__locals = self.__locals_stack.pop()
         self._clear_combined_locals_cache()
 
@@ -136,18 +127,17 @@ class LaunchContext:
     @property  # noqa: A003
     def locals(self):  # noqa: A003
         """Getter for the locals."""
-        class AttributeDict:
 
+        class AttributeDict:
             def __init__(self, dict_in):
-                self.__dict__['__dict'] = dict_in
+                self.__dict__["__dict"] = dict_in
 
             def __getattr__(self, key):
-                _dict = self.__dict__['__dict']
+                _dict = self.__dict__["__dict"]
                 if key not in _dict:
                     raise AttributeError(
                         "context.locals does not contain attribute '{}', it contains: [{}]".format(
-                            key,
-                            ', '.join(_dict.keys())
+                            key, ", ".join(_dict.keys())
                         )
                     )
                 return _dict[key]
@@ -162,7 +152,7 @@ class LaunchContext:
 
     def _pop_launch_configurations(self):
         if not self.__launch_configurations_stack:
-            raise RuntimeError('launch_configurations stack unexpectedly empty')
+            raise RuntimeError("launch_configurations stack unexpectedly empty")
         self.__launch_configurations = self.__launch_configurations_stack.pop()
 
     @property

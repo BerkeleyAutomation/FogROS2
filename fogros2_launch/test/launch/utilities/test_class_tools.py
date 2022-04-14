@@ -19,6 +19,7 @@ from launch.utilities.class_tools_impl import is_a, is_a_subclass, isclassinstan
 
 def test_isclassinstance():
     """Test the isclassinstance function."""
+
     class MockClass:
         pass
 
@@ -26,13 +27,13 @@ def test_isclassinstance():
     assert isclassinstance(0)
     assert isclassinstance(1.0)
     assert isclassinstance(complex(2.0))
-    assert isclassinstance('foo')
+    assert isclassinstance("foo")
     assert isclassinstance([])
     assert isclassinstance(())
     assert isclassinstance(range(6))
     assert isclassinstance(bytes(7))
     assert isclassinstance(bytearray())
-    assert isclassinstance(memoryview(b'nine'))
+    assert isclassinstance(memoryview(b"nine"))
     assert isclassinstance(set())
     assert isclassinstance(frozenset())
     assert isclassinstance({})
@@ -42,6 +43,7 @@ def test_isclassinstance():
 
 def test_is_a():
     """Test the is_a function."""
+
     class MockParentClass:
         pass
 
@@ -50,13 +52,13 @@ def test_is_a():
         0,
         1.0,
         complex(2.0),
-        'foo',
+        "foo",
         [],
         (),
         range(6),
         bytes(7),
         bytearray(),
-        memoryview(b'nine'),
+        memoryview(b"nine"),
         set(),
         frozenset(),
         {},
@@ -105,6 +107,7 @@ def test_is_a():
 
 def test_is_a_subclass():
     """Test the is_a_subclass function."""
+
     class MockParentClass:
         pass
 

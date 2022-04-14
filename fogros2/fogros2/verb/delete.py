@@ -1,18 +1,18 @@
-from ros2cli.verb import VerbExtension
-import os
 import json
-from fogros2 import AWS
+import os
 import shutil
 
-class DeleteVerb(VerbExtension):
+from ros2cli.verb import VerbExtension
 
+from fogros2 import AWS
+
+
+class DeleteVerb(VerbExtension):
     def add_arguments(self, parser, cli_name):
         parser.add_argument(
-            '--all', '-A', action='store_true',  default=False,
-            help="Delete All existing FogROS instances")
-        parser.add_argument(
-            '--name', '-n',  type=str, nargs=1,
-            help="Select FogROS instance name to delete")
+            "--all", "-A", action="store_true", default=False, help="Delete All existing FogROS instances"
+        )
+        parser.add_argument("--name", "-n", type=str, nargs=1, help="Select FogROS instance name to delete")
 
     def delete_instance(self, instance):
         pwd = self.fogros_working_dir + instance
@@ -34,8 +34,7 @@ class DeleteVerb(VerbExtension):
         if args.all == True:
             instances = os.listdir(self.fogros_working_dir)
             for instance in instances:
-                print("======" +instance +"======")
+                print("======" + instance + "======")
                 self.delete_instance(instance)
         else:
             self.delete_instance(args.name[0])
-

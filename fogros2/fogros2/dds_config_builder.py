@@ -29,7 +29,9 @@ class CycloneConfigBuilder(DDSConfigBuilder):
     def __init__(self, ip_addresses):
         super().__init__(ip_addresses)
         self.config_save_path = "/tmp/cyclonedds.xml"
-        self.env_cmd = "export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp && export CYCLONEDDS_URI=file:///home/ubuntu/cyclonedds.xml"
+        self.env_cmd = (
+            "export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp && export CYCLONEDDS_URI=file:///home/ubuntu/cyclonedds.xml"
+        )
 
     def generate_config_file(self):
         template = """
