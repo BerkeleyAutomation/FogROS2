@@ -10,7 +10,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ipaddress import ip_address
 import boto3
 import botocore
 import random
@@ -23,25 +22,24 @@ from .scp import SCP_Client
 import os
 import json
 import subprocess
+import abc
 
-class CloudInstance:
-    def __init__(self, ros_workspace = None, working_dir_base = "/tmp/fogros/"):
+class CloudInstance(abc.ABC):
+    def __init__(self, ros_workspace = os.path.dirname(os.getenv("COLCON_PREFIX_PATH")), working_dir_base = "/tmp/fogros/", vis=False):
         self.cyclone_builder = None
         self.scp = None
         self.public_ip = None
-        if ros_workspace:
-            self.ros_workspace = ros_workspace
-        else:
-            self.ros_workspace = "/".join(os.getenv("COLCON_PREFIX_PATH").split("/")[:-1])
+        self.ros_workspace = ros_workspace
         print("using ROS workspace: ", self.ros_workspace)
         self.ssh_key_path = None
         self.unique_name = str(random.randint(10, 1000))
-        self.working_dir = working_dir_base + "/" +  self.unique_name + "/"
+        self.working_dir = os.path.join(working_dir_base, self.unique_name)
         os.makedirs(self.working_dir, exist_ok=True)
         self.ready_lock = threading.Lock()
         self.ready_state = False
         self.cloud_service_provider = None
         self.dockers = []
+        self.vis = vis
 
     def create(self):
         raise NotImplementedError("Cloud SuperClass not implemented")
@@ -56,7 +54,7 @@ class CloudInstance:
             "public_ip": self.public_ip
         }
         if flush_to_disk:
-            with open(self.working_dir + "info", "w+") as f:
+            with open(os.path.join(self.working_dir, "info"), "w+") as f:
                 json.dump(info_dict, f)
         return info_dict
 
@@ -65,8 +63,10 @@ class CloudInstance:
         self.scp.connect()
 
     @staticmethod
+    @abc.abstractmethod
     def delete(instance_name):
-        raise NotImplementedError("Cloud SuperClass not implemented")
+        """Terminate this CloudInstance"""
+        pass
 
     def get_ssh_key_path(self):
         return self.ssh_key_path
@@ -175,8 +175,9 @@ class CloudInstance:
         self.dockers.append(cmd)
 
     def launch_cloud_dockers(self):
-        # launch foxglove docker
-        self.scp.execute_cmd("sudo docker run -d --rm -p '8080:8080' ghcr.io/foxglove/studio:latest")
+        # launch foxglove docker (if vis specified)
+        if self.vis:
+            self.scp.execute_cmd("sudo docker run -d --rm -p '8080:8080' ghcr.io/foxglove/studio:latest")
 
         # launch user specified dockers
         for docker_cmd in self.dockers:
@@ -186,7 +187,7 @@ class CloudInstance:
 class RemoteMachine(CloudInstance):
     def __init__(self, ip, ssh_key_path):
         super().__init__()
-        self.ip = public_ip
+        self.ip = ip
         self.ssh_key_path = ssh_key_path
         self.unique_name = "REMOTE" + str(random.randint(10, 1000))
         self.set_ready_state() # assume it to be true
@@ -221,7 +222,7 @@ class AWS(CloudInstance):
         self.aws_name = "AWS" + str(random.randint(10, 1000))
         self.ec2_security_group = "FOGROS_SECURITY_GROUP" + self.aws_name
         self.ec2_key_name = "FogROSKEY" + self.aws_name
-        self.ssh_key_path = self.working_dir + self.ec2_key_name + ".pem"
+        self.ssh_key_path = os.path.join(self.working_dir, self.ec2_key_name + ".pem")
 
         # aws objects
         self.ec2_instance = None
@@ -229,7 +230,6 @@ class AWS(CloudInstance):
         self.ec2_boto3_client = boto3.client("ec2", self.region)
 
         # after config
-
         self.ssh_key = None
         self.ec2_security_group_ids = None
 
@@ -262,7 +262,7 @@ class AWS(CloudInstance):
         info_dict["aws_ami_image"] = self.aws_ami_image
         info_dict["ec2_instance_id"] = self.ec2_instance.instance_id
         if flush_to_disk:
-            with open(self.working_dir + "info", "w+") as f:
+            with open(os.path.join(self.working_dir, "info"), "w+") as f:
                json.dump(info_dict, f)
         return info_dict
 

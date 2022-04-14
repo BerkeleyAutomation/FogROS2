@@ -5,7 +5,7 @@
   <version>0.0.0</version>
   <description>
     A ROS 2 extension for the cloud deployment of computational graphs in a cloud-provider
-     agnostic and security-conscius manner.
+    agnostic and security-conscious manner.
   </description>
   <author email="kych@berkeley.edu">Kaiyuan (Eric) Chen</author>
   <author email="v.mayoralv@gmail.com">Víctor Mayoral-Vilches</author>

@@ -29,9 +29,10 @@ class SCP_Client:
         self.ssh_client = paramiko.SSHClient()
         self.logger = logging.getLogger(__name__)
 
-    def connect(self, keep_trying=True):
+    def connect(self):
         self.ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        while keep_trying:
+        connected = False
+        while not connected:
             try:
                 self.ssh_client.connect(
                     hostname=self.ip,
@@ -39,7 +40,9 @@ class SCP_Client:
                     pkey=self.ssh_key,
                     look_for_keys=False,
                 )
-                keep_trying = False
+                connected = True
+            # TODO: Handle specific exceptions differently?
+            # See https://docs.paramiko.org/en/stable/api/client.html
             except Exception as e:
                 self.logger.warn(
                     "Exception occured when connecting scp" + str(e) + ", retrying..."
