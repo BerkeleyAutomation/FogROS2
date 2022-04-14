@@ -163,13 +163,11 @@ class FogROSLaunchDescription(LaunchDescriptionEntity):
                 f.write(dumped_node_str)
 
 
+        # create VPN credentials to all of the machines
         machines = [self.__to_cloud_entities[n][0].machine  for n in self.__to_cloud_entities]
         vpn = VPN()
         vpn.generate_wg_config_files(machines)
         vpn.start_robot_vpn()
-
-        # create VPN credentials to all of the machines
-
 
         # tell remote machine to push the to cloud nodes and
         # wait here until all the nodes are done

@@ -28,7 +28,7 @@ class VPN:
         self.cloud_name_to_priv_key_path = dict()
 
         self.robot_private_key = wgexec.generate_privatekey()
-        self.robot_public_key = wgexec.get_publickey(robot_private_key)
+        self.robot_public_key = wgexec.get_publickey(self.robot_private_key)
 
 
     def generate_key_pairs(self, machines):
@@ -50,7 +50,7 @@ class VPN:
         for machine in machines:
             name = machine.get_name()
             machine_config_pwd = self.cloud_key_path + name
-            machine_priv_key = cloud_name_to_priv_key_path[name]
+            machine_priv_key = self.cloud_name_to_priv_key_path[name]
             aws_config = wgconfig.WGConfig(machine_config_pwd)
             aws_config.add_attr(None, "PrivateKey", machine_priv_key)
             aws_config.add_attr(None, "ListenPort", 51820)
@@ -68,10 +68,10 @@ class VPN:
         for machine in machines:
             name = machine.get_name()
             ip = machine.get_ip()
-            robot_config.add_peer(aws_public_key, "# AWS" + name)
-            robot_config.add_attr(aws_public_key, "AllowedIPs", "10.0.0.2/32")
-            robot_config.add_attr(aws_public_key, "Endpoint", f"{ip}:51820")
-            robot_config.add_attr(aws_public_key, "PersistentKeepalive", 3)
+            robot_config.add_peer(self.cloud_name_to_pub_key_path[name], "# AWS" + name)
+            robot_config.add_attr(self.cloud_name_to_pub_key_path[name], "AllowedIPs", "10.0.0.2/32")
+            robot_config.add_attr(self.cloud_name_to_pub_key_path[name], "Endpoint", f"{ip}:51820")
+            robot_config.add_attr(self.cloud_name_to_pub_key_path[name], "PersistentKeepalive", 3)
         robot_config.write_file()
 
 

@@ -1,7 +1,5 @@
 from ros2cli.verb import VerbExtension
-import os
 import json
-from fogros2 import AWS
 import boto3 
 
 class ImageVerb(VerbExtension):
