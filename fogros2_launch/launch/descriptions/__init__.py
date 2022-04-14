@@ -19,6 +19,4 @@
 
 from .executable import Executable
 
-__all__ = [
-    'Executable'
-]
+__all__ = ["Executable"]

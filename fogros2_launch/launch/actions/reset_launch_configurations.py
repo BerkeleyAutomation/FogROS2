@@ -14,21 +14,16 @@
 
 """Module for the ResetLaunchConfigurations action."""
 
-from typing import Dict
-from typing import List
-from typing import Optional
+from typing import Dict, List, Optional
 
 from ..action import Action
-from ..frontend import Entity
-from ..frontend import expose_action
-from ..frontend import Parser
+from ..frontend import Entity, Parser, expose_action
 from ..launch_context import LaunchContext
 from ..some_substitutions_type import SomeSubstitutionsType
-from ..utilities import normalize_to_list_of_substitutions
-from ..utilities import perform_substitutions
+from ..utilities import normalize_to_list_of_substitutions, perform_substitutions
 
 
-@expose_action('reset')
+@expose_action("reset")
 class ResetLaunchConfigurations(Action):
     """
     Action that resets launch configurations in the current context.
@@ -50,9 +45,7 @@ class ResetLaunchConfigurations(Action):
     """
 
     def __init__(
-        self,
-        launch_configurations: Optional[Dict[SomeSubstitutionsType, SomeSubstitutionsType]] = None,
-        **kwargs
+        self, launch_configurations: Optional[Dict[SomeSubstitutionsType, SomeSubstitutionsType]] = None, **kwargs
     ) -> None:
         """Create an ResetLaunchConfigurations action."""
         super().__init__(**kwargs)
@@ -62,11 +55,11 @@ class ResetLaunchConfigurations(Action):
     def parse(cls, entity: Entity, parser: Parser):
         """Return `ResetLaunchConfigurations` action and kwargs for constructing it."""
         _, kwargs = super().parse(entity, parser)
-        keeps = entity.get_attr('keep', data_type=List[Entity], optional=True)
+        keeps = entity.get_attr("keep", data_type=List[Entity], optional=True)
         if keeps is not None:
-            kwargs['launch_configurations'] = {
-                    tuple(parser.parse_substitution(e.get_attr('name'))):
-                    parser.parse_substitution(e.get_attr('value')) for e in keeps
+            kwargs["launch_configurations"] = {
+                tuple(parser.parse_substitution(e.get_attr("name"))): parser.parse_substitution(e.get_attr("value"))
+                for e in keeps
             }
             for e in keeps:
                 e.assert_entity_completely_parsed()

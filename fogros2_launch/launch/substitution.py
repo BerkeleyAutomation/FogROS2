@@ -14,8 +14,7 @@
 
 """Module for the Substitution class."""
 
-from typing import Text
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Text
 
 if TYPE_CHECKING:
     from .launch_context import LaunchContext  # noqa: F401
@@ -34,7 +33,7 @@ class Substitution:
         return repr(self)
 
     # Note: LaunchContext is in a string here to break a circular import.
-    def perform(self, context: 'LaunchContext') -> Text:
+    def perform(self, context: "LaunchContext") -> Text:
         """
         Perform the substitution, given the launch context, and return it as a string.
 
@@ -43,4 +42,4 @@ class Substitution:
 
         :raises: NotImplementedError
         """
-        raise NotImplementedError('perform() not implemented for Substitution base class.')
+        raise NotImplementedError("perform() not implemented for Substitution base class.")

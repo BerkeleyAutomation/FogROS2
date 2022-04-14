@@ -14,11 +14,7 @@
 
 """Module for Action class."""
 
-from typing import Iterable
-from typing import List
-from typing import Optional
-from typing import Text
-from typing import Tuple
+from typing import Iterable, List, Optional, Text, Tuple
 
 from .condition import Condition
 from .launch_context import LaunchContext
@@ -50,7 +46,7 @@ class Action(LaunchDescriptionEntity):
         self.__condition = condition
 
     @staticmethod
-    def parse(entity: 'Entity', parser: 'Parser'):
+    def parse(entity: "Entity", parser: "Parser"):
         """
         Return the `Action` action and kwargs for constructing it.
 
@@ -58,21 +54,17 @@ class Action(LaunchDescriptionEntity):
         This class is not exposed with `expose_action`.
         """
         # Import here for avoiding cyclic imports.
-        from .conditions import IfCondition
-        from .conditions import UnlessCondition
-        if_cond = entity.get_attr('if', optional=True)
-        unless_cond = entity.get_attr('unless', optional=True)
+        from .conditions import IfCondition, UnlessCondition
+
+        if_cond = entity.get_attr("if", optional=True)
+        unless_cond = entity.get_attr("unless", optional=True)
         kwargs = {}
         if if_cond is not None and unless_cond is not None:
             raise RuntimeError("if and unless conditions can't be used simultaneously")
         if if_cond is not None:
-            kwargs['condition'] = IfCondition(
-                predicate_expression=parser.parse_substitution(if_cond)
-            )
+            kwargs["condition"] = IfCondition(predicate_expression=parser.parse_substitution(if_cond))
         if unless_cond is not None:
-            kwargs['condition'] = UnlessCondition(
-                predicate_expression=parser.parse_substitution(unless_cond)
-            )
+            kwargs["condition"] = UnlessCondition(predicate_expression=parser.parse_substitution(unless_cond))
         return Action, kwargs
 
     @property
@@ -92,14 +84,20 @@ class Action(LaunchDescriptionEntity):
         """Override describe_sub_entities from LaunchDescriptionEntity."""
         return self.get_sub_entities() if self.condition is None else []
 
-    def describe_conditional_sub_entities(self) -> List[Tuple[
-        Text,  # text description of the condition
-        Iterable[LaunchDescriptionEntity],  # list of conditional sub-entities
-    ]]:
+    def describe_conditional_sub_entities(
+        self,
+    ) -> List[
+        Tuple[
+            Text,  # text description of the condition
+            Iterable[LaunchDescriptionEntity],  # list of conditional sub-entities
+        ]
+    ]:
         """Override describe_conditional_sub_entities from LaunchDescriptionEntity."""
-        return [
-            ('Conditionally included by {}'.format(self.describe()), self.get_sub_entities())
-        ] if self.condition is not None else []
+        return (
+            [("Conditionally included by {}".format(self.describe()), self.get_sub_entities())]
+            if self.condition is not None
+            else []
+        )
 
     def visit(self, context: LaunchContext) -> Optional[List[LaunchDescriptionEntity]]:
         """Override visit from LaunchDescriptionEntity so that it executes."""
@@ -108,13 +106,12 @@ class Action(LaunchDescriptionEntity):
                 return self.execute(context)
             finally:
                 from .events import ExecutionComplete  # noqa
+
                 event = ExecutionComplete(action=self)
                 if context.would_handle_event(event):
                     future = self.get_asyncio_future()
                     if future is not None:
-                        future.add_done_callback(
-                            lambda _: context.emit_event_sync(event)
-                        )
+                        future.add_done_callback(lambda _: context.emit_event_sync(event))
                     else:
                         context.emit_event_sync(event)
         return None

@@ -15,8 +15,7 @@
 """Tests for the PopLaunchConfigurations and PushLaunchConfigurations action classes."""
 
 from launch import LaunchContext
-from launch.actions import PopLaunchConfigurations
-from launch.actions import PushLaunchConfigurations
+from launch.actions import PopLaunchConfigurations, PushLaunchConfigurations
 
 
 def test_push_and_pop_launch_configuration_constructors():
@@ -36,40 +35,40 @@ def test_push_and_pop_launch_configuration_execute():
     assert len(lc1.launch_configurations) == 0
 
     # does not change single config
-    lc1.launch_configurations['foo'] = 'FOO'
+    lc1.launch_configurations["foo"] = "FOO"
     assert len(lc1.launch_configurations) == 1
-    assert 'foo' in lc1.launch_configurations
-    assert lc1.launch_configurations['foo'] == 'FOO'
+    assert "foo" in lc1.launch_configurations
+    assert lc1.launch_configurations["foo"] == "FOO"
     PushLaunchConfigurations().visit(lc1)
     PopLaunchConfigurations().visit(lc1)
     assert len(lc1.launch_configurations) == 1
-    assert 'foo' in lc1.launch_configurations
-    assert lc1.launch_configurations['foo'] == 'FOO'
+    assert "foo" in lc1.launch_configurations
+    assert lc1.launch_configurations["foo"] == "FOO"
 
     # does scope additions
     lc2 = LaunchContext()
     PushLaunchConfigurations().visit(lc2)
-    lc2.launch_configurations['foo'] = 'FOO'
+    lc2.launch_configurations["foo"] = "FOO"
     PopLaunchConfigurations().visit(lc2)
     assert len(lc2.launch_configurations) == 0
-    assert 'foo' not in lc2.launch_configurations
+    assert "foo" not in lc2.launch_configurations
 
     # does scope modifications
     lc3 = LaunchContext()
-    lc3.launch_configurations['foo'] = 'FOO'
+    lc3.launch_configurations["foo"] = "FOO"
     PushLaunchConfigurations().visit(lc3)
-    lc3.launch_configurations['foo'] = 'BAR'
+    lc3.launch_configurations["foo"] = "BAR"
     PopLaunchConfigurations().visit(lc3)
     assert len(lc3.launch_configurations) == 1
-    assert 'foo' in lc3.launch_configurations
-    assert lc3.launch_configurations['foo'] == 'FOO'
+    assert "foo" in lc3.launch_configurations
+    assert lc3.launch_configurations["foo"] == "FOO"
 
     # does scope deletions
     lc4 = LaunchContext()
-    lc4.launch_configurations['foo'] = 'FOO'
+    lc4.launch_configurations["foo"] = "FOO"
     PushLaunchConfigurations().visit(lc4)
-    del lc4.launch_configurations['foo']
+    del lc4.launch_configurations["foo"]
     PopLaunchConfigurations().visit(lc4)
     assert len(lc4.launch_configurations) == 1
-    assert 'foo' in lc4.launch_configurations
-    assert lc4.launch_configurations['foo'] == 'FOO'
+    assert "foo" in lc4.launch_configurations
+    assert lc4.launch_configurations["foo"] == "FOO"

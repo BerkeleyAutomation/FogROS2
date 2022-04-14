@@ -18,26 +18,18 @@ import os
 from typing import List
 
 from ..action import Action
-from ..frontend import Entity
-from ..frontend import expose_action
-from ..frontend import Parser
+from ..frontend import Entity, Parser, expose_action
 from ..launch_context import LaunchContext
 from ..some_substitutions_type import SomeSubstitutionsType
 from ..substitution import Substitution
-from ..utilities import normalize_to_list_of_substitutions
-from ..utilities import perform_substitutions
+from ..utilities import normalize_to_list_of_substitutions, perform_substitutions
 
 
-@expose_action('set_env')
+@expose_action("set_env")
 class SetEnvironmentVariable(Action):
     """Action that sets an environment variable."""
 
-    def __init__(
-        self,
-        name: SomeSubstitutionsType,
-        value: SomeSubstitutionsType,
-        **kwargs
-    ) -> None:
+    def __init__(self, name: SomeSubstitutionsType, value: SomeSubstitutionsType, **kwargs) -> None:
         """Create a SetEnvironmentVariable action."""
         super().__init__(**kwargs)
         self.__name = normalize_to_list_of_substitutions(name)
@@ -51,8 +43,8 @@ class SetEnvironmentVariable(Action):
     ):
         """Parse a 'set_env' entity."""
         _, kwargs = super().parse(entity, parser)
-        kwargs['name'] = parser.parse_substitution(entity.get_attr('name'))
-        kwargs['value'] = parser.parse_substitution(entity.get_attr('value'))
+        kwargs["name"] = parser.parse_substitution(entity.get_attr("name"))
+        kwargs["value"] = parser.parse_substitution(entity.get_attr("value"))
         return cls, kwargs
 
     @property
@@ -67,6 +59,5 @@ class SetEnvironmentVariable(Action):
 
     def execute(self, context: LaunchContext) -> None:
         """Execute the action."""
-        os.environ[perform_substitutions(context, self.name)] = \
-            perform_substitutions(context, self.value)
+        os.environ[perform_substitutions(context, self.name)] = perform_substitutions(context, self.value)
         return None

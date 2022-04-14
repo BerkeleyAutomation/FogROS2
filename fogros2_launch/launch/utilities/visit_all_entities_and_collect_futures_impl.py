@@ -15,16 +15,14 @@
 """Module for the visit_all_entities_and_collect_futures() utility function."""
 
 import asyncio
-from typing import List
-from typing import Tuple
+from typing import List, Tuple
 
 from ..launch_context import LaunchContext
 from ..launch_description_entity import LaunchDescriptionEntity
 
 
 def visit_all_entities_and_collect_futures(
-    entity: LaunchDescriptionEntity,
-    context: LaunchContext
+    entity: LaunchDescriptionEntity, context: LaunchContext
 ) -> List[Tuple[LaunchDescriptionEntity, asyncio.Future]]:
     """
     Visit given entity, as well as all sub-entities, and collect any futures.

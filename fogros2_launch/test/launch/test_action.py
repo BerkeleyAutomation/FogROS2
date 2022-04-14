@@ -14,9 +14,7 @@
 
 """Tests for the Action class."""
 
-from launch import Action
-from launch import Condition
-from launch import LaunchContext
+from launch import Action, Condition, LaunchContext
 
 
 def test_action_constructors():
@@ -27,18 +25,18 @@ def test_action_constructors():
 
 def test_action_methods():
     """Test the methods of the Action class."""
+
     class MockLaunchContext(LaunchContext):
         ...
 
     action = Action()
-    assert 'Action' in action.describe()
+    assert "Action" in action.describe()
     assert isinstance(action.describe_sub_entities(), list)
     assert isinstance(action.describe_conditional_sub_entities(), list)
     assert action.visit(MockLaunchContext()) is None
     assert action.get_asyncio_future() is None
 
     class CustomAction(Action):
-
         def __init__(self, **kwargs):
             super().__init__(**kwargs)
             self.execute_called = False
@@ -47,7 +45,7 @@ def test_action_methods():
             self.execute_called = True
 
     custom_action = CustomAction()
-    assert 'CustomAction' in custom_action.describe()
+    assert "CustomAction" in custom_action.describe()
     assert isinstance(custom_action.describe_sub_entities(), list)
     assert isinstance(custom_action.describe_conditional_sub_entities(), list)
     assert custom_action.visit(MockLaunchContext()) is None

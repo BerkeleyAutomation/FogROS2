@@ -14,12 +14,7 @@
 
 """Module for EventHandler class."""
 
-from typing import Callable
-from typing import List
-from typing import Optional
-from typing import Text
-from typing import Tuple
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Callable, List, Optional, Text, Tuple
 
 from .event import Event
 from .some_actions_type import SomeActionsType
@@ -81,22 +76,19 @@ class BaseEventHandler:
         """Return the description list with 0 as a string, and then LaunchDescriptionEntity's."""
         return (
             "{}(matcher='{}', handler='{}', handle_once={})".format(
-                type(self).__name__,
-                self.matcher_description,
-                self.handler_description,
-                self.handle_once
+                type(self).__name__, self.matcher_description, self.handler_description, self.handle_once
             ),
-            []
+            [],
         )
 
-    def handle(self, event: Event, context: 'LaunchContext') -> Optional[SomeActionsType]:
+    def handle(self, event: Event, context: "LaunchContext") -> Optional[SomeActionsType]:
         """
         Handle the given event.
 
         This implementation should always be called by child classes in order to properly
         support common event handler functionality.
         """
-        context.extend_locals({'event': event})
+        context.extend_locals({"event": event})
         if self.handle_once:
             context.unregister_event_handler(self)
 
@@ -135,7 +127,7 @@ class EventHandler(BaseEventHandler):
             actions.extend(self.entities)
         return (text, actions)
 
-    def handle(self, event: Event, context: 'LaunchContext') -> Optional[SomeActionsType]:
+    def handle(self, event: Event, context: "LaunchContext") -> Optional[SomeActionsType]:
         """Handle the given event."""
         super().handle(event, context)
         return self.entities

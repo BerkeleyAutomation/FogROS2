@@ -14,17 +14,13 @@
 
 """Module for OnProcessStart class."""
 
-from typing import Callable
-from typing import cast
-from typing import Optional
-from typing import TYPE_CHECKING
-from typing import Union
+from typing import TYPE_CHECKING, Callable, Optional, Union, cast
 
-from .on_action_event_base import OnActionEventBase
 from ..event import Event
 from ..events.process import ProcessStarted
 from ..launch_context import LaunchContext
 from ..some_actions_type import SomeActionsType
+from .on_action_event_base import OnActionEventBase
 
 if TYPE_CHECKING:
     from ..actions import Action  # noqa: F401
@@ -42,24 +38,15 @@ class OnProcessStart(OnActionEventBase):
     def __init__(
         self,
         *,
-        target_action:
-            Optional[Union[Callable[['ExecuteProcess'], bool], 'ExecuteProcess']] = None,
-        on_start:
-            Union[
-                SomeActionsType,
-                Callable[[ProcessStarted, LaunchContext], Optional[SomeActionsType]]],
+        target_action: Optional[Union[Callable[["ExecuteProcess"], bool], "ExecuteProcess"]] = None,
+        on_start: Union[SomeActionsType, Callable[[ProcessStarted, LaunchContext], Optional[SomeActionsType]]],
         **kwargs
     ) -> None:
         """Create an OnProcessStart event handler."""
         from ..actions import ExecuteProcess  # noqa: F811
-        target_action = cast(
-            Optional[Union[Callable[['Action'], bool], 'Action']],
-            target_action)
-        on_start = cast(
-            Union[
-                SomeActionsType,
-                Callable[[Event, LaunchContext], Optional[SomeActionsType]]],
-            on_start)
+
+        target_action = cast(Optional[Union[Callable[["Action"], bool], "Action"]], target_action)
+        on_start = cast(Union[SomeActionsType, Callable[[Event, LaunchContext], Optional[SomeActionsType]]], on_start)
         super().__init__(
             action_matcher=target_action,
             on_event=on_start,

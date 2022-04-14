@@ -14,9 +14,9 @@
 
 """Module for the AnyLaunchDescriptionSource class."""
 
-from .any_launch_file_utilities import get_launch_description_from_any_launch_file
 from ..launch_description_source import LaunchDescriptionSource
 from ..some_substitutions_type import SomeSubstitutionsType
+from .any_launch_file_utilities import get_launch_description_from_any_launch_file
 
 
 class AnyLaunchDescriptionSource(LaunchDescriptionSource):
@@ -45,7 +45,7 @@ class AnyLaunchDescriptionSource(LaunchDescriptionSource):
         super().__init__(
             None,
             launch_file_path,
-            'interpreted launch file',
+            "interpreted launch file",
         )
 
     def _get_launch_description(self, location):

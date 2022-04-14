@@ -16,13 +16,7 @@
 
 import asyncio
 import collections.abc
-from typing import Any
-from typing import Coroutine
-from typing import Dict
-from typing import Iterable
-from typing import List
-from typing import Optional
-from typing import Text
+from typing import Any, Coroutine, Dict, Iterable, List, Optional, Text
 
 from ..action import Action
 from ..event import Event
@@ -62,7 +56,8 @@ class OpaqueCoroutine(Action):
     """
 
     def __init__(
-        self, *,
+        self,
+        *,
         coroutine: Coroutine,
         args: Optional[Iterable[Any]] = None,
         kwargs: Optional[Dict[Text, Any]] = None,
@@ -72,16 +67,10 @@ class OpaqueCoroutine(Action):
         """Create an OpaqueCoroutine action."""
         super().__init__(**left_over_kwargs)
         if not asyncio.iscoroutinefunction(coroutine):
-            raise TypeError(
-                "OpaqueCoroutine expected a coroutine for 'coroutine', got '{}'".format(
-                    type(coroutine)
-                )
-            )
-        ensure_argument_type(
-            args, (collections.abc.Iterable, type(None)), 'args', 'OpaqueCoroutine'
-        )
-        ensure_argument_type(kwargs, (dict, type(None)), 'kwargs', 'OpaqueCoroutine')
-        ensure_argument_type(ignore_context, bool, 'ignore_context', 'OpaqueCoroutine')
+            raise TypeError("OpaqueCoroutine expected a coroutine for 'coroutine', got '{}'".format(type(coroutine)))
+        ensure_argument_type(args, (collections.abc.Iterable, type(None)), "args", "OpaqueCoroutine")
+        ensure_argument_type(kwargs, (dict, type(None)), "kwargs", "OpaqueCoroutine")
+        ensure_argument_type(ignore_context, bool, "ignore_context", "OpaqueCoroutine")
         self.__coroutine = coroutine
         self.__args = []  # type: Iterable
         if args is not None:
@@ -103,12 +92,8 @@ class OpaqueCoroutine(Action):
         args = self.__args
         if not self.__ignore_context:
             args = [context, *self.__args]
-        self.__future = context.asyncio_loop.create_task(
-            self.__coroutine(*args, **self.__kwargs)
-        )
-        context.register_event_handler(
-            OnShutdown(on_shutdown=self.__on_shutdown)
-        )
+        self.__future = context.asyncio_loop.create_task(self.__coroutine(*args, **self.__kwargs))
+        context.register_event_handler(OnShutdown(on_shutdown=self.__on_shutdown))
         return None
 
     def get_asyncio_future(self) -> Optional[asyncio.Future]:

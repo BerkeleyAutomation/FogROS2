@@ -14,17 +14,16 @@
 
 """Module for the ThisLaunchFileDir substitution."""
 
-from typing import Iterable
-from typing import Text
+from typing import Iterable, Text
 
-from .substitution_failure import SubstitutionFailure
 from ..frontend.expose import expose_substitution
 from ..launch_context import LaunchContext
 from ..some_substitutions_type import SomeSubstitutionsType
 from ..substitution import Substitution
+from .substitution_failure import SubstitutionFailure
 
 
-@expose_substitution('dirname')
+@expose_substitution("dirname")
 class ThisLaunchFileDir(Substitution):
     """Substitution that returns the absolute path to the current launch file."""
 
@@ -41,7 +40,7 @@ class ThisLaunchFileDir(Substitution):
 
     def describe(self) -> Text:
         """Return a description of this substitution as a string."""
-        return 'ThisLaunchFileDir()'
+        return "ThisLaunchFileDir()"
 
     def perform(self, context: LaunchContext) -> Text:
         """
@@ -52,7 +51,6 @@ class ThisLaunchFileDir(Substitution):
 
         :raises: SubstitutionFailure if not in a launch file
         """
-        if 'current_launch_file_directory' not in context.get_locals_as_dict():
-            raise SubstitutionFailure(
-                'ThisLaunchFileDir used outside of a launch file (in a script)')
+        if "current_launch_file_directory" not in context.get_locals_as_dict():
+            raise SubstitutionFailure("ThisLaunchFileDir used outside of a launch file (in a script)")
         return context.locals.current_launch_file_directory

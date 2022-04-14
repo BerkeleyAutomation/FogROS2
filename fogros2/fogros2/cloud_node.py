@@ -1,14 +1,8 @@
-
-
 from launch_ros.actions import Node
 
 
 class CloudNode(Node):
-    def __init__(self,
-                 machine,
-                 stream_topics=[],
-                 **kwargs
-                 ):
+    def __init__(self, machine, stream_topics=[], **kwargs):
         super().__init__(**kwargs)
         self.machine = machine
         self.stream_topics = stream_topics

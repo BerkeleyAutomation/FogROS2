@@ -14,11 +14,9 @@
 
 """Python package utility functions related to loading Frontend Launch Files."""
 
-from typing import Text
-from typing import Type
+from typing import Text, Type
 
-from ..frontend import InvalidFrontendLaunchFileError
-from ..frontend import Parser
+from ..frontend import InvalidFrontendLaunchFileError, Parser
 from ..launch_description import LaunchDescription
 
 # Re-export name
@@ -26,9 +24,7 @@ InvalidFrontendLaunchFileError = InvalidFrontendLaunchFileError
 
 
 def get_launch_description_from_frontend_launch_file(
-    frontend_launch_file_path: Text,
-    *,
-    parser: Type[Parser] = Parser
+    frontend_launch_file_path: Text, *, parser: Type[Parser] = Parser
 ) -> LaunchDescription:
     """Load a `LaunchDescription` from a declarative (markup based) launch file."""
     root_entity, parser = parser.load(frontend_launch_file_path)

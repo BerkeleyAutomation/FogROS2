@@ -14,39 +14,32 @@
 
 """Tests for the OnProcessStart event handler."""
 
-from unittest.mock import Mock
-from unittest.mock import NonCallableMock
+from unittest.mock import Mock, NonCallableMock
 
+import pytest
 from launch import LaunchContext
 from launch.action import Action
 from launch.actions.execute_process import ExecuteProcess
 from launch.event_handlers.on_process_start import OnProcessStart
-from launch.events.process import ProcessExited
-from launch.events.process import ProcessStarted
-
-import pytest
-
+from launch.events.process import ProcessExited, ProcessStarted
 
 phony_process_started = ProcessStarted(
-    action=Mock(spec=Action), name='PhonyProcessStarted', cmd=['ls'], cwd=None, env=None, pid=1)
+    action=Mock(spec=Action), name="PhonyProcessStarted", cmd=["ls"], cwd=None, env=None, pid=1
+)
 phony_process_exited = ProcessExited(
-    action=Mock(spec=Action), name='PhonyProcessExited', cmd=['ls'], cwd=None, env=None, pid=2,
-    returncode=0)
+    action=Mock(spec=Action), name="PhonyProcessExited", cmd=["ls"], cwd=None, env=None, pid=2, returncode=0
+)
 phony_context = Mock(spec=LaunchContext)
 
 
 def test_non_execute_process_target():
     with pytest.raises(TypeError):
-        OnProcessStart(
-            target_action=NonCallableMock(),
-            on_start=NonCallableMock(spec=Action))
+        OnProcessStart(target_action=NonCallableMock(), on_start=NonCallableMock(spec=Action))
 
 
 def test_non_action_on_start():
     with pytest.raises(TypeError):
-        OnProcessStart(
-            target_action=NonCallableMock(),
-            on_start=NonCallableMock())
+        OnProcessStart(target_action=NonCallableMock(), on_start=NonCallableMock())
 
 
 def test_matches_process_started():
@@ -57,22 +50,16 @@ def test_matches_process_started():
 
 def test_matches_single_process():
     target_action = NonCallableMock(spec=ExecuteProcess)
-    handler = OnProcessStart(
-        target_action=target_action,
-        on_start=Mock())
-    assert handler.matches(ProcessStarted(
-        action=target_action, name='foo', cmd=['ls'], cwd=None, env=None, pid=3))
+    handler = OnProcessStart(target_action=target_action, on_start=Mock())
+    assert handler.matches(ProcessStarted(action=target_action, name="foo", cmd=["ls"], cwd=None, env=None, pid=3))
     assert not handler.matches(phony_process_started)
     assert not handler.matches(phony_process_exited)
 
 
 def test_matches_callable():
     target_action = Mock(spec=ExecuteProcess)
-    handler = OnProcessStart(
-        target_action=target_action,
-        on_start=Mock())
-    assert handler.matches(ProcessStarted(
-        action=target_action, name='foo', cmd=['ls'], cwd=None, env=None, pid=3))
+    handler = OnProcessStart(target_action=target_action, on_start=Mock())
+    assert handler.matches(ProcessStarted(action=target_action, name="foo", cmd=["ls"], cwd=None, env=None, pid=3))
     assert handler.matches(phony_process_started)
     assert not handler.matches(phony_process_exited)
 
@@ -103,7 +90,7 @@ def test_event_added_to_context():
 
     handler = OnProcessStart(on_start=Mock())
     handler.handle(phony_process_started, context)
-    extend_locals_mock.assert_called_once_with({'event': phony_process_started})
+    extend_locals_mock.assert_called_once_with({"event": phony_process_started})
     unregister_event_handler_mock.assert_not_called()
 
 

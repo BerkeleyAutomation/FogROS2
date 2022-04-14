@@ -20,8 +20,7 @@ from ..action import Action
 from ..launch_context import LaunchContext
 from ..some_substitutions_type import SomeSubstitutionsType
 from ..substitution import Substitution
-from ..utilities import normalize_to_list_of_substitutions
-from ..utilities import perform_substitutions
+from ..utilities import normalize_to_list_of_substitutions, perform_substitutions
 
 
 class UnsetLaunchConfiguration(Action):
@@ -34,11 +33,7 @@ class UnsetLaunchConfiguration(Action):
     /sa :py:class:`launch.actions.SetLaunchConfiguration`
     """
 
-    def __init__(
-        self,
-        name: SomeSubstitutionsType,
-        **kwargs
-    ) -> None:
+    def __init__(self, name: SomeSubstitutionsType, **kwargs) -> None:
         """Create an UnsetLaunchConfiguration action."""
         super().__init__(**kwargs)
         self.__name = normalize_to_list_of_substitutions(name)

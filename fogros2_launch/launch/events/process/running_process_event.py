@@ -14,11 +14,7 @@
 
 """Module for RunningProcessEvent event."""
 
-from typing import Dict
-from typing import List
-from typing import Optional
-from typing import Text
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Dict, List, Optional, Text
 
 from ...event import Event
 
@@ -29,12 +25,12 @@ if TYPE_CHECKING:
 class RunningProcessEvent(Event):
     """Event base class that is related to some running process."""
 
-    name = 'launch.events.process.RunningProcessEvent'
+    name = "launch.events.process.RunningProcessEvent"
 
     def __init__(
         self,
         *,
-        action: 'ExecuteProcess',
+        action: "ExecuteProcess",
         name: Text,
         cmd: List[Text],
         cwd: Optional[Text],
@@ -59,12 +55,12 @@ class RunningProcessEvent(Event):
         self.__pid = pid
 
     @property
-    def action(self) -> 'ExecuteProcess':
+    def action(self) -> "ExecuteProcess":
         """Getter for action."""
         return self.__action
 
     @property
-    def execute_process_action(self) -> 'ExecuteProcess':
+    def execute_process_action(self) -> "ExecuteProcess":
         """Getter for execute_process_action."""
         return self.__action
 

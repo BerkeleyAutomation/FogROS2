@@ -28,16 +28,16 @@ from .this_launch_file import ThisLaunchFile
 from .this_launch_file_dir import ThisLaunchFileDir
 
 __all__ = [
-    'AnonName',
-    'Command',
-    'EnvironmentVariable',
-    'FindExecutable',
-    'LaunchConfiguration',
-    'LocalSubstitution',
-    'PathJoinSubstitution',
-    'PythonExpression',
-    'SubstitutionFailure',
-    'TextSubstitution',
-    'ThisLaunchFile',
-    'ThisLaunchFileDir',
+    "AnonName",
+    "Command",
+    "EnvironmentVariable",
+    "FindExecutable",
+    "LaunchConfiguration",
+    "LocalSubstitution",
+    "PathJoinSubstitution",
+    "PythonExpression",
+    "SubstitutionFailure",
+    "TextSubstitution",
+    "ThisLaunchFile",
+    "ThisLaunchFileDir",
 ]

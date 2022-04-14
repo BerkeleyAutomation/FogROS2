@@ -19,9 +19,8 @@ import functools
 import platform
 import signal
 
-from launch.utilities import AsyncSafeSignalManager
-
 import osrf_pycommon.process_utils
+from launch.utilities import AsyncSafeSignalManager
 
 
 def cap_signals(*signals):
@@ -38,12 +37,13 @@ def cap_signals(*signals):
                 return func(*args, **kwargs)
             finally:
                 assert all(signal.signal(s, h) is _noop for s, h in handlers.items())
+
         return _wrapper
 
     return _decorator
 
 
-if platform.system() == 'Windows':
+if platform.system() == "Windows":
     # NOTE(hidmic): this is risky, but we have few options.
     SIGNAL = signal.SIGINT
     ANOTHER_SIGNAL = signal.SIGBREAK
@@ -51,11 +51,13 @@ else:
     SIGNAL = signal.SIGUSR1
     ANOTHER_SIGNAL = signal.SIGUSR2
 
-if not hasattr(signal, 'raise_signal'):
+if not hasattr(signal, "raise_signal"):
     # Only available for Python 3.8+
     def raise_signal(signum):
         import os
+
         os.kill(os.getpid(), signum)
+
 else:
     raise_signal = signal.raise_signal
 
@@ -79,11 +81,9 @@ def test_async_safe_signal_manager():
 
         # Verify signal handling is working
         loop.call_soon(raise_signal, SIGNAL)
-        loop.run_until_complete(asyncio.wait(
-            [got_signal, got_another_signal],
-            return_when=asyncio.FIRST_COMPLETED,
-            timeout=1.0
-        ))
+        loop.run_until_complete(
+            asyncio.wait([got_signal, got_another_signal], return_when=asyncio.FIRST_COMPLETED, timeout=1.0)
+        )
         assert got_signal.done()
         assert got_signal.result() == SIGNAL
         assert not got_another_signal.done()
@@ -93,23 +93,17 @@ def test_async_safe_signal_manager():
 
         # Verify signal handler is no longer there
         loop.call_soon(raise_signal, SIGNAL)
-        loop.run_until_complete(asyncio.wait(
-            [got_another_signal], timeout=1.0
-        ))
+        loop.run_until_complete(asyncio.wait([got_another_signal], timeout=1.0))
         assert not got_another_signal.done()
 
     # Signal handling is (now) inactive outside context
     loop.call_soon(raise_signal, ANOTHER_SIGNAL)
-    loop.run_until_complete(asyncio.wait(
-        [got_another_signal], timeout=1.0
-    ))
+    loop.run_until_complete(asyncio.wait([got_another_signal], timeout=1.0))
     assert not got_another_signal.done()
 
     # Managers' context may be re-entered
     with manager:
         loop.call_soon(raise_signal, ANOTHER_SIGNAL)
-        loop.run_until_complete(asyncio.wait(
-            [got_another_signal], timeout=1.0
-        ))
+        loop.run_until_complete(asyncio.wait([got_another_signal], timeout=1.0))
         assert got_another_signal.done()
         assert got_another_signal.result() == ANOTHER_SIGNAL

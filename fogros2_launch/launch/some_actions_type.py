@@ -15,11 +15,9 @@
 """Module for SomeActionsType type."""
 
 import collections.abc
-from typing import Iterable
-from typing import Union
+from typing import Iterable, Union
 
 from .launch_description_entity import LaunchDescriptionEntity
-
 
 SomeActionsType = Union[
     LaunchDescriptionEntity,

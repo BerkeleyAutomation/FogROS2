@@ -14,17 +14,13 @@
 
 """Module for OnProcessIO class."""
 
-from typing import Callable
-from typing import cast
-from typing import Optional
-from typing import TYPE_CHECKING
-from typing import Union
+from typing import TYPE_CHECKING, Callable, Optional, Union, cast
 
-from .on_action_event_base import OnActionEventBase
 from ..event import Event
 from ..events.process import ProcessIO
 from ..launch_context import LaunchContext
 from ..some_actions_type import SomeActionsType
+from .on_action_event_base import OnActionEventBase
 
 if TYPE_CHECKING:
     from ..actions import Action  # noqa: F401
@@ -39,8 +35,7 @@ class OnProcessIO(OnActionEventBase):
     def __init__(
         self,
         *,
-        target_action:
-            Optional[Union[Callable[['ExecuteLocal'], bool], 'ExecuteLocal']] = None,
+        target_action: Optional[Union[Callable[["ExecuteLocal"], bool], "ExecuteLocal"]] = None,
         on_stdin: Callable[[ProcessIO], Optional[SomeActionsType]] = None,
         on_stdout: Callable[[ProcessIO], Optional[SomeActionsType]] = None,
         on_stderr: Callable[[ProcessIO], Optional[SomeActionsType]] = None,
@@ -48,9 +43,8 @@ class OnProcessIO(OnActionEventBase):
     ) -> None:
         """Create an OnProcessIO event handler."""
         from ..actions import ExecuteLocal  # noqa: F811
-        target_action = cast(
-            Optional[Union[Callable[['Action'], bool], 'Action']],
-            target_action)
+
+        target_action = cast(Optional[Union[Callable[["Action"], bool], "Action"]], target_action)
 
         def handle(event: Event, _: LaunchContext) -> Optional[SomeActionsType]:
             event = cast(ProcessIO, event)

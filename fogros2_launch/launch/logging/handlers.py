@@ -19,6 +19,7 @@ import sys
 
 def with_per_logger_formatting(cls):
     """Add per logger formatting capabilities to the given logging.Handler."""
+
     class _trait(cls):
         """A logging.Handler subclass to enable per logger formatting."""
 
@@ -56,10 +57,11 @@ class _module_wrapper:
     def __init__(self, wrapped_module):
         import logging
         import logging.handlers
+
         self._handlers = {}
         for module in (logging, logging.handlers):
             for name in dir(module):
-                if name.startswith('_'):
+                if name.startswith("_"):
                     continue
                 obj = getattr(module, name)
                 if not isinstance(obj, type):

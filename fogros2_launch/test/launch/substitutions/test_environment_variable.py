@@ -16,31 +16,29 @@
 
 import os
 
+import pytest
 from launch import LaunchContext
 from launch.actions import SetEnvironmentVariable
-from launch.substitutions import EnvironmentVariable
-from launch.substitutions import SubstitutionFailure
-
-import pytest
+from launch.substitutions import EnvironmentVariable, SubstitutionFailure
 
 
 def test_this_launch_file_path():
-    if 'MY_ENVIRONMENT_VARIABLE' in os.environ:
-        del os.environ['MY_ENVIRONMENT_VARIABLE']
+    if "MY_ENVIRONMENT_VARIABLE" in os.environ:
+        del os.environ["MY_ENVIRONMENT_VARIABLE"]
     lc = LaunchContext()
-    sub1 = EnvironmentVariable('MY_ENVIRONMENT_VARIABLE')
+    sub1 = EnvironmentVariable("MY_ENVIRONMENT_VARIABLE")
     with pytest.raises(SubstitutionFailure) as ex:
         sub1.perform(lc)
     ex.match("environment variable 'MY_ENVIRONMENT_VARIABLE' does not exist")
 
-    sub2 = EnvironmentVariable('MY_ENVIRONMENT_VARIABLE', default_value='')
-    assert '' == sub2.perform(lc)
+    sub2 = EnvironmentVariable("MY_ENVIRONMENT_VARIABLE", default_value="")
+    assert "" == sub2.perform(lc)
 
-    sub3 = EnvironmentVariable('MY_ENVIRONMENT_VARIABLE', default_value='MY_DEFAULT_VALUE')
-    assert 'MY_DEFAULT_VALUE' == sub3.perform(lc)
+    sub3 = EnvironmentVariable("MY_ENVIRONMENT_VARIABLE", default_value="MY_DEFAULT_VALUE")
+    assert "MY_DEFAULT_VALUE" == sub3.perform(lc)
 
-    SetEnvironmentVariable('MY_ENVIRONMENT_VARIABLE', 'SOME_VALUE').visit(lc)
-    assert 'SOME_VALUE' == sub1.perform(lc)
-    assert 'SOME_VALUE' == sub2.perform(lc)
-    assert 'SOME_VALUE' == sub3.perform(lc)
-    del os.environ['MY_ENVIRONMENT_VARIABLE']
+    SetEnvironmentVariable("MY_ENVIRONMENT_VARIABLE", "SOME_VALUE").visit(lc)
+    assert "SOME_VALUE" == sub1.perform(lc)
+    assert "SOME_VALUE" == sub2.perform(lc)
+    assert "SOME_VALUE" == sub3.perform(lc)
+    del os.environ["MY_ENVIRONMENT_VARIABLE"]

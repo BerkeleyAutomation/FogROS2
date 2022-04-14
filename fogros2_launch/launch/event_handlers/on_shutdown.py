@@ -14,12 +14,7 @@
 
 """Module for OnShutdown class."""
 
-from typing import Callable
-from typing import cast
-from typing import Optional
-from typing import Text
-from typing import TYPE_CHECKING
-from typing import Union
+from typing import TYPE_CHECKING, Callable, Optional, Text, Union, cast
 
 from ..event import Event
 from ..event_handler import BaseEventHandler
@@ -37,8 +32,7 @@ class OnShutdown(BaseEventHandler):
     def __init__(
         self,
         *,
-        on_shutdown: Union[SomeActionsType,
-                           Callable[[Shutdown, 'LaunchContext'], Optional[SomeActionsType]]],
+        on_shutdown: Union[SomeActionsType, Callable[[Shutdown, "LaunchContext"], Optional[SomeActionsType]]],
         **kwargs
     ) -> None:
         """Create an OnShutdown event handler."""
@@ -50,9 +44,9 @@ class OnShutdown(BaseEventHandler):
         # the correct signature for a handler in this case
         self.__on_shutdown = on_shutdown
         if not callable(on_shutdown):
-            self.__on_shutdown = (lambda event, context: on_shutdown)
+            self.__on_shutdown = lambda event, context: on_shutdown
 
-    def handle(self, event: Event, context: 'LaunchContext') -> Optional[SomeActionsType]:
+    def handle(self, event: Event, context: "LaunchContext") -> Optional[SomeActionsType]:
         """Handle the given event."""
         super().handle(event, context)
         return self.__on_shutdown(cast(Shutdown, event), context)
@@ -61,9 +55,9 @@ class OnShutdown(BaseEventHandler):
     def handler_description(self) -> Text:
         """Return the string description of the handler."""
         # TODO(dhood): print known actions if they were passed in, like in OnProcessExit
-        return '{}'.format(self.__on_shutdown)
+        return "{}".format(self.__on_shutdown)
 
     @property
     def matcher_description(self):
         """Return the string description of the matcher."""
-        return 'event issubclass of launch.events.Shutdown'
+        return "event issubclass of launch.events.Shutdown"

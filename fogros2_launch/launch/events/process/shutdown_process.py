@@ -14,8 +14,7 @@
 
 """Module for ShutdownProcess event."""
 
-from typing import Callable
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Callable
 
 from .process_targeted_event import ProcessTargetedEvent
 
@@ -34,8 +33,8 @@ class ShutdownProcess(ProcessTargetedEvent):
     process.
     """
 
-    name = 'launch.events.process.ShutdownProcess'
+    name = "launch.events.process.ShutdownProcess"
 
-    def __init__(self, *, process_matcher: Callable[['ExecuteProcess'], bool]) -> None:
+    def __init__(self, *, process_matcher: Callable[["ExecuteProcess"], bool]) -> None:
         """Create a ShutdownProcess event."""
         super().__init__(process_matcher=process_matcher)

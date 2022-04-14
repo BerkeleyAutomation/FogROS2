@@ -16,9 +16,7 @@
 
 import collections.abc
 import math
-from typing import Iterable
-from typing import List
-from typing import Text
+from typing import Iterable, List, Text
 
 from ..frontend import expose_substitution
 from ..launch_context import LaunchContext
@@ -27,7 +25,7 @@ from ..substitution import Substitution
 from ..utilities import ensure_argument_type
 
 
-@expose_substitution('eval')
+@expose_substitution("eval")
 class PythonExpression(Substitution):
     """
     Substitution that can access contextual local variables.
@@ -42,20 +40,19 @@ class PythonExpression(Substitution):
         super().__init__()
 
         ensure_argument_type(
-            expression,
-            (str, Substitution, collections.abc.Iterable),
-            'expression',
-            'PythonExpression')
+            expression, (str, Substitution, collections.abc.Iterable), "expression", "PythonExpression"
+        )
 
         from ..utilities import normalize_to_list_of_substitutions
+
         self.__expression = normalize_to_list_of_substitutions(expression)
 
     @classmethod
     def parse(cls, data: Iterable[SomeSubstitutionsType]):
         """Parse `PythonExpression` substitution."""
         if len(data) != 1:
-            raise TypeError('eval substitution expects 1 argument')
-        return cls, {'expression': data[0]}
+            raise TypeError("eval substitution expects 1 argument")
+        return cls, {"expression": data[0]}
 
     @property
     def expression(self) -> List[Substitution]:
@@ -64,9 +61,10 @@ class PythonExpression(Substitution):
 
     def describe(self) -> Text:
         """Return a description of this substitution as a string."""
-        return 'PythonExpr({})'.format(' + '.join([sub.describe() for sub in self.expression]))
+        return "PythonExpr({})".format(" + ".join([sub.describe() for sub in self.expression]))
 
     def perform(self, context: LaunchContext) -> Text:
         """Perform the substitution by evaluating the expression."""
         from ..utilities import perform_substitutions
+
         return str(eval(perform_substitutions(context, self.expression), {}, math.__dict__))

@@ -21,7 +21,7 @@ from ..event import Event
 class ExecutionComplete(Event):
     """Event that is emitted on action execution completion."""
 
-    name = 'launch.events.ExecutionComplete'
+    name = "launch.events.ExecutionComplete"
 
     def __init__(self, *, action: Action) -> None:
         """Create an ExecutionComplete event."""

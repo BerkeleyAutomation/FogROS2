@@ -10,9 +10,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
+
 import wgconfig
 import wgconfig.wgexec as wgexec
-import os
 
 
 class VPN:
@@ -30,7 +31,6 @@ class VPN:
         self.robot_private_key = wgexec.generate_privatekey()
         self.robot_public_key = wgexec.get_publickey(self.robot_private_key)
 
-
     def generate_key_pairs(self, machines):
         """
         @param machines: List<machine>
@@ -40,13 +40,13 @@ class VPN:
             cloud_private_key = wgexec.generate_privatekey()
             self.cloud_name_to_priv_key_path[name] = cloud_private_key
             cloud_public_key = wgexec.get_publickey(cloud_private_key)
-            self.cloud_name_to_pub_key_path[name] =cloud_public_key
+            self.cloud_name_to_pub_key_path[name] = cloud_public_key
 
     def generate_wg_config_files(self, machines):
         self.generate_key_pairs(machines)
 
         # generate cloud configs
-        counter = 2 # start the static ip addr counter from 2
+        counter = 2  # start the static ip addr counter from 2
         for machine in machines:
             name = machine.get_name()
             machine_config_pwd = self.cloud_key_path + name
@@ -54,7 +54,7 @@ class VPN:
             aws_config = wgconfig.WGConfig(machine_config_pwd)
             aws_config.add_attr(None, "PrivateKey", machine_priv_key)
             aws_config.add_attr(None, "ListenPort", 51820)
-            aws_config.add_attr(None, "Address", "10.0.0." + str(counter) +"/24")
+            aws_config.add_attr(None, "Address", "10.0.0." + str(counter) + "/24")
             aws_config.add_peer(self.robot_public_key, "# fogROS Robot")
             aws_config.add_attr(self.robot_public_key, "AllowedIPs", "10.0.0.1/32")
             aws_config.write_file()
@@ -73,7 +73,6 @@ class VPN:
             robot_config.add_attr(self.cloud_name_to_pub_key_path[name], "Endpoint", f"{ip}:51820")
             robot_config.add_attr(self.cloud_name_to_pub_key_path[name], "PersistentKeepalive", 3)
         robot_config.write_file()
-
 
     def start_robot_vpn(self):
         # Copy /tmp/fogros-local.conf to /etc/wireguard/wg0.conf locally.

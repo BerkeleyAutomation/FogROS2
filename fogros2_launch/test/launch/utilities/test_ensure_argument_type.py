@@ -14,40 +14,39 @@
 
 """Tests for the ensure_argument_type() function."""
 
-from launch.utilities import ensure_argument_type
-
 import pytest
+from launch.utilities import ensure_argument_type
 
 
 def test_valid_argument_types():
     """Test the ensure_argument_type function with valid input."""
-    ensure_argument_type('foo', str, 'arg_foo')
-    ensure_argument_type(1, [str, int], 'arg_bar')
-    ensure_argument_type([3.14159], [list, str, int], '')
-    ensure_argument_type(3.14159, [float], ' ')
+    ensure_argument_type("foo", str, "arg_foo")
+    ensure_argument_type(1, [str, int], "arg_bar")
+    ensure_argument_type([3.14159], [list, str, int], "")
+    ensure_argument_type(3.14159, [float], " ")
 
     class MockClass:
         pass
 
     mock_class_obj = MockClass()
-    ensure_argument_type(mock_class_obj, MockClass, 'MockClass')
+    ensure_argument_type(mock_class_obj, MockClass, "MockClass")
 
     # With inheritence
     class MockChildClass(MockClass):
         pass
 
     mock_child_obj = MockChildClass()
-    ensure_argument_type(mock_child_obj, MockClass, 'MockChildClass')
+    ensure_argument_type(mock_child_obj, MockClass, "MockChildClass")
 
 
 def test_invalid_argument_types():
     """Test the ensure_argument_type function with invalid input."""
     with pytest.raises(TypeError):
-        ensure_argument_type(None, None, 'none')
+        ensure_argument_type(None, None, "none")
     with pytest.raises(TypeError):
-        ensure_argument_type(1, str, 'foo')
+        ensure_argument_type(1, str, "foo")
     with pytest.raises(TypeError):
-        ensure_argument_type('bar', [int, float, list, tuple], 'arg_bar')
+        ensure_argument_type("bar", [int, float, list, tuple], "arg_bar")
 
     class MockClass:
         pass
@@ -57,12 +56,12 @@ def test_invalid_argument_types():
 
     mock_class_obj = MockClass()
     with pytest.raises(TypeError):
-        ensure_argument_type(mock_class_obj, MockChildClass, 'MockChildClass')
+        ensure_argument_type(mock_class_obj, MockChildClass, "MockChildClass")
 
 
 def test_invalid_argument_types_with_caller():
     """Test the ensure_argument_type function with invalid input and caller name."""
     with pytest.raises(TypeError) as ex:
-        ensure_argument_type(1, [float, complex, list, tuple], 'test arg name', 'My test caller')
-    assert 'test arg name' in str(ex.value)
-    assert 'My test caller' in str(ex.value)
+        ensure_argument_type(1, [float, complex, list, tuple], "test arg name", "My test caller")
+    assert "test arg name" in str(ex.value)
+    assert "My test caller" in str(ex.value)

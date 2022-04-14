@@ -19,7 +19,7 @@ import inspect
 
 def isclassinstance(obj):
     """Return True if obj is an instance of a class."""
-    return hasattr(obj, '__class__')
+    return hasattr(obj, "__class__")
 
 
 def is_a(obj, entity_type):

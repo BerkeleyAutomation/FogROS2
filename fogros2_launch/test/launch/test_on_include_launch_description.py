@@ -16,17 +16,18 @@
 
 from unittest.mock import Mock
 
-from launch import LaunchContext
-from launch import LaunchDescription
+from launch import LaunchContext, LaunchDescription
 from launch.action import Action
-from launch.event_handlers.on_include_launch_description import OnIncludeLaunchDescription
+from launch.event_handlers.on_include_launch_description import (
+    OnIncludeLaunchDescription,
+)
 from launch.events import IncludeLaunchDescription
 from launch.events.process import ProcessStarted
 
 phony_process_started = ProcessStarted(
-    action=Mock(spec=Action), name='PhonyProcessStarted', cmd=['ls'], cwd=None, env=None, pid=1)
-phony_include_launch_description = IncludeLaunchDescription(
-    launch_description=Mock(spec=LaunchDescription))
+    action=Mock(spec=Action), name="PhonyProcessStarted", cmd=["ls"], cwd=None, env=None, pid=1
+)
+phony_include_launch_description = IncludeLaunchDescription(launch_description=Mock(spec=LaunchDescription))
 phony_context = Mock(spec=LaunchContext)
 
 
@@ -43,7 +44,7 @@ def test_event_added_to_context():
 
     handler = OnIncludeLaunchDescription()
     handler.handle(phony_include_launch_description, context)
-    extend_locals_mock.assert_called_once_with({'event': phony_include_launch_description})
+    extend_locals_mock.assert_called_once_with({"event": phony_include_launch_description})
     unregister_event_handler_mock.assert_not_called()
 
 

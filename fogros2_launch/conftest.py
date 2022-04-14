@@ -19,7 +19,9 @@ def pytest_ignore_collect(path):
     # pytest doctest messes up when trying to import .launch.py packages, ignore them.
     # It also messes up when trying to import launch.logging.handlers due to conflicts with
     # logging.handlers, ignore that as well.
-    return str(path).endswith((
-        '.launch.py',
-        str(PurePath('logging') / 'handlers.py'),
-    ))
+    return str(path).endswith(
+        (
+            ".launch.py",
+            str(PurePath("logging") / "handlers.py"),
+        )
+    )

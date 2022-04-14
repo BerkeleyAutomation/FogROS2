@@ -15,20 +15,19 @@
 """Python package utility functions related to loading Frontend Launch Files."""
 
 import os
-from typing import Text
-from typing import Type
+from typing import Text, Type
 
-from .frontend_launch_file_utilities import get_launch_description_from_frontend_launch_file
-from .python_launch_file_utilities import get_launch_description_from_python_launch_file
 from ..frontend import Parser
 from ..invalid_launch_file_error import InvalidLaunchFileError
 from ..launch_description import LaunchDescription
+from .frontend_launch_file_utilities import (
+    get_launch_description_from_frontend_launch_file,
+)
+from .python_launch_file_utilities import get_launch_description_from_python_launch_file
 
 
 def get_launch_description_from_any_launch_file(
-    launch_file_path: Text,
-    *,
-    parser: Type[Parser] = Parser
+    launch_file_path: Text, *, parser: Type[Parser] = Parser
 ) -> LaunchDescription:
     """
     Load a given launch file (by path), and return the launch description from it.
@@ -43,11 +42,11 @@ def get_launch_description_from_any_launch_file(
     extension = os.path.splitext(launch_file_name)[1]
     if extension:
         extension = extension[1:]
-    if extension == 'py':
+    if extension == "py":
         loaders.insert(0, get_launch_description_from_python_launch_file)
     else:
         loaders.append(get_launch_description_from_python_launch_file)
-        extension = '' if not Parser.is_filename_valid(launch_file_name) else extension
+        extension = "" if not Parser.is_filename_valid(launch_file_name) else extension
     exceptions = []
     for loader in loaders:
         try:

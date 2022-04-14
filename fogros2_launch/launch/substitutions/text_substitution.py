@@ -28,9 +28,7 @@ class TextSubstitution(Substitution):
         super().__init__()
 
         if not isinstance(text, Text):
-            raise TypeError(
-                "TextSubstitution expected Text object got '{}' instead.".format(type(text))
-            )
+            raise TypeError("TextSubstitution expected Text object got '{}' instead.".format(type(text)))
 
         self.__text = text
 

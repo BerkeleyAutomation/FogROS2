@@ -12,13 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from launch.frontend.expose import __expose_impl
-
 import pytest
+from launch.frontend.expose import __expose_impl
 
 
 class ToBeExposed:
-
     @classmethod
     def parse(cls, entity, parser):
         return ToBeExposed(), ()
@@ -32,19 +30,19 @@ def test_expose_decorators():
     register = {}
 
     def expose_test(name):
-        return __expose_impl(name, register, 'test')
-    expose_test('ToBeExposed')(ToBeExposed)
-    assert 'ToBeExposed' in register
-    if 'ToBeExposed' in register:
-        assert register['ToBeExposed'] == ToBeExposed.parse
-    expose_test('to_be_exposed')(to_be_exposed)
-    assert 'to_be_exposed' in register
-    if 'to_be_exposed' in register:
-        assert register['to_be_exposed'] == to_be_exposed
+        return __expose_impl(name, register, "test")
+
+    expose_test("ToBeExposed")(ToBeExposed)
+    assert "ToBeExposed" in register
+    if "ToBeExposed" in register:
+        assert register["ToBeExposed"] == ToBeExposed.parse
+    expose_test("to_be_exposed")(to_be_exposed)
+    assert "to_be_exposed" in register
+    if "to_be_exposed" in register:
+        assert register["to_be_exposed"] == to_be_exposed
     NotACallable = 5
     with pytest.raises(
         RuntimeError,
-        match='Exposed test parser for NotACallable is not a callable or a class'
-              ' containg a parse method'
+        match="Exposed test parser for NotACallable is not a callable or a class" " containg a parse method",
     ):
-        expose_test('NotACallable')(NotACallable)
+        expose_test("NotACallable")(NotACallable)

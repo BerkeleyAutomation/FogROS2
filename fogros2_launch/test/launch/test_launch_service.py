@@ -17,11 +17,9 @@
 import queue
 import threading
 
-from launch import LaunchDescription
-from launch import LaunchService
-from launch.events import ExecutionComplete
-
 import osrf_pycommon
+from launch import LaunchDescription, LaunchService
+from launch.events import ExecutionComplete
 
 
 def test_launch_service_constructors():
@@ -42,24 +40,27 @@ def test_launch_service_emit_event():
 
     assert ls._LaunchService__context._event_queue.qsize() == 0
 
-    from launch.actions import OpaqueFunction
-    from launch.actions import RegisterEventHandler
+    from launch.actions import OpaqueFunction, RegisterEventHandler
     from launch.event_handler import EventHandler
 
     handled_events = queue.Queue()
-    ld = LaunchDescription([
-        RegisterEventHandler(EventHandler(
-            matcher=lambda event: not isinstance(event, ExecutionComplete),
-            entities=OpaqueFunction(
-                function=lambda context: handled_events.put(context.locals.event),
-            ),
-        ))
-    ])
+    ld = LaunchDescription(
+        [
+            RegisterEventHandler(
+                EventHandler(
+                    matcher=lambda event: not isinstance(event, ExecutionComplete),
+                    entities=OpaqueFunction(
+                        function=lambda context: handled_events.put(context.locals.event),
+                    ),
+                )
+            )
+        ]
+    )
     ls.include_launch_description(ld)
     assert ls._LaunchService__context._event_queue.qsize() == 1
 
     class MockEvent:
-        name = 'Event'
+        name = "Event"
 
     ls.emit_event(MockEvent())
     assert ls._LaunchService__context._event_queue.qsize() == 2

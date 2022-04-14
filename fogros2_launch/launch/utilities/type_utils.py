@@ -15,44 +15,29 @@
 """Module that implements type coercion and checking utilities."""
 
 import collections.abc
-from typing import Any
-from typing import cast
-from typing import List
-from typing import Optional
-from typing import Sequence
-from typing import Set
-from typing import Text
-from typing import Tuple
-from typing import Type
-from typing import Union
+from typing import Any, List, Optional, Sequence, Set, Text, Tuple, Type, Union, cast
 
 import yaml
 
-from .ensure_argument_type_impl import ensure_argument_type
-from .normalize_to_list_of_substitutions_impl import normalize_to_list_of_substitutions
-from .perform_substitutions_impl import perform_substitutions
 from ..launch_context import LaunchContext
 from ..some_substitutions_type import SomeSubstitutionsType
 from ..substitution import Substitution
+from .ensure_argument_type_impl import ensure_argument_type
+from .normalize_to_list_of_substitutions_impl import normalize_to_list_of_substitutions
+from .perform_substitutions_impl import perform_substitutions
 
 """Tuple of valid scalar types."""
-ScalarTypesTuple = (
-    int, float, bool, str
-)
+ScalarTypesTuple = (int, float, bool, str)
 
 """Tuple of valid list types."""
-ListTypesTuple = (
-    List[int], List[float], List[bool], List[str]
-)
+ListTypesTuple = (List[int], List[float], List[bool], List[str])
 
 AllowedTypesTuple = ScalarTypesTuple + ListTypesTuple
 
 """Allowed scalar types."""
 ScalarTypesType = Type[Union[int, float, bool, str]]
 """Allowed uniform list types."""
-ListTypesType = Type[Union[
-    List[int], List[float], List[bool], List[str]
-]]
+ListTypesType = Type[Union[List[int], List[float], List[bool], List[str]]]
 """Allowed types."""
 AllowedTypesType = Union[ScalarTypesType, ListTypesType]
 
@@ -68,12 +53,14 @@ AllowedValueType = Union[ScalarValueType, SequenceValueType]
 """Substitution to a scalar type or a scalar type."""
 SomeScalarType = Union[SomeSubstitutionsType, ScalarValueType]
 """Substitution that can be performed to a uniform list."""
-SomeSequenceType = Union[(
-    Sequence[Union[int, SomeSubstitutionsType]],
-    Sequence[Union[float, SomeSubstitutionsType]],
-    Sequence[Union[bool, SomeSubstitutionsType]],
-    Sequence[Union[str, SomeSubstitutionsType]],
-)]
+SomeSequenceType = Union[
+    (
+        Sequence[Union[int, SomeSubstitutionsType]],
+        Sequence[Union[float, SomeSubstitutionsType]],
+        Sequence[Union[bool, SomeSubstitutionsType]],
+        Sequence[Union[str, SomeSubstitutionsType]],
+    )
+]
 """Union of SomeScalarType and SomeSequenceType."""
 SomeValueType = Union[SomeScalarType, SomeSequenceType]
 
@@ -92,12 +79,14 @@ NormalizedValueType = Union[NormalizedScalarType, NormalizedSequenceType]
 """String embedded substitution version of SomeScalarType"""
 StrSomeScalarType = SomeScalarType
 """String embedded substitution version of SomeSequenceType"""
-StrSomeSequenceType = Union[(
-    Sequence[Union[int, str]],
-    Sequence[Union[float, str]],
-    Sequence[Union[bool, str]],
-    Sequence[Union[str]],
-)]
+StrSomeSequenceType = Union[
+    (
+        Sequence[Union[int, str]],
+        Sequence[Union[float, str]],
+        Sequence[Union[bool, str]],
+        Sequence[Union[str]],
+    )
+]
 """String embedded substitution version of SomeValueType"""
 StrSomeValueType = Union[StrSomeScalarType, StrSomeSequenceType]
 
@@ -116,9 +105,9 @@ def is_typing_list(data_type: Any) -> bool:
 
     """
     return data_type is List or (
-        hasattr(data_type, '__origin__') and
-        hasattr(data_type, '__args__') and
-        data_type.__origin__ in  # type: ignore
+        hasattr(data_type, "__origin__")
+        and hasattr(data_type, "__args__")
+        and data_type.__origin__ in  # type: ignore
         # This has changed in newer Python implementations to `List`,
         # `list` is checked for compatibility.
         (list, List)
@@ -152,11 +141,11 @@ def extract_type(data_type: AllowedTypesType) -> Tuple[ScalarTypesType, bool]:
     """
     is_list = False
     scalar_type: ScalarTypesType = cast(ScalarTypesType, data_type)
-    if is_typing_list(data_type) and getattr(data_type, '__args__', None):
+    if is_typing_list(data_type) and getattr(data_type, "__args__", None):
         is_list = True
         scalar_type = data_type.__args__[0]  # type: ignore
     if is_valid_scalar_type(scalar_type) is False:
-        raise ValueError(f'Unrecognized data type: {data_type}')
+        raise ValueError(f"Unrecognized data type: {data_type}")
     return (scalar_type, is_list)
 
 
@@ -228,6 +217,7 @@ def coerce_to_type(
     :raise: `TypeError` if `value` is not a `str`.
     :return: `value` coerced to `data_type`.
     """
+
     def convert_as_yaml(value, error_msg):
         # Forward empty strings
         if not value:
@@ -238,15 +228,13 @@ def coerce_to_type(
         except Exception as err:
             if can_be_str:
                 return value
-            raise ValueError(f'{error_msg}: yaml.safe_load() failed\n{err}')
+            raise ValueError(f"{error_msg}: yaml.safe_load() failed\n{err}")
 
         if not is_instance_of_valid_type(output, can_be_str=can_be_str):
-            raise ValueError(
-                f'{error_msg}: output type is not allowed, got {type(output)}'
-            )
+            raise ValueError(f"{error_msg}: output type is not allowed, got {type(output)}")
         return output
 
-    ensure_argument_type(value, str, 'value', 'coerce_to_type')
+    ensure_argument_type(value, str, "value", "coerce_to_type")
     if data_type is None:
         # No type specified, return best conversion.
         return convert_as_yaml(value, f"Failed to convert '{value}' using yaml rules")
@@ -255,13 +243,11 @@ def coerce_to_type(
     valid_types = (str, type_obj) if can_be_str else type_obj
 
     if is_list:
-        output = convert_as_yaml(
-            value, f"Cannot convert value '{value}' to a list of '{valid_types}'")
+        output = convert_as_yaml(value, f"Cannot convert value '{value}' to a list of '{valid_types}'")
         if not isinstance(output, list):
             raise ValueError(f"Cannot convert value '{value}' to a list of '{valid_types}'")
         if not all(isinstance(x, valid_types) for x in output):
-            raise ValueError(
-                f"Cannot convert value '{value}' to a list of '{valid_types}', got {output}")
+            raise ValueError(f"Cannot convert value '{value}' to a list of '{valid_types}', got {output}")
         return output
 
     if type_obj is str:
@@ -277,9 +263,10 @@ def coerce_to_type(
 
     if type_obj is not bool:
         raise ValueError(
-            'data_type is invalid. Expected one of: '
-            'int, float, str, bool, List[int], List[float], List[str], List[bool]'
-            f'. Got {data_type}')
+            "data_type is invalid. Expected one of: "
+            "int, float, str, bool, List[int], List[float], List[str], List[bool]"
+            f". Got {data_type}"
+        )
     output = convert_as_yaml(value, f"Failed to convert '{value}' to '{type_obj}'")
     if isinstance(output, valid_types):
         return output
@@ -303,10 +290,10 @@ def coerce_list(
     :raise: `TypeError` if `value` is not a list of `str`.
     :return: `value` coerced to `data_type`.
     """
-    ensure_argument_type(value, list, 'value', 'coerce_list')
+    ensure_argument_type(value, list, "value", "coerce_list")
     output = [coerce_to_type(i, data_type, can_be_str=can_be_str) for i in value]
     if not is_instance_of_valid_type(output, can_be_str=can_be_str):
-        raise ValueError(f'cannot convert value to {data_type}. Got value=`{value}`')
+        raise ValueError(f"cannot convert value to {data_type}. Got value=`{value}`")
     return cast(ListValueType, output)
 
 
@@ -333,10 +320,7 @@ def get_typed_value(
         if data_type is not None:
             data_type, is_list = extract_type(data_type)
             if not is_list:
-                raise TypeError(
-                    f"Cannot convert input '{value}' of type '{type(value)}' to"
-                    f" '{data_type}'"
-                )
+                raise TypeError(f"Cannot convert input '{value}' of type '{type(value)}' to" f" '{data_type}'")
         output: AllowedValueType = coerce_list(value, data_type, can_be_str=can_be_str)
     else:
         output = coerce_to_type(value, data_type, can_be_str=can_be_str)
@@ -352,20 +336,15 @@ def is_substitution(x):
     - A list of mixed `launch.Substitution` and `str` instances,
         with at least one instance of the former.
     """
-    return (
-        isinstance(x, Substitution) or
-        (
-            isinstance(x, collections.abc.Iterable) and
-            len(x) > 0 and
-            all(isinstance(item, (Substitution, str)) for item in x) and
-            any(isinstance(item, Substitution) for item in x)
-        )
+    return isinstance(x, Substitution) or (
+        isinstance(x, collections.abc.Iterable)
+        and len(x) > 0
+        and all(isinstance(item, (Substitution, str)) for item in x)
+        and any(isinstance(item, Substitution) for item in x)
     )
 
 
-def normalize_typed_substitution(
-    value: SomeValueType, data_type: Optional[AllowedTypesType]
-) -> NormalizedValueType:
+def normalize_typed_substitution(value: SomeValueType, data_type: Optional[AllowedTypesType]) -> NormalizedValueType:
     """
     Normalize a mix of substitution and values.
 
@@ -419,9 +398,9 @@ def normalize_typed_substitution(
     # For the other cases, the input must be an iterable
     if not isinstance(value, collections.abc.Iterable):
         raise TypeError(
-            'value should be either a scalar, a substitutions,'
-            ' or a mixed list of scalars and substitutions. '
-            f'Got `value={value}` of type `{type(value)}`. '
+            "value should be either a scalar, a substitutions,"
+            " or a mixed list of scalars and substitutions. "
+            f"Got `value={value}` of type `{type(value)}`. "
         )
     # Collect the types of the items of the list
     types_in_list: Set[Optional[Type[Union[str, int, float, bool, Substitution]]]] = set()
@@ -432,7 +411,7 @@ def normalize_typed_substitution(
             types_in_list.add(Substitution)
         else:
             raise TypeError(
-                'value is a list, and one of the items is not a scalar, a Substitution '
+                "value is a list, and one of the items is not a scalar, a Substitution "
                 f"or a list of substitutions. Got value='{value}'"
             )
     # Extract expected type information
@@ -442,57 +421,70 @@ def normalize_typed_substitution(
     # Must be expecting a list
     if not is_list:
         raise TypeError(
-            'The provided value resolves to a list, though the required type is a scalar. '
+            "The provided value resolves to a list, though the required type is a scalar. "
             f"Got value='{value}', data_type='{data_type}'."
         )
 
     # Normalize each specific uniform list input
-    err_msg = (
-        "Got a list of '{}'"
-        f", expected a list of '{data_type}'. value='{value}'"
-    )
+    err_msg = "Got a list of '{}'" f", expected a list of '{data_type}'. value='{value}'"
     if types_in_list == {Substitution}:
         # list of substitutions, can be coerced later to anything
-        return cast(List[Union[List[Substitution], str]], [
-            normalize_to_list_of_substitutions(cast(SomeSubstitutionsType, x)) for x in value
-        ])
+        return cast(
+            List[Union[List[Substitution], str]],
+            [normalize_to_list_of_substitutions(cast(SomeSubstitutionsType, x)) for x in value],
+        )
     if types_in_list.issubset({str, Substitution}):
         # list of mixed strings and substitutions
         if data_type not in (None, str):
             raise TypeError(err_msg.format(str))
-        return cast(List[Union[List[Substitution], str]], [
-            x if isinstance(x, str) else  # Don't convert strings to TextSubstitution
-            normalize_to_list_of_substitutions(cast(SomeSubstitutionsType, x)) for x in value
-        ])
+        return cast(
+            List[Union[List[Substitution], str]],
+            [
+                x
+                if isinstance(x, str)
+                else normalize_to_list_of_substitutions(  # Don't convert strings to TextSubstitution
+                    cast(SomeSubstitutionsType, x)
+                )
+                for x in value
+            ],
+        )
     if types_in_list.issubset({bool, Substitution}):
         # list of booleans and substitutions
         if data_type not in (None, bool):
             raise TypeError(err_msg.format(bool))
-        return cast(List[Union[List[Substitution], bool]], [
-            normalize_to_list_of_substitutions(cast(SomeSubstitutionsType, x))
-            if is_substitution(x) else x for x in value
-        ])
+        return cast(
+            List[Union[List[Substitution], bool]],
+            [
+                normalize_to_list_of_substitutions(cast(SomeSubstitutionsType, x)) if is_substitution(x) else x
+                for x in value
+            ],
+        )
     if types_in_list.issubset({int, Substitution}):
         # list of ints and substitutions
         if data_type not in (None, int):
             raise TypeError(err_msg.format(int))
-        return cast(List[Union[List[Substitution], int]], [
-            normalize_to_list_of_substitutions(cast(SomeSubstitutionsType, x))
-            if is_substitution(x) else x for x in value
-        ])
+        return cast(
+            List[Union[List[Substitution], int]],
+            [
+                normalize_to_list_of_substitutions(cast(SomeSubstitutionsType, x)) if is_substitution(x) else x
+                for x in value
+            ],
+        )
     if types_in_list.issubset({int, float, Substitution}):
         # list of floats and substitutions
         if data_type not in (None, float):
             raise TypeError(err_msg.format(float))
-        return cast(List[Union[List[Substitution], float]], [
-            normalize_to_list_of_substitutions(cast(SomeSubstitutionsType, x))
-            if is_substitution(x) else float(cast(Union[int, float], x)) for x in value
-        ])
+        return cast(
+            List[Union[List[Substitution], float]],
+            [
+                normalize_to_list_of_substitutions(cast(SomeSubstitutionsType, x))
+                if is_substitution(x)
+                else float(cast(Union[int, float], x))
+                for x in value
+            ],
+        )
     # Invalid input
-    raise TypeError(
-        "Input value is not an acceptable 'SomeValueType'."
-        f"Got value='{value}'"
-    )
+    raise TypeError("Input value is not an acceptable 'SomeValueType'." f"Got value='{value}'")
 
 
 def is_normalized_substitution(x):
@@ -501,17 +493,11 @@ def is_normalized_substitution(x):
 
     A normalized substitution is a list with :py:class:`launch.Substitution` instances as items.
     """
-    return (
-        isinstance(x, list) and
-        len(x) > 0 and
-        all(isinstance(item, Substitution) for item in x)
-    )
+    return isinstance(x, list) and len(x) > 0 and all(isinstance(item, Substitution) for item in x)
 
 
 def perform_typed_substitution(
-    context: LaunchContext,
-    value: NormalizedValueType,
-    data_type: Optional[AllowedTypesType]
+    context: LaunchContext, value: NormalizedValueType, data_type: Optional[AllowedTypesType]
 ) -> AllowedValueType:
     """
     Perform a normalized typed substitution.
@@ -538,38 +524,32 @@ def perform_typed_substitution(
     """
     if isinstance(value, ScalarTypesTuple):
         if data_type is not None and not is_instance_of(value, data_type):
-            raise TypeError(
-                f'value=`{value}` is a scalar and not an instance of `{data_type}`')
+            raise TypeError(f"value=`{value}` is a scalar and not an instance of `{data_type}`")
         return value
     elif is_normalized_substitution(value):
-        return coerce_to_type(
-            perform_substitutions(context, cast(List[Substitution], value)),
-            data_type
-        )
+        return coerce_to_type(perform_substitutions(context, cast(List[Substitution], value)), data_type)
     elif isinstance(value, list):
         scalar_type: Optional[ScalarTypesType] = None
         if data_type is not None:
             scalar_type, is_list = extract_type(data_type)
             if not is_list:
                 raise ValueError(
-                    'The input value is a list, cannot convert it to a scalar. '
+                    "The input value is a list, cannot convert it to a scalar. "
                     f"Got value='{value}', expected type {scalar_type}."
                 )
         output = [
-            coerce_to_type(
-                perform_substitutions(context, cast(List[Substitution], x)), scalar_type)
-            if is_normalized_substitution(x) else x for x in value
+            coerce_to_type(perform_substitutions(context, cast(List[Substitution], x)), scalar_type)
+            if is_normalized_substitution(x)
+            else x
+            for x in value
         ]
         if not is_instance_of(output, data_type):
             raise ValueError(
-                    'The output list does not match the expected type '
-                    f"Got value='{value}', expected type {scalar_type}."
-                    if scalar_type is not None else
-                    'The output list is not uniform'
-                )
+                "The output list does not match the expected type "
+                f"Got value='{value}', expected type {scalar_type}."
+                if scalar_type is not None
+                else "The output list is not uniform"
+            )
         return cast(ListValueType, output)
     # Invalid input
-    raise TypeError(
-        "Input value is not an acceptable 'NormalizedValueType'."
-        f"Got value='{value}'"
-    )
+    raise TypeError("Input value is not an acceptable 'NormalizedValueType'." f"Got value='{value}'")

@@ -15,34 +15,27 @@
 """Module for the LaunchConfiguration substitution."""
 
 import collections.abc
-from typing import Any
-from typing import Iterable
-from typing import List
-from typing import Optional
-from typing import Text
-from typing import Union
+from typing import Any, Iterable, List, Optional, Text, Union
 
-from .substitution_failure import SubstitutionFailure
 from ..frontend import expose_substitution
 from ..launch_context import LaunchContext
 from ..some_substitutions_type import SomeSubstitutionsType
 from ..substitution import Substitution
+from .substitution_failure import SubstitutionFailure
 
 
-@expose_substitution('var')
+@expose_substitution("var")
 class LaunchConfiguration(Substitution):
     """Substitution that can access launch configuration variables."""
 
     def __init__(
-        self,
-        variable_name: SomeSubstitutionsType,
-        *,
-        default: Optional[Union[Any, Iterable[Any]]] = None
+        self, variable_name: SomeSubstitutionsType, *, default: Optional[Union[Any, Iterable[Any]]] = None
     ) -> None:
         """Create a LaunchConfiguration substitution."""
         super().__init__()
 
         from ..utilities import normalize_to_list_of_substitutions
+
         self.__variable_name = normalize_to_list_of_substitutions(variable_name)
         if default is None:
             self.__default = default
@@ -60,19 +53,17 @@ class LaunchConfiguration(Substitution):
                 else:
                     str_normalized_default.append(str(item))
             # use normalize_to_list_of_substitutions to convert str to TextSubstitution's too
-            self.__default = \
-                normalize_to_list_of_substitutions(
-                    str_normalized_default)  # type: List[Substitution]
+            self.__default = normalize_to_list_of_substitutions(str_normalized_default)  # type: List[Substitution]
 
     @classmethod
     def parse(cls, data: Iterable[SomeSubstitutionsType]):
         """Parse `FindExecutable` substitution."""
         if len(data) < 1 or len(data) > 2:
-            raise TypeError('var substitution expects 1 or 2 arguments')
+            raise TypeError("var substitution expects 1 or 2 arguments")
         kwargs = {}
-        kwargs['variable_name'] = data[0]
+        kwargs["variable_name"] = data[0]
         if len(data) == 2:
-            kwargs['default'] = data[1]
+            kwargs["default"] = data[1]
         return cls, kwargs
 
     @property
@@ -82,7 +73,7 @@ class LaunchConfiguration(Substitution):
 
     def describe(self) -> Text:
         """Return a description of this substitution as a string."""
-        return 'LaunchConfig({})'.format(' + '.join([s.describe() for s in self.variable_name]))
+        return "LaunchConfig({})".format(" + ".join([s.describe() for s in self.variable_name]))
 
     def perform(self, context: LaunchContext) -> Text:
         """
@@ -92,11 +83,11 @@ class LaunchConfiguration(Substitution):
         the default will be returned, as a string.
         """
         from ..utilities import perform_substitutions
+
         expanded_variable_name = perform_substitutions(context, self.__variable_name)
         if expanded_variable_name not in context.launch_configurations:
             if self.__default is None:
-                raise SubstitutionFailure(
-                    "launch configuration '{}' does not exist".format(expanded_variable_name))
+                raise SubstitutionFailure("launch configuration '{}' does not exist".format(expanded_variable_name))
             else:
                 return perform_substitutions(context, self.__default)
         return context.launch_configurations[expanded_variable_name]

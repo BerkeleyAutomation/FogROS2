@@ -10,12 +10,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import paramiko
-from scp import SCPClient
 import logging
-from time import sleep
 import select
 import sys
+from time import sleep
+
+import paramiko
+from scp import SCPClient
 
 # ec2 console coloring
 CRED = "\033[91m"
@@ -44,9 +45,7 @@ class SCP_Client:
             # TODO: Handle specific exceptions differently?
             # See https://docs.paramiko.org/en/stable/api/client.html
             except Exception as e:
-                self.logger.warn(
-                    "Exception occured when connecting scp" + str(e) + ", retrying..."
-                )
+                self.logger.warn("Exception occured when connecting scp" + str(e) + ", retrying...")
                 sleep(1)
         self.logger.info("SCP connection succeeds!")
 
@@ -60,9 +59,9 @@ class SCP_Client:
         # for line in iter(stdout.readline, ""):
         #     print("ec2 (out): " + CRED + line + CEND, end="")
         # See https://stackoverflow.com/a/32758464
-        ch = stdout.channel # channel shared by stdin, stdout, stderr
-        stdin.close() # we don't need stdin
-        ch.shutdown_write() # not going to write
+        ch = stdout.channel  # channel shared by stdin, stdout, stderr
+        stdin.close()  # we don't need stdin
+        ch.shutdown_write()  # not going to write
         while not ch.closed:
             readq, _, _ = select.select([ch], [], [], timeout)
             for c in readq:
@@ -75,4 +74,3 @@ class SCP_Client:
         stdout.close()
         stderr.close()
         ch.recv_exit_status()
-        

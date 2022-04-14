@@ -20,34 +20,36 @@ from launch.substitutions import TextSubstitution
 
 def test_launch_configuration_not_equals():
     """Test LaunchConfigurationNotEquals class."""
-    class MockLaunchContext:
 
+    class MockLaunchContext:
         def perform_substitution(self, substitution):
             return substitution.perform(self)
 
         @property
         def launch_configurations(self):
             return {
-                'foo': 'foo_value',
-                'bar': 'bar_value',
-                'empty': '',
+                "foo": "foo_value",
+                "bar": "bar_value",
+                "empty": "",
             }
 
     lc = MockLaunchContext()
     test_cases = [
-        ('foo', 'foo_value', False),
-        ('bar', 'bar_value', False),
-        ('bar', 'foo_value', True),
-        ('bar', None, True),
-        ('empty', '', False),
-        ('empty', 'foo_value', True),
-        ('empty', None, True),
-        ('baz', None, False),
-        ('baz', 'foo_value', True),
+        ("foo", "foo_value", False),
+        ("bar", "bar_value", False),
+        ("bar", "foo_value", True),
+        ("bar", None, True),
+        ("empty", "", False),
+        ("empty", "foo_value", True),
+        ("empty", None, True),
+        ("baz", None, False),
+        ("baz", "foo_value", True),
     ]
 
     for name, value, expected in test_cases:
-        assert LaunchConfigurationNotEquals(
-            name,
-            [TextSubstitution(text=value)] if value is not None else None
-        ).evaluate(lc) is expected
+        assert (
+            LaunchConfigurationNotEquals(name, [TextSubstitution(text=value)] if value is not None else None).evaluate(
+                lc
+            )
+            is expected
+        )

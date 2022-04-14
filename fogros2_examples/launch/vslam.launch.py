@@ -12,24 +12,26 @@
 
 from launch import FogROSLaunchDescription
 from launch_ros.actions import Node
+
 import fogros2
+
 
 def generate_launch_description():
     ld = FogROSLaunchDescription()
     machine1 = fogros2.AWS(region="us-west-1", ec2_instance_type="t2.medium", ami_image="ami-09175f2ca3c3dc67c")
 
-
-    #run this command locally:
+    # run this command locally:
     # sudo docker run --net=host --env RMW_IMPLEMENTATION=rmw_cyclonedds_cpp --env CYCLONEDDS_URI=file:///tmp/cyclonedds.xml -v $(pwd)/install/share/fogros2/configs/cyclonedds.xml:/tmp/cyclonedds.xml --rm -it -v /home/gdpmobile7/rgbd_dataset_freiburg1_xyz:/dataset -v $(pwd)/output:/output mjd3/orbslam-ros ros2 launch orb_slam2_ros orb_slam2_d435_rgbd_client_launch.py dataset:=/dataset compress:=0
-    
-    machine1.add_docker_container("sudo docker run --net=host --env RMW_IMPLEMENTATION=rmw_cyclonedds_cpp --env CYCLONEDDS_URI=file:///tmp/cyclonedds.xml -v /home/ubuntu/cyclonedds.xml:/tmp/cyclonedds.xml --rm -it mjd3/orbslam-ros ros2 launch orb_slam2_ros orb_slam2_d435_rgbd_launch.py compress:=0")
-    #keplerc/gqcnn_ros:pj ros2 launch gqcnn_ros planner.launch.py")
 
-    talker_node = Node(
-        package="fogros2_examples", executable="listener", output="screen")
+    machine1.add_docker_container(
+        "sudo docker run --net=host --env RMW_IMPLEMENTATION=rmw_cyclonedds_cpp --env CYCLONEDDS_URI=file:///tmp/cyclonedds.xml -v /home/ubuntu/cyclonedds.xml:/tmp/cyclonedds.xml --rm -it mjd3/orbslam-ros ros2 launch orb_slam2_ros orb_slam2_d435_rgbd_launch.py compress:=0"
+    )
+    # keplerc/gqcnn_ros:pj ros2 launch gqcnn_ros planner.launch.py")
+
+    talker_node = Node(package="fogros2_examples", executable="listener", output="screen")
     listener_node = fogros2.CloudNode(
-        package="fogros2_examples", executable="talker", output="screen",
-        machine = machine1)
+        package="fogros2_examples", executable="talker", output="screen", machine=machine1
+    )
     ld.add_action(talker_node)
     ld.add_action(listener_node)
     return ld

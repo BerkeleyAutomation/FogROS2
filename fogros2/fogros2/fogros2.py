@@ -10,11 +10,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
+
 from .aws import AWS
 from .scp import SCP_Client
 from .vpn import VPN
-
-import os
 
 
 def start():

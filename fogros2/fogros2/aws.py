@@ -10,22 +10,30 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import abc
+import json
+import logging
+import os
+import random
+import subprocess
+import threading
+
 import boto3
 import botocore
-import random
-import logging
-import threading
-from .util import make_zip_file
+
 from .command_builder import BashBuilder
 from .dds_config_builder import CycloneConfigBuilder
 from .scp import SCP_Client
-import os
-import json
-import subprocess
-import abc
+from .util import make_zip_file
+
 
 class CloudInstance(abc.ABC):
-    def __init__(self, ros_workspace = os.path.dirname(os.getenv("COLCON_PREFIX_PATH")), working_dir_base = "/tmp/fogros/", vis=False):
+    def __init__(
+        self,
+        ros_workspace=os.path.dirname(os.getenv("COLCON_PREFIX_PATH")),
+        working_dir_base="/tmp/fogros/",
+        vis=False,
+    ):
         self.cyclone_builder = None
         self.scp = None
         self.public_ip = None
@@ -44,14 +52,14 @@ class CloudInstance(abc.ABC):
     def create(self):
         raise NotImplementedError("Cloud SuperClass not implemented")
 
-    def info(self, flush_to_disk = True):
+    def info(self, flush_to_disk=True):
         info_dict = {
             "name": self.unique_name,
             "cloud_service_provider": self.cloud_service_provider,
-            "ros_workspace" : self.ros_workspace,
+            "ros_workspace": self.ros_workspace,
             "working_dir": self.working_dir,
             "ssh_key_path": self.ssh_key_path,
-            "public_ip": self.public_ip
+            "public_ip": self.public_ip,
         }
         if flush_to_disk:
             with open(os.path.join(self.working_dir, "info"), "w+") as f:
@@ -83,7 +91,7 @@ class CloudInstance(abc.ABC):
         self.ready_lock.release()
         return ready
 
-    def set_ready_state(self, ready = True):
+    def set_ready_state(self, ready=True):
         self.ready_lock.acquire()
         self.ready_state = ready
         self.ready_lock.release()
@@ -93,7 +101,7 @@ class CloudInstance(abc.ABC):
         self.scp.execute_cmd("sudo apt-get install -y wireguard unzip docker.io")
         self.scp.execute_cmd("sudo apt-get install -y python3-pip")
         self.scp.execute_cmd("sudo pip3 install wgconfig boto3 paramiko scp")
-        
+
     def install_ros(self):
         # set locale
         self.scp.execute_cmd("sudo apt-get update && sudo apt-get install -y locales")
@@ -105,9 +113,13 @@ class CloudInstance(abc.ABC):
         self.scp.execute_cmd("sudo apt-get install -y software-properties-common")
         self.scp.execute_cmd("sudo add-apt-repository universe")
         self.scp.execute_cmd("sudo apt-get update && sudo apt-get install -y curl gnupg lsb-release")
-        self.scp.execute_cmd("sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg")
-        self.scp.execute_cmd("""echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(source /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null""")
-        
+        self.scp.execute_cmd(
+            "sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg"
+        )
+        self.scp.execute_cmd(
+            """echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(source /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null"""
+        )
+
         # install ros2 packages
         self.scp.execute_cmd("sudo apt-get update")
         self.scp.execute_cmd("sudo apt-get install -y ros-rolling-desktop")
@@ -116,26 +128,36 @@ class CloudInstance(abc.ABC):
         self.scp.execute_cmd("source /opt/ros/rolling/setup.bash")
 
     def configure_rosbridge(self):
-         # install rosbridge
+        # install rosbridge
         self.scp.execute_cmd("sudo apt-get install -y ros-rolling-rosbridge-suite")
 
         # source ros and launch rosbridge through ssh
         subprocess.call("chmod 400 " + self.ssh_key_path, shell=True)
-        rosbridge_launch_script = 'ssh -o StrictHostKeyChecking=no -i ' + self.ssh_key_path + ' ubuntu@' + self.public_ip + ' "source /opt/ros/rolling/setup.bash && ros2 launch rosbridge_server rosbridge_websocket_launch.xml &"'
+        rosbridge_launch_script = (
+            "ssh -o StrictHostKeyChecking=no -i "
+            + self.ssh_key_path
+            + " ubuntu@"
+            + self.public_ip
+            + ' "source /opt/ros/rolling/setup.bash && ros2 launch rosbridge_server rosbridge_websocket_launch.xml &"'
+        )
         print(rosbridge_launch_script)
         subprocess.Popen(rosbridge_launch_script, shell=True)
 
     def install_colcon(self):
         # ros2 repository
-        self.scp.execute_cmd("""sudo sh -c 'echo "deb [arch=amd64,arm64] http://repo.ros2.org/ubuntu/main `lsb_release -cs` main" > /etc/apt/sources.list.d/ros2-latest.list'""")
-        self.scp.execute_cmd("curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo apt-key add -")
+        self.scp.execute_cmd(
+            """sudo sh -c 'echo "deb [arch=amd64,arm64] http://repo.ros2.org/ubuntu/main `lsb_release -cs` main" > /etc/apt/sources.list.d/ros2-latest.list'"""
+        )
+        self.scp.execute_cmd(
+            "curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo apt-key add -"
+        )
 
         self.scp.execute_cmd("sudo apt-get update")
         self.scp.execute_cmd("sudo apt-get install -y python3-colcon-common-extensions")
 
     def push_ros_workspace(self):
         # configure ROS env
-        workspace_path = self.ros_workspace  #os.getenv("COLCON_PREFIX_PATH")
+        workspace_path = self.ros_workspace  # os.getenv("COLCON_PREFIX_PATH")
         workspace_folder_name = workspace_path.split("/")[-1]
         zip_dst = "/tmp/ros_workspace"
         make_zip_file(workspace_path, zip_dst)
@@ -150,7 +172,7 @@ class CloudInstance(abc.ABC):
         self.scp.send_file("/tmp/to_cloud_" + self.unique_name, "/tmp/to_cloud_nodes")
 
     def push_and_setup_vpn(self):
-        self.scp.send_file("/tmp/fogros-cloud.conf"+ self.unique_name, "/tmp/fogros-aws.conf")
+        self.scp.send_file("/tmp/fogros-cloud.conf" + self.unique_name, "/tmp/fogros-aws.conf")
         self.scp.execute_cmd(
             "sudo cp /tmp/fogros-aws.conf /etc/wireguard/wg0.conf && sudo chmod 600 /etc/wireguard/wg0.conf && sudo wg-quick up wg0"
         )
@@ -190,8 +212,8 @@ class RemoteMachine(CloudInstance):
         self.ip = ip
         self.ssh_key_path = ssh_key_path
         self.unique_name = "REMOTE" + str(random.randint(10, 1000))
-        self.set_ready_state() # assume it to be true
-    
+        self.set_ready_state()  # assume it to be true
+
     def create(self):
         # since the machine is assumed to be established
         # no need to create
@@ -201,15 +223,9 @@ class RemoteMachine(CloudInstance):
     def delete(instance_name):
         pass
 
+
 class AWS(CloudInstance):
-    def __init__(
-            self,
-            ami_image,
-            region="us-west-1",
-            ec2_instance_type="t2.micro",
-            disk_size = 30,
-            **kwargs
-    ):
+    def __init__(self, ami_image, region="us-west-1", ec2_instance_type="t2.micro", disk_size=30, **kwargs):
         super().__init__(**kwargs)
         self.cloud_service_provider = "AWS"
 
@@ -250,11 +266,11 @@ class AWS(CloudInstance):
         self.install_colcon()
         self.install_cloud_dependencies()
         self.push_ros_workspace()
-        #self.push_to_cloud_nodes()
-        self.info(flush_to_disk = True)
+        # self.push_to_cloud_nodes()
+        self.info(flush_to_disk=True)
         self.set_ready_state()
 
-    def info(self, flush_to_disk = True):
+    def info(self, flush_to_disk=True):
         info_dict = super().info(flush_to_disk)
         info_dict["ec2_region"] = self.region
         info_dict["ec2_instance_type"] = self.ec2_instance_type
@@ -263,7 +279,7 @@ class AWS(CloudInstance):
         info_dict["ec2_instance_id"] = self.ec2_instance.instance_id
         if flush_to_disk:
             with open(os.path.join(self.working_dir, "info"), "w+") as f:
-               json.dump(info_dict, f)
+                json.dump(info_dict, f)
         return info_dict
 
     def get_ssh_key(self):
@@ -279,9 +295,7 @@ class AWS(CloudInstance):
                 VpcId=vpc_id,
             )
             security_group_id = response["GroupId"]
-            self.logger.info(
-                "Security Group Created %s in vpc %s." % (security_group_id, vpc_id)
-            )
+            self.logger.info("Security Group Created %s in vpc %s." % (security_group_id, vpc_id))
 
             data = self.ec2_boto3_client.authorize_security_group_ingress(
                 GroupId=security_group_id,
@@ -356,6 +370,6 @@ class AWS(CloudInstance):
 
     @staticmethod
     def delete(instance_name, region):
-        ec2 = boto3.resource('ec2', region)
+        ec2 = boto3.resource("ec2", region)
         instance = ec2.Instance(instance_name)
         print(instance.terminate())

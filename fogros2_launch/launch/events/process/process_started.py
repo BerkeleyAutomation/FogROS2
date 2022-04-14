@@ -20,7 +20,7 @@ from .running_process_event import RunningProcessEvent
 class ProcessStarted(RunningProcessEvent):
     """Event emitted when a process starts."""
 
-    name = 'launch.events.process.ProcessStarted'
+    name = "launch.events.process.ProcessStarted"
 
     def __init__(self, **kwargs):
         """

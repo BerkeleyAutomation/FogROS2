@@ -25,6 +25,6 @@ def create_future(loop: asyncio.AbstractEventLoop) -> asyncio.Future:
 
     https://docs.python.org/3/library/asyncio-eventloop.html#asyncio.AbstractEventLoop.create_future
     """
-    if hasattr(loop, 'create_future'):
+    if hasattr(loop, "create_future"):
         return loop.create_future()
     return asyncio.Future(loop=loop)

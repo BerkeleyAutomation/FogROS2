@@ -25,11 +25,12 @@ def test_condition_constructors():
 
 def test_condition_methods():
     """Test the methods of the Condition class."""
+
     class MockLaunchContext:
         ...
 
     condition = Condition()
-    assert 'Condition' in condition.describe()
+    assert "Condition" in condition.describe()
     assert condition.evaluate(MockLaunchContext()) is False
 
     condition = Condition(predicate=lambda context: True)

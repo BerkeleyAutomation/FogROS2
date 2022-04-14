@@ -25,7 +25,8 @@ capabilities disabled."
 import os
 import sys
 from typing import cast
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))  # noqa
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))  # noqa
 
 import launch  # noqa: E402
 
@@ -34,26 +35,27 @@ def generate_launch_description():
     ld = launch.LaunchDescription()
 
     # Disable tty emulation (on by default).
-    ld.add_action(launch.actions.SetLaunchConfiguration('emulate_tty', 'false'))
+    ld.add_action(launch.actions.SetLaunchConfiguration("emulate_tty", "false"))
 
     # Wire up stdout from processes
     def on_output(event: launch.Event) -> None:
         for line in event.text.decode().splitlines():
-            print('[{}] {}'.format(
-                cast(launch.events.process.ProcessIO, event).process_name, line))
+            print("[{}] {}".format(cast(launch.events.process.ProcessIO, event).process_name, line))
 
-    ld.add_action(launch.actions.RegisterEventHandler(launch.event_handlers.OnProcessIO(
-        on_stdout=on_output,
-    )))
+    ld.add_action(
+        launch.actions.RegisterEventHandler(
+            launch.event_handlers.OnProcessIO(
+                on_stdout=on_output,
+            )
+        )
+    )
 
     # Execute
-    ld.add_action(launch.actions.ExecuteProcess(
-        cmd=[sys.executable, './counter.py']
-    ))
+    ld.add_action(launch.actions.ExecuteProcess(cmd=[sys.executable, "./counter.py"]))
     return ld
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # ls = LaunchService(argv=argv, debug=True)  # Use this instead to get more debug messages.
     ls = launch.LaunchService(argv=sys.argv[1:])
     ls.include_launch_description(generate_launch_description())

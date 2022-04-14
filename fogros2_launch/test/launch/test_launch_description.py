@@ -18,16 +18,17 @@ import collections.abc
 import logging
 import os
 
-from launch import Action
-from launch import LaunchDescription
-from launch import LaunchDescriptionEntity
-from launch import LaunchDescriptionSource
-from launch.actions import DeclareLaunchArgument
-from launch.actions import IncludeLaunchDescription
+from launch import (
+    Action,
+    LaunchDescription,
+    LaunchDescriptionEntity,
+    LaunchDescriptionSource,
+)
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 
-logging.getLogger('launch').setLevel(logging.DEBUG)
+logging.getLogger("launch").setLevel(logging.DEBUG)
 
 
 def test_launch_description_constructors():
@@ -44,42 +45,50 @@ def test_launch_description_get_launch_arguments():
     ld = LaunchDescription([])
     assert len(ld.get_launch_arguments()) == 0
 
-    ld = LaunchDescription([DeclareLaunchArgument('foo')])
+    ld = LaunchDescription([DeclareLaunchArgument("foo")])
     la = ld.get_launch_arguments()
     assert len(la) == 1
     assert la[0]._conditionally_included is False
 
-    ld = LaunchDescription([DeclareLaunchArgument('foo', condition=IfCondition('True'))])
+    ld = LaunchDescription([DeclareLaunchArgument("foo", condition=IfCondition("True"))])
     la = ld.get_launch_arguments()
     assert len(la) == 1
     assert la[0]._conditionally_included is True
 
-    ld = LaunchDescription([
-        IncludeLaunchDescription(LaunchDescriptionSource(LaunchDescription([
-            DeclareLaunchArgument('foo'),
-        ]))),
-    ])
+    ld = LaunchDescription(
+        [
+            IncludeLaunchDescription(
+                LaunchDescriptionSource(
+                    LaunchDescription(
+                        [
+                            DeclareLaunchArgument("foo"),
+                        ]
+                    )
+                )
+            ),
+        ]
+    )
     la = ld.get_launch_arguments()
     assert len(la) == 1
 
     this_dir = os.path.dirname(os.path.abspath(__file__))
-    ld = LaunchDescription([
-        IncludeLaunchDescription(PythonLaunchDescriptionSource(
-            os.path.join(this_dir, 'launch_file_with_argument.launch.py'))),
-    ])
+    ld = LaunchDescription(
+        [
+            IncludeLaunchDescription(
+                PythonLaunchDescriptionSource(os.path.join(this_dir, "launch_file_with_argument.launch.py"))
+            ),
+        ]
+    )
     la = ld.get_launch_arguments()
     assert len(la) == 1
 
     # From issue #144: get_launch_arguments was broken when an entitity had conditional
     # sub entities
     class EntityWithConditional(LaunchDescriptionEntity):
-
         def describe_conditional_sub_entities(self):
-            return [('String describing condition', [DeclareLaunchArgument('foo')])]
+            return [("String describing condition", [DeclareLaunchArgument("foo")])]
 
-    ld = LaunchDescription([
-        EntityWithConditional()
-    ])
+    ld = LaunchDescription([EntityWithConditional()])
     la = ld.get_launch_arguments()
     assert len(la) == 1
 
@@ -95,7 +104,6 @@ def test_launch_description_add_things():
 
 
 class MockLaunchContext:
-
     def get_locals_as_dict(self):
         return {}
 
@@ -112,7 +120,7 @@ def test_launch_description_visit():
 
 
 def test_launch_description_deprecated():
-    ld = LaunchDescription(deprecated_reason='DEPRECATED MESSAGE')
+    ld = LaunchDescription(deprecated_reason="DEPRECATED MESSAGE")
     ld.visit(MockLaunchContext())
     assert ld.deprecated is True
-    assert ld.deprecated_reason == 'DEPRECATED MESSAGE'
+    assert ld.deprecated_reason == "DEPRECATED MESSAGE"

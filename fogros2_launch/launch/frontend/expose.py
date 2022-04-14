@@ -16,9 +16,7 @@
 
 import functools
 import inspect
-from typing import Iterable
-from typing import Optional
-from typing import Text
+from typing import Iterable, Optional, Text
 
 from ..action import Action
 from ..some_substitutions_type import SomeSubstitutionsType
@@ -32,22 +30,18 @@ action_parse_methods = {}
 substitution_parse_methods = {}
 
 
-def instantiate_action(entity: 'Entity', parser: 'Parser') -> Action:
+def instantiate_action(entity: "Entity", parser: "Parser") -> Action:
     """Call the registered parsing method for the `Entity`."""
     if entity.type_name not in action_parse_methods:
-        raise RuntimeError('Unrecognized entity of the type: {}'.format(entity.type_name))
+        raise RuntimeError("Unrecognized entity of the type: {}".format(entity.type_name))
     action_type, kwargs = action_parse_methods[entity.type_name](entity, parser)
     return action_type(**kwargs)
 
 
-def instantiate_substitution(
-    type_name: Text,
-    args: Optional[Iterable[SomeSubstitutionsType]] = None
-) -> Substitution:
+def instantiate_substitution(type_name: Text, args: Optional[Iterable[SomeSubstitutionsType]] = None) -> Substitution:
     """Call the registered substitution parsing method, according to `args`."""
     if type_name not in substitution_parse_methods:
-        raise RuntimeError(
-            'Unknown substitution: {}'.format(type_name))
+        raise RuntimeError("Unknown substitution: {}".format(type_name))
     args = [] if args is None else args
     subst_type, kwargs = substitution_parse_methods[type_name](args)
     return subst_type(**kwargs)
@@ -78,37 +72,32 @@ def __expose_impl(name: Text, parse_methods_map: dict, exposed_type: Text):
     def expose_impl_decorator(exposed):
         found_parse_method = None
         if inspect.isclass(exposed):
-            if 'parse' in dir(exposed) and inspect.ismethod(exposed.parse):
+            if "parse" in dir(exposed) and inspect.ismethod(exposed.parse):
                 found_parse_method = exposed.parse
             else:
-                raise RuntimeError(
-                    "Did not find a class method called 'parse' in the class being decorated."
-                )
+                raise RuntimeError("Did not find a class method called 'parse' in the class being decorated.")
         elif inspect.isfunction(exposed):
             found_parse_method = exposed
         if not found_parse_method:
             raise RuntimeError(
-                'Exposed {} parser for {} is not a callable or a class'
-                ' containg a parse method'.format(exposed_type, name)
+                "Exposed {} parser for {} is not a callable or a class"
+                " containg a parse method".format(exposed_type, name)
             )
         if name in parse_methods_map and found_parse_method != parse_methods_map[name]:
-            raise RuntimeError(
-                'Two {} parsing methods exposed with the same name: [{}].'.format(
-                    exposed_type,
-                    name
-                )
-            )
-        if exposed_type == 'action':
+            raise RuntimeError("Two {} parsing methods exposed with the same name: [{}].".format(exposed_type, name))
+        if exposed_type == "action":
             # For actions, validate that the user didn't provide unknown attributes or children
             @functools.wraps(found_parse_method)
             def wrapper(entity, parser):
                 ret = found_parse_method(entity, parser)
                 entity.assert_entity_completely_parsed()
                 return ret
+
             parse_methods_map[name] = wrapper
         else:
             parse_methods_map[name] = found_parse_method
         return exposed
+
     return expose_impl_decorator
 
 
@@ -118,7 +107,7 @@ def expose_substitution(name: Text):
 
     Read __expose_impl documentation.
     """
-    return __expose_impl(name, substitution_parse_methods, 'substitution')
+    return __expose_impl(name, substitution_parse_methods, "substitution")
 
 
 def expose_action(name: Text):
@@ -127,4 +116,4 @@ def expose_action(name: Text):
 
     Read __expose_impl documentation.
     """
-    return __expose_impl(name, action_parse_methods, 'action')
+    return __expose_impl(name, action_parse_methods, "action")

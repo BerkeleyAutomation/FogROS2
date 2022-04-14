@@ -27,20 +27,19 @@ class OnIncludeLaunchDescription(EventHandler):
     def __init__(self, **kwargs):
         """Create an OnIncludeLaunchDescription event handler."""
         from ..actions import OpaqueFunction
+
         super().__init__(
             matcher=lambda event: is_a_subclass(event, IncludeLaunchDescription),
-            entities=OpaqueFunction(
-                function=lambda context: [context.locals.event.launch_description]
-            ),
+            entities=OpaqueFunction(function=lambda context: [context.locals.event.launch_description]),
             **kwargs,
         )
 
     @property
     def handler_description(self) -> Text:
         """Return the string description of the handler."""
-        return 'returns the launch_description in the event'
+        return "returns the launch_description in the event"
 
     @property
     def matcher_description(self) -> Text:
         """Return the string description of the matcher."""
-        return 'event issubclass of launch.events.IncludeLaunchDescription'
+        return "event issubclass of launch.events.IncludeLaunchDescription"

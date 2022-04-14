@@ -12,12 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ament_flake8.main import main
 import pytest
+from ament_flake8.main import main
 
 
 @pytest.mark.flake8
 @pytest.mark.linter
 def test_flake8():
     rc = main(argv=[])
-    assert rc == 0, 'Found errors'
+    assert rc == 0, "Found errors"

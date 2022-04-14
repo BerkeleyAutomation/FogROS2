@@ -14,24 +14,22 @@
 
 """Tests for the LaunchDescriptionSource class."""
 
-from launch import LaunchDescription
-from launch import LaunchDescriptionSource
-
 import pytest
+from launch import LaunchDescription, LaunchDescriptionSource
 
 
 def test_launch_description_source_constructors():
     """Test the constructors for LaunchDescriptionSource class."""
     LaunchDescriptionSource()
     LaunchDescriptionSource(LaunchDescription())
-    LaunchDescriptionSource(LaunchDescription(), 'location')
-    LaunchDescriptionSource(LaunchDescription(), 'location', 'method description')
+    LaunchDescriptionSource(LaunchDescription(), "location")
+    LaunchDescriptionSource(LaunchDescription(), "location", "method description")
 
 
 def test_launch_description_source_methods():
     """Test the methods of the LaunchDescriptionSource class."""
-    class MockLaunchContext:
 
+    class MockLaunchContext:
         def perform_substitution(self, substitution):
             return substitution.perform(None)
 
@@ -44,12 +42,12 @@ def test_launch_description_source_methods():
     assert lds.get_launch_description(MockLaunchContext()) == ld
 
     ld = LaunchDescription()
-    lds = LaunchDescriptionSource(ld, 'location')
+    lds = LaunchDescriptionSource(ld, "location")
     assert lds.get_launch_description(MockLaunchContext()) == ld
-    assert lds.location == 'location'
+    assert lds.location == "location"
 
     ld = LaunchDescription()
-    lds = LaunchDescriptionSource(ld, 'location', 'method description')
+    lds = LaunchDescriptionSource(ld, "location", "method description")
     assert lds.get_launch_description(MockLaunchContext()) == ld
-    assert lds.location == 'location'
-    assert lds.method == 'method description'
+    assert lds.location == "location"
+    assert lds.method == "method description"

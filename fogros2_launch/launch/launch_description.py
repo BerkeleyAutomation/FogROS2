@@ -14,12 +14,7 @@
 
 """Module for LaunchDescription class."""
 
-from typing import Iterable
-from typing import List
-from typing import Optional
-from typing import Text
-from typing import Tuple
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Iterable, List, Optional, Text, Tuple
 
 import launch.logging
 
@@ -29,7 +24,9 @@ from .launch_context import LaunchContext
 from .launch_description_entity import LaunchDescriptionEntity
 
 if TYPE_CHECKING:
-    from .actions.include_launch_description import IncludeLaunchDescription  # noqa: F401
+    from .actions.include_launch_description import (  # noqa: F401
+        IncludeLaunchDescription,
+    )
 
 
 class LaunchDescription(LaunchDescriptionEntity):
@@ -63,13 +60,13 @@ class LaunchDescription(LaunchDescriptionEntity):
     def visit(self, context: LaunchContext) -> Optional[List[LaunchDescriptionEntity]]:
         """Override visit from LaunchDescriptionEntity to visit contained entities."""
         if self.__deprecated_reason is not None:
-            if 'current_launch_file_path' in context.get_locals_as_dict():
-                message = 'launch file [{}] is deprecated: {}'.format(
+            if "current_launch_file_path" in context.get_locals_as_dict():
+                message = "launch file [{}] is deprecated: {}".format(
                     context.locals.current_launch_file_path,
                     self.__deprecated_reason,
                 )
             else:
-                message = 'deprecated launch description: {}'.format(self.__deprecated_reason)
+                message = "deprecated launch description: {}".format(self.__deprecated_reason)
             launch.logging.get_logger().warning(message)
         return self.__entities
 
@@ -85,14 +82,13 @@ class LaunchDescription(LaunchDescriptionEntity):
         for more details.
         """
         return [
-            item[0] for item in
-            self.get_launch_arguments_with_include_launch_description_actions(
-                conditional_inclusion)
+            item[0]
+            for item in self.get_launch_arguments_with_include_launch_description_actions(conditional_inclusion)
         ]
 
     def get_launch_arguments_with_include_launch_description_actions(
         self, conditional_inclusion=False
-    ) -> List[Tuple[DeclareLaunchArgument, List['IncludeLaunchDescription']]]:
+    ) -> List[Tuple[DeclareLaunchArgument, List["IncludeLaunchDescription"]]]:
         """
         Return a list of launch arguments with its associated include launch descriptions actions.
 
@@ -124,8 +120,8 @@ class LaunchDescription(LaunchDescriptionEntity):
         declaration is used.
         """
         from .actions import IncludeLaunchDescription  # noqa: F811
-        declared_launch_arguments: List[
-            Tuple[DeclareLaunchArgument, List[IncludeLaunchDescription]]] = []
+
+        declared_launch_arguments: List[Tuple[DeclareLaunchArgument, List[IncludeLaunchDescription]]] = []
         from .actions import ResetLaunchConfigurations
 
         def process_entities(entities, *, _conditional_inclusion, nested_ild_actions=None):
@@ -151,12 +147,14 @@ class LaunchDescription(LaunchDescriptionEntity):
                     process_entities(
                         entity.describe_sub_entities(),
                         _conditional_inclusion=False,
-                        nested_ild_actions=next_nested_ild_actions)
+                        nested_ild_actions=next_nested_ild_actions,
+                    )
                     for conditional_sub_entity in entity.describe_conditional_sub_entities():
                         process_entities(
                             conditional_sub_entity[1],
                             _conditional_inclusion=True,
-                            nested_ild_actions=next_nested_ild_actions)
+                            nested_ild_actions=next_nested_ild_actions,
+                        )
 
         process_entities(self.entities, _conditional_inclusion=conditional_inclusion)
 

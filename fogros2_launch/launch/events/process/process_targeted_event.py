@@ -14,8 +14,7 @@
 
 """Module for ProcessTargetedEvent event."""
 
-from typing import Callable
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Callable
 
 from ...event import Event
 
@@ -26,9 +25,9 @@ if TYPE_CHECKING:
 class ProcessTargetedEvent(Event):
     """Event base class that is targeted at some running process."""
 
-    name = 'launch.events.process.ProcessTargetedEvent'
+    name = "launch.events.process.ProcessTargetedEvent"
 
-    def __init__(self, *, process_matcher: Callable[['ExecuteProcess'], bool]) -> None:
+    def __init__(self, *, process_matcher: Callable[["ExecuteProcess"], bool]) -> None:
         """
         Create a ProcessTargetedEvent.
 
@@ -46,6 +45,6 @@ class ProcessTargetedEvent(Event):
         self.__process_matcher = process_matcher
 
     @property
-    def process_matcher(self) -> Callable[['ExecuteProcess'], bool]:
+    def process_matcher(self) -> Callable[["ExecuteProcess"], bool]:
         """Getter for process_matcher."""
         return self.__process_matcher

@@ -14,11 +14,9 @@
 
 """Tests for the ThisLaunchFile substitution class."""
 
-from launch import LaunchContext
-from launch.substitutions import SubstitutionFailure
-from launch.substitutions import ThisLaunchFile
-
 import pytest
+from launch import LaunchContext
+from launch.substitutions import SubstitutionFailure, ThisLaunchFile
 
 
 def test_this_launch_file_path():
@@ -33,5 +31,5 @@ def test_this_launch_file_path_methods():
     lc = LaunchContext()
     with pytest.raises(SubstitutionFailure):
         tlf.perform(lc)
-    lc.extend_locals({'current_launch_file_path': 'foo'})
-    assert tlf.perform(lc) == 'foo'
+    lc.extend_locals({"current_launch_file_path": "foo"})
+    assert tlf.perform(lc) == "foo"

@@ -17,18 +17,18 @@
 import logging
 from typing import Text
 
-from .emit_event import EmitEvent
 from ..events import Shutdown as ShutdownEvent
 from ..events.process import ProcessExited
 from ..launch_context import LaunchContext
+from .emit_event import EmitEvent
 
-_logger = logging.getLogger(name='launch')
+_logger = logging.getLogger(name="launch")
 
 
 class Shutdown(EmitEvent):
     """Action that shuts down a launched system by emitting Shutdown when executed."""
 
-    def __init__(self, *, reason: Text = 'reason not given', **kwargs):
+    def __init__(self, *, reason: Text = "reason not given", **kwargs):
         super().__init__(event=ShutdownEvent(reason=reason), **kwargs)
 
     def execute(self, context: LaunchContext):
@@ -39,7 +39,6 @@ class Shutdown(EmitEvent):
             event = None
 
         if isinstance(event, ProcessExited):
-            _logger.info('process[{}] was required: shutting down launched system'.format(
-                event.process_name))
+            _logger.info("process[{}] was required: shutting down launched system".format(event.process_name))
 
         super().execute(context)
