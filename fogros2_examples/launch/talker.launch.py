@@ -10,7 +10,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from launch import FogROSLaunchDescription
+from fogros2 import FogROSLaunchDescription
 from launch_ros.actions import Node
 
 import fogros2
