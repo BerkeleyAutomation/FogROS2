@@ -1,14 +1,15 @@
+import os
 from setuptools import find_packages, setup
 
 package_name = "launch"
 
 setup(
     name=package_name,
-    version="0.21.0",
+    version="0.1.0",
     packages=find_packages(exclude=["test"]),
     data_files=[
-        ("share/" + package_name, ["package.xml"]),
-        ("share/ament_index/resource_index/packages", ["resource/" + package_name]),
+        (os.path.join("share", package_name), ["package.xml"]),
+        ("share/ament_index/resource_index/packages", [os.path.join("resource", package_name)]),
         ("share/launch/frontend", ["share/launch/frontend/grammar.lark"]),
     ],
     install_requires=["setuptools"],

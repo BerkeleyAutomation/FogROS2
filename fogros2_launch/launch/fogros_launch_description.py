@@ -28,7 +28,6 @@ if TYPE_CHECKING:
 
 import os
 import pickle
-import socket
 from collections import defaultdict
 from threading import Thread
 from time import sleep

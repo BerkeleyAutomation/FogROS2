@@ -92,10 +92,7 @@ TODO: replace this with fogros2 tooling that's cloud-agnostic. E.g. `ros2 fog co
 docker run -it --rm --net=host --cap-add=NET_ADMIN fogros2
 # configure cloud provider CLI wrappers (e.g. AWS)
 aws configure
-# configure environment
-source install/setup.bash  # source fogros2 workspace as an overlay
-export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp  # work with CycloneDDS DDS implementation
-export CYCLONEDDS_URI=file://$(pwd)/install/share/fogros2/configs/cyclonedds.xml
+# launch talker node on the cloud
 ros2 launch fogros2_examples talker.launch.py
 ```
 

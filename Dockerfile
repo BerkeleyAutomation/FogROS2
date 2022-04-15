@@ -6,12 +6,10 @@ ARG DISTRO
 RUN apt update && sudo apt install -y \
   build-essential \
   cmake \
-  git \
   python3-colcon-common-extensions \
   python3-pip \
   python3-vcstool \
-  wget \
-  emacs-nox \
+  ros-${DISTRO}-rmw-cyclonedds-cpp \
   unzip \
   wireguard \
   iproute2 \
@@ -21,7 +19,6 @@ RUN apt update && sudo apt install -y \
 
 RUN rm -rf /var/lib/apt/lists/*
  
-
 # install some pip packages needed for testing
 RUN python3 -m pip install --no-cache-dir -U \
   argcomplete \
@@ -38,25 +35,28 @@ RUN python3 -m pip install --no-cache-dir -U \
   pytest-rerunfailures \
   pytest \
   pytest-cov \
-  pytest-runner \
-  setuptools \
-  opencv-python
+  pytest-runner 
 
 RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-# RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-aarch64.zip" -o "awscliv2.zip"
 
 RUN unzip awscliv2.zip && rm awscliv2.zip
 RUN ./aws/install
-RUN pip3 install boto3 paramiko scp wgconfig
+RUN python3 -m pip install --no-cache-dir -U boto3 paramiko scp wgconfig
 
 # Create FogROS2 worspace and build it
-RUN mkdir -p /home/root/fog_ws/src
-WORKDIR /home/root/fog_ws/src
-COPY .  /home/root/fog_ws/src/fogros2
-COPY ./fogros2/configs/cyclonedds.xml /home/root/fog_ws
+ENV ROS_WS=/home/root/fog_ws
+RUN mkdir -p ${ROS_WS}/src
+WORKDIR ${ROS_WS}/src
+COPY .  ${ROS_WS}/src/
 
-WORKDIR /home/root/fog_ws
-RUN . /opt/ros/$DISTRO/setup.sh && \
+WORKDIR ${ROS_WS}
+RUN . /opt/ros/${DISTRO}/setup.sh && \
       colcon build --merge-install --cmake-clean-cache
 
+# setup entrypoint
+ENV ROS_DISTRO=${DISTRO}
+COPY ./ros_entrypoint.sh /
+RUN chmod +x /ros_entrypoint.sh
+
+ENTRYPOINT [ "/ros_entrypoint.sh" ]
 CMD ["bash"]
