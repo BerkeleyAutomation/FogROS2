@@ -24,7 +24,7 @@ from launch.launch_context import LaunchContext
 from launch.launch_description_entity import LaunchDescriptionEntity
 
 if TYPE_CHECKING:
-    from .actions.include_launch_description import IncludeLaunchDescription  # noqa: F401
+    from launch.actions.include_launch_description import IncludeLaunchDescription  # noqa: F401
 
 import os
 import pickle
@@ -232,10 +232,10 @@ class FogROSLaunchDescription(LaunchDescriptionEntity):
         default value and description from the first instance of the argument
         declaration is used.
         """
-        from .actions import IncludeLaunchDescription  # noqa: F811
+        from launch.actions import IncludeLaunchDescription  # noqa: F811
 
         declared_launch_arguments: List[Tuple[DeclareLaunchArgument, List[IncludeLaunchDescription]]] = []
-        from .actions import ResetLaunchConfigurations
+        from launch.actions import ResetLaunchConfigurations
 
         def process_entities(entities, *, _conditional_inclusion, nested_ild_actions=None):
             for entity in entities:
