@@ -4,8 +4,9 @@ ema-instance" xsi:schemaLocation="https://cdds.io/config https://raw.githubuserc
 ent.com/eclipse-cyclonedds/cyclonedds/master/etc/cyclonedds.xsd">
     <Domain id="any">
         <General>
-            <NetworkInterfaceAddress>wg0</NetworkInterfaceAddress>
-            <AllowMulticast>false</AllowMulticast>
+            <Interfaces>
+                <NetworkInterface name="wg0"/>
+            </Interfaces>
         </General>
         <Discovery>
             <Peers>
