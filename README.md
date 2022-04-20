@@ -92,8 +92,12 @@ TODO: replace this with fogros2 tooling that's cloud-agnostic. E.g. `ros2 fog co
 docker run -it --rm --net=host --cap-add=NET_ADMIN fogros2
 # configure cloud provider CLI wrappers (e.g. AWS)
 aws configure
+
+source install/setup.bash
+export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+export CYCLONEDDS_URI=file://$(pwd)/install/share/fogros2/configs/cyclonedds.xml
 # launch talker node on the cloud
-ros2 launch fogros2_examples talker.launch.py
+ros2 launch fogros2_examples talker.ubuntu.2204.launch.py
 ```
 
 ### Native
@@ -101,7 +105,12 @@ ros2 launch fogros2_examples talker.launch.py
 source install/setup.bash
 export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
 export CYCLONEDDS_URI=file://$(pwd)/install/share/fogros2/configs/cyclonedds.xml
-ros2 launch fogros2_examples talker.launch.py
+
+# if use Ubuntu 20.04
+ros2 launch fogros2_examples talker.ubuntu.2004.launch.py
+
+# if use Ubuntu 22.04 or container 
+ros2 launch fogros2_examples talker.ubuntu.2204.launch.py
 ```
 
 ## Run your own robotics applications
@@ -119,7 +128,7 @@ you may also `git clone` your development repo to the docker instead.
 
 
 Step 2: Write the FogROSlaunch file
-Example of launch file can be found in https://github.com/BerkeleyAutomation/FogROS2/blob/main/examples/fogros2_examples/launch/talker.launch.py.
+Example of launch file can be found in https://github.com/BerkeleyAutomation/FogROS2/blob/main/examples/fogros2_examples/launch/talker.*.launch.py.
 
 Note a few points that are different from https://github.com/SimeonOA/orb_slam_2_ros/blob/fogros2/TUTORIAL.mdnormal launch file:
 1. use `FogROSLaunchDescription` instead of `LaunchDescription` class
