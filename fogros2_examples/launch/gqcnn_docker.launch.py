@@ -17,7 +17,7 @@ import fogros2
 
 def generate_launch_description():
     ld = FogROSLaunchDescription()
-    machine1 = fogros2.AWS(region="us-west-1", ec2_instance_type="t2.medium", ami_image="ami-09175f2ca3c3dc67c")
+    machine1 = fogros2.AWS(region="us-west-1", ec2_instance_type="t2.medium", ami_image="ami-00f25057ddc9b310b")
 
     # machine1.add_docker_container("sudo docker run --net=host --env RMW_IMPLEMENTATION=rmw_cyclonedds_cpp --env CYCLONEDDS_URI=file:///tmp/cyclonedds.xml -v $(pwd)/install/share/fogros2/configs/cyclonedds.xml:/tmp/cyclonedds.xml --rm -it keplerc/gqcnn_ros:pj ros2 launch gqcnn_ros client.launch.py")
     machine1.add_docker_container(
