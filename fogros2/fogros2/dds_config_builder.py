@@ -10,6 +10,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import lsb_release
+
+ubuntu_release = lsb_release.get_os_release()['RELEASE']
 
 class DDSConfigBuilder:
     def __init__(self, ip_addresses):
@@ -34,19 +37,25 @@ class CycloneConfigBuilder(DDSConfigBuilder):
         )
 
     def generate_config_file(self):
-        template = """
-<?xml version="1.0" encoding="UTF-8" ?>
-<CycloneDDS xmlns="https://cdds.io/config" xmlns:xsi="http://www.w3.org/2001/XMLSch\
-ema-instance" xsi:schemaLocation="https://cdds.io/config https://raw.githubusercont\
-ent.com/eclipse-cyclonedds/cyclonedds/master/etc/cyclonedds.xsd">
-    <Domain id="any">
-        <General>
+        if ubuntu_release == "20.04":
+            interfaces = """
+	    <NetworkInterfaceAddress>wg0</NetworkInterfaceAddress>
+            <AllowMulticast>false</AllowMulticast>
+            """
+        else:
+            interfaces = """
             <Interfaces>
                 <NetworkInterface name="wg0"/>
             </Interfaces>
-        </General>
+            """
+            
+        template = f"""
+<?xml version="1.0" encoding="UTF-8" ?>
+<CycloneDDS xmlns="https://cdds.io/config" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://cdds.io/config https://raw.githubusercontent.com/eclipse-cyclonedds/cyclonedds/master/etc/cyclonedds.xsd">
+    <Domain id="any">
+        <General>{interfaces}</General>
         <Discovery>
-            <Peers>                
+            <Peers>      
                 <Peer address="10.0.0.1"/>
                 <Peer address="10.0.0.2"/>
             </Peers>
@@ -55,5 +64,6 @@ ent.com/eclipse-cyclonedds/cyclonedds/master/etc/cyclonedds.xsd">
     </Domain>
 </CycloneDDS>
         """
+        
         with open(self.config_save_path, "w+") as f:
             f.write(template)

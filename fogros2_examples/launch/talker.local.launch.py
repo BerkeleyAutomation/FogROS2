@@ -10,19 +10,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from fogros2 import FogROSLaunchDescription
+from launch import LaunchDescription
 from launch_ros.actions import Node
 
-import fogros2
-
-
 def generate_launch_description():
-    ld = FogROSLaunchDescription()
-    machine1 = fogros2.AWS(region="us-west-1", ec2_instance_type="t2.medium", ami_image="ami-0beef1c520a116bbd")
+    """
+    Talker example that launches everything on the robot (compare to talker.ubuntu.*.launch.py)
+    """
+    ld = LaunchDescription()
 
     talker_node = Node(package="fogros2_examples", executable="listener", output="screen")
-    listener_node = fogros2.CloudNode(
-        package="fogros2_examples", executable="talker", output="screen", machine=machine1
+    listener_node = Node(
+        package="fogros2_examples", executable="talker", output="screen"
     )
     ld.add_action(talker_node)
     ld.add_action(listener_node)

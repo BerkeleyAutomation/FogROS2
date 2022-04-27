@@ -12,20 +12,22 @@
 
 import rclpy
 from std_msgs.msg import String
-
+import socket
 
 def main(args=None):
     rclpy.init(args=args)
 
     node = rclpy.create_node("minimal_publisher")
     publisher = node.create_publisher(String, "topic", 10)
+    host_name = socket.gethostname()
+    host_ip = socket.gethostbyname(host_name)
 
     msg = String()
     i = 0
 
     def timer_callback():
         nonlocal i
-        msg.data = "Hello World: %d" % i
+        msg.data = "Hello World from %s (%s): %d" % (host_name, host_ip, i)
         i += 1
         node.get_logger().warning('Publishing: "%s"' % msg.data)
         publisher.publish(msg)
