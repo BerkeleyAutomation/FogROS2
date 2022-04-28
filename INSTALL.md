@@ -111,12 +111,12 @@ This is quick start guide for installing FogROS 2 (and ROS 2) and its requisites
     cd ~/fog_ws
     source install/setup.bash
     export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp 
-    export CYCLONEDDS_URI=file://$(pwd)/install/share/fogros2/configs/cyclonedds.xml
+    # if using Ubuntu 20.04
+    export CYCLONEDDS_URI=file://$(pwd)/install/share/fogros2/configs/cyclonedds.ubuntu.2004.xml
+    # if using Ubuntu 22.04
+    export CYCLONEDDS_URI=file://$(pwd)/install/share/fogros2/configs/cyclonedds.ubuntu.2204.xml
 
-    # if use Ubuntu 20.04
-    ros2 launch fogros2_examples talker.ubuntu.2004.launch.py
-    # if use Ubuntu 22.04
-    ros2 launch fogros2_examples talker.ubuntu.2204.launch.py
+    ros2 launch fogros2_examples talker.aws.launch.py
 ```
 
 18. You are done. Refer to our [README](https://github.com/BerkeleyAutomation/FogROS2/blob/main/README.md) for additional information including [Command Line Interface commmands](https://github.com/BerkeleyAutomation/FogROS2#command-line-interface) and [Docker installation](https://github.com/BerkeleyAutomation/FogROS2#docker).
