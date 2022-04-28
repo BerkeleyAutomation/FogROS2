@@ -25,7 +25,7 @@ from .command_builder import BashBuilder
 from .dds_config_builder import CycloneConfigBuilder
 from .scp import SCP_Client
 from .util import make_zip_file
-
+from botocore.exceptions import ClientError
 
 class CloudInstance(abc.ABC):
     def __init__(
@@ -236,7 +236,7 @@ class AWS(CloudInstance):
 
         # key & security group names
         self.aws_name = "AWS" + str(random.randint(10, 1000))
-        self.ec2_security_group = "FOGROS_SECURITY_GROUP" + self.aws_name
+        self.ec2_security_group = "FOGROS2_SECURITY_GROUP"
         self.ec2_key_name = "FogROSKEY" + self.aws_name
         self.ssh_key_path = os.path.join(self.working_dir, self.ec2_key_name + ".pem")
 
@@ -289,9 +289,19 @@ class AWS(CloudInstance):
         response = self.ec2_boto3_client.describe_vpcs()
         vpc_id = response.get("Vpcs", [{}])[0].get("VpcId", "")
         try:
+            response = self.ec2_boto3_client.describe_security_groups(
+                GroupNames=[self.ec2_security_group])
+            security_group_id = response["SecurityGroups"][0]["GroupId"]
+        except ClientError as e:
+            # check if the group does not exist. we'll create one in
+            # that case.  Any other error is unexpected and re-thrown.
+            if e.response['Error']['Code'] != 'InvalidGroup.NotFound':
+                raise e
+
+            self.logger.warn("security group does not exist, creating.")
             response = self.ec2_boto3_client.create_security_group(
                 GroupName=self.ec2_security_group,
-                Description="DESCRIPTION",
+                Description="Security group used by FogROS 2 (safe to delete when FogROS 2 is not in use)",
                 VpcId=vpc_id,
             )
             security_group_id = response["GroupId"]
@@ -309,10 +319,9 @@ class AWS(CloudInstance):
                 ],
             )
             self.logger.info("Ingress Successfully Set %s" % data)
-            ec2_security_group_ids = [security_group_id]
-        except botocore.exceptions.ClientError as e:
-            self.logger.error(e)
-        self.logger.warn("security group id is " + str(ec2_security_group_ids))
+            
+        ec2_security_group_ids = [security_group_id]
+        self.logger.warn(f"security group id is {ec2_security_group_ids}")
         self.ec2_security_group_ids = ec2_security_group_ids
 
     def generate_key_pair(self):
