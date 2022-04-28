@@ -25,7 +25,10 @@ class DeleteVerb(VerbExtension):
 
         if instance_info["cloud_service_provider"] == "AWS":
             print("Terminating EC2 instance")
-            AWS.delete(instance_info["ec2_instance_id"], instance_info["ec2_region"])
+            try:
+                AWS.delete(instance_info["ec2_instance_id"], instance_info["ec2_region"])
+            except:
+                print(f"the instance {instance} does not exist")
 
         print("Removing Instance Dir")
         shutil.rmtree(pwd)
