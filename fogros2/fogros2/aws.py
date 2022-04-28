@@ -26,12 +26,13 @@ from .dds_config_builder import CycloneConfigBuilder
 from .scp import SCP_Client
 from .util import make_zip_file
 from botocore.exceptions import ClientError
+from fogros2.util import instance_dir
 
 class CloudInstance(abc.ABC):
     def __init__(
         self,
         ros_workspace=os.path.dirname(os.getenv("COLCON_PREFIX_PATH")),
-        working_dir_base="/tmp/fogros/",
+        working_dir_base=instance_dir(),
         vis=False,
     ):
         self.cyclone_builder = None

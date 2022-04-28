@@ -1,7 +1,8 @@
 import json
-
+import os
 import boto3
 from ros2cli.verb import VerbExtension
+from fogros2.util import work_dir
 
 
 class ImageVerb(VerbExtension):
@@ -11,8 +12,8 @@ class ImageVerb(VerbExtension):
         )
 
     def create_image(self, instance):
-        pwd = self.fogros_working_dir + instance
-        with open(pwd + "/info") as f:
+        pwd = os.path.join(work_dir(), instance)
+        with open(os.path.join(pwd, "info")) as f:
             instance_info = json.loads(f.read())
 
         if instance_info["cloud_service_provider"] == "AWS":
@@ -30,6 +31,4 @@ class ImageVerb(VerbExtension):
                     print("Image ID: " + image["ImageId"])
 
     def main(self, *, args):
-        self.fogros_working_dir = "/tmp/fogros/"
-
         self.create_image(args.name[0])
