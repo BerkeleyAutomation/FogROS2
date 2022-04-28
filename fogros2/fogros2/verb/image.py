@@ -13,7 +13,11 @@ class ImageVerb(VerbExtension):
 
     def create_image(self, instance):
         pwd = os.path.join(work_dir(), instance)
-        with open(os.path.join(pwd, "info")) as f:
+        info_path = os.path.join(pwd, "info")
+        if not os.path.isfile(info_path):
+            print("the info file does not exist, likely that the instance is not fully initialized")
+            return 
+        with open() as f:
             instance_info = json.loads(f.read())
 
         if instance_info["cloud_service_provider"] == "AWS":
