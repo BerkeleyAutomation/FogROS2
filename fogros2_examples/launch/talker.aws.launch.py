@@ -25,7 +25,7 @@ def ami_image():
     if ubuntu_release == "20.04":
         return "ami-00f25057ddc9b310b"
     if ubuntu_release == "22.04":
-        return "ami-0beef1c520a116bbd"
+        return "ami-0b6030c78f8b2f076"
 
     raise ValueError(f"No AMI for {ubuntu_release}")
 
