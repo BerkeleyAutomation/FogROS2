@@ -1,7 +1,13 @@
 ARG DISTRO=rolling
-FROM ros:$DISTRO
+FROM ubuntu:jammy
 
 ARG DISTRO
+
+RUN apt update && apt install -y curl gnupg2 lsb-release sudo && \
+    curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
+    
+RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu jammy main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
+RUN apt update && DEBIAN_FRONTEND=noninteractive apt install -y ros-rolling-desktop
 
 RUN apt update && sudo apt install -y \
   build-essential \
