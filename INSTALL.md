@@ -96,7 +96,7 @@ This is quick start guide for installing FogROS 2 (and ROS 2) and its requisites
 ```
     sudo apt install build-essential cmake git python3-colcon-common-extensions python3-pip python3-vcstool wget emacs-nox unzip wireguard iproute2 curl net-tools ssh
     sudo apt install emacs-gtk
-    pip3 install boto3 paramiko scp wgconfig
+    pip3 install boto3 paramiko scp wgconfig unique-names-generator
 ```
 
 16. If using Ubuntu 22.04

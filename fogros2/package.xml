@@ -9,6 +9,7 @@
   </description>
   <maintainer email="kych@berkeley.edu">Kaiyuan (Eric) Chen</maintainer>
   <author email="kych@berkeley.edu">Kaiyuan (Eric) Chen</author>
+  <author email="jeffi@berkeley.edu">Jeff Ichnowski</author>
   <author email="victor@accelerationrobotics.com">Víctor Mayoral-Vilches</author>
   <license>Apache License 2.0</license>
 
@@ -16,6 +17,7 @@
   <depend>scp</depend>
   <depend>paramiko</depend>
   <depend>ros2cli</depend>
+  <depend>unique-names-generator</depend>
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>

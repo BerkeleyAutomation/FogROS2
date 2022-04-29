@@ -27,6 +27,7 @@ from .scp import SCP_Client
 from .util import make_zip_file
 from botocore.exceptions import ClientError
 from fogros2.util import instance_dir
+from unique_names_generator import get_random_name
 
 class CloudInstance(abc.ABC):
     def __init__(
@@ -41,7 +42,7 @@ class CloudInstance(abc.ABC):
         self.ros_workspace = ros_workspace
         print("using ROS workspace: ", self.ros_workspace)
         self.ssh_key_path = None
-        self.unique_name = str(random.randint(10, 1000))
+        self.unique_name = get_random_name(separator="-", style="lowercase")
         self.working_dir = os.path.join(working_dir_base, self.unique_name)
         os.makedirs(self.working_dir, exist_ok=True)
         self.ready_lock = threading.Lock()
@@ -101,7 +102,7 @@ class CloudInstance(abc.ABC):
     def install_cloud_dependencies(self):
         self.scp.execute_cmd("sudo apt-get install -y wireguard unzip docker.io")
         self.scp.execute_cmd("sudo apt-get install -y python3-pip")
-        self.scp.execute_cmd("sudo pip3 install wgconfig boto3 paramiko scp")
+        self.scp.execute_cmd("sudo pip3 install wgconfig boto3 paramiko scp unique-names-generator")
 
     def install_ros(self):
         # set locale
@@ -236,9 +237,8 @@ class AWS(CloudInstance):
         self.aws_ami_image = ami_image
 
         # key & security group names
-        self.aws_name = "AWS" + str(random.randint(10, 1000))
         self.ec2_security_group = "FOGROS2_SECURITY_GROUP"
-        self.ec2_key_name = "FogROSKEY" + self.aws_name
+        self.ec2_key_name = "FogROS2KEY-" + self.unique_name
         self.ssh_key_path = os.path.join(self.working_dir, self.ec2_key_name + ".pem")
 
         # aws objects
@@ -252,7 +252,8 @@ class AWS(CloudInstance):
 
         # others
         self.logger = logging.getLogger(__name__)
-        self.logger.setLevel(logging.WARNING)
+        self.logger.setLevel(logging.INFO)
+        self.logger.info(f"New instance name: {self.unique_name}")
 
         self.create()
 
@@ -261,6 +262,7 @@ class AWS(CloudInstance):
         self.create_security_group()
         self.generate_key_pair()
         self.create_ec2_instance()
+        self.info(flush_to_disk=True)
         self.connect()
         self.install_ros()
         self.configure_rosbridge()
@@ -330,7 +332,8 @@ class AWS(CloudInstance):
         ec2_priv_key = ec2_keypair["KeyMaterial"]
         self.logger.info(ec2_priv_key)
 
-        with open(self.ssh_key_path, "w+") as f:
+        # Since we're writing an SSH key, make sure to write with user-only permissions.
+        with open(os.open(self.ssh_key_path, os.O_CREAT | os.O_WRONLY, 0o600), 'w') as f:
             f.write(ec2_priv_key)
 
         self.ssh_key = ec2_priv_key
@@ -348,6 +351,18 @@ class AWS(CloudInstance):
             InstanceType=self.ec2_instance_type,
             KeyName=self.ec2_key_name,
             SecurityGroupIds=self.ec2_security_group_ids,
+            ClientToken="FogROS2-"+self.unique_name,
+            TagSpecifications=[
+                {
+                    "ResourceType":"instance",
+                    "Tags": [
+                        {
+                            "Key":"FogROS2-Name",
+                            "Value":self.unique_name
+                        }
+                    ]
+                }
+            ],
             BlockDeviceMappings=[
                 {
                     "DeviceName": "/dev/sda1",
