@@ -77,8 +77,6 @@ class VPN:
 
     def start_robot_vpn(self):
         # Copy /tmp/fogros-local.conf to /etc/wireguard/wg0.conf locally.
-        # TODO: This needs root. Move this to a separate script with setuid.
+        os.system("cp /tmp/fogros-local.conf /etc/wireguard/wg0.conf")
         os.system("sudo wg-quick down wg0")
-        os.system("sudo cp /tmp/fogros-local.conf /etc/wireguard/wg0.conf")
-        os.system("sudo chmod 600 /etc/wireguard/wg0.conf")
         os.system("sudo wg-quick up wg0")

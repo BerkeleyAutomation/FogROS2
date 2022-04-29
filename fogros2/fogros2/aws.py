@@ -95,6 +95,13 @@ class CloudInstance:
         self.scp.execute_cmd("sudo apt install -y wireguard unzip docker.io")
         self.scp.execute_cmd("sudo apt install -y python3-pip")
         self.scp.execute_cmd("sudo pip3 install wgconfig boto3 paramiko scp")
+
+        # Set permissions for wheel members to configure the VPN later.
+        self.scp.execute_cmd("sudo touch /etc/wireguard/wg0.conf")
+        self.scp.execute_cmd("sudo chmod 770 /etc/wireguard")
+        self.scp.execute_cmd("sudo chmod 770 /etc/wireguard/wg0.conf")
+        self.scp.execute_cmd("sudo chown root:wheel /etc/wireguard/wg0.conf")
+        self.scp.execute_cmd("echo '%wheel ALL = (ALL) NOPASSWD: /usr/bin/wg-quick' | sudo EDITOR='tee -a' visudo")
         
         # image transport dependencies and H.264 deps
         self.scp.execute_cmd("sudo apt install -y ros-rolling-image-transport ros-rolling-image-transport-plugins libswscale-dev libx264-dev libavutil-dev libavcodec-dev libavformat-dev libavdevice-dev ros-rolling-camera-calibration-parsers")
