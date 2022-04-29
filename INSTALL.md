@@ -67,9 +67,12 @@ This is quick start guide for installing FogROS 2 (and ROS 2) and its requisites
 11. Clone
 
 ```
-    cd ~/fog_ws/src
-    git clone -b humble --recurse-submodules https://github.com/BerkeleyAutomation/FogROS2.git
-    cp FogROS2/fogros2/configs/cyclonedds.xml ..
+cd ~/fog_ws/src
+git clone -b humble --recurse-submodules https://github.com/BerkeleyAutomation/FogROS2.git
+# if using Ubuntu 20.04
+cp FogROS2/fogros2/configs/cyclonedds.ubuntu.2004.xml ../cyclonedds.xml
+# if using Ubuntu 22.04
+cp FogROS2/fogros2/configs/cyclonedds.ubuntu.2204.xml ../cyclonedds.xml
 ```
 
 12. Build
