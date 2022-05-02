@@ -191,7 +191,10 @@ class CloudInstance(abc.ABC):
         cmd_builder.append("cd /home/ubuntu/fog_ws && colcon build --merge-install --cmake-clean-cache")
         cmd_builder.append(". /home/ubuntu/fog_ws/install/setup.bash")
         cmd_builder.append(self.cyclone_builder.env_cmd)
-        cmd_builder.append("ros2 launch fogros2 cloud.launch.py")
+        ros_domain_id = os.environ.get('ROS_DOMAIN_ID')
+        if not ros_domain_id:
+            ros_domain_id = 0
+        cmd_builder.append(f"ROS_DOMAIN_ID={ros_domain_id} ros2 launch fogros2 cloud.launch.py")
         print(cmd_builder.get())
         self.scp.execute_cmd(cmd_builder.get())
 
