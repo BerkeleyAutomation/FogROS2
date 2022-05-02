@@ -181,6 +181,18 @@ docker exec -it $(docker ps | grep fogros2 | awk '{print $1}') /bin/bash
 ```
 
 
+## Creating an AMI Image from An Existing Launched FogRos Instance
+
+See more information [here.](https://docs.aws.amazon.com/toolkit-for-visual-studio/latest/user-guide/tkv-create-ami-from-instance.html)
+
+Step 1: Log into your AWS account and locate your list of instances. 
+
+Step 2: Right-click on the FogROS instance, and choose Create Image from the menu options.
+
+Step 3: In the Create Image dialog box, type a unique name and description, and then choose Create Image. 
+
+Note that Amazon EC2 shuts down the instance by deafult before creating the AMI and then reboots the instance. Choose the No reboot option if you don't want your instance to be shut down.
+
 ## Running Examples:
 # NOTE: (mjd3) These should likely be moved to the examples repo
 
