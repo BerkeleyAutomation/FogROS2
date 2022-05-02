@@ -12,7 +12,7 @@
 
 import abc
 import json
-import logging
+from rclpy import logging
 import os
 import random
 import subprocess
@@ -36,13 +36,18 @@ class CloudInstance(abc.ABC):
         working_dir_base=instance_dir(),
         vis=False,
     ):
+        # others
+        self.logger = logging.get_logger(__name__)
+        #self.logger.setLevel(logging.INFO)
+
         self.cyclone_builder = None
         self.scp = None
         self.public_ip = None
         self.ros_workspace = ros_workspace
-        print("using ROS workspace: ", self.ros_workspace)
+        self.logger.info(f"using ROS workspace: {self.ros_workspace}")
         self.ssh_key_path = None
         self.unique_name = get_random_name(separator="-", style="lowercase")
+        self.logger.info(f"New instance name: {self.unique_name}")
         self.working_dir = os.path.join(working_dir_base, self.unique_name)
         os.makedirs(self.working_dir, exist_ok=True)
         self.ready_lock = threading.Lock()
@@ -253,15 +258,10 @@ class AWS(CloudInstance):
         self.ssh_key = None
         self.ec2_security_group_ids = None
 
-        # others
-        self.logger = logging.getLogger(__name__)
-        self.logger.setLevel(logging.INFO)
-        self.logger.info(f"New instance name: {self.unique_name}")
-
         self.create()
 
     def create(self):
-        print("creating EC2 instance")
+        self.logger.info("creating EC2 instance")
         self.create_security_group()
         self.generate_key_pair()
         self.create_ec2_instance()
@@ -291,9 +291,28 @@ class AWS(CloudInstance):
     def get_ssh_key(self):
         return self.ssh_key
 
+    def get_default_vpc(self):
+        response = self.ec2_boto3_client.describe_vpcs(
+            Filters=[{"Name":"is-default", "Values":["true"]}])
+        vpcs = response.get("Vpcs", [])
+        
+        if len(vpcs) == 0:
+            self.logger.warn("No default VPC found.  Creating one.")
+            response = self.ec2_boto3_client.create_default_vpc()
+            vpc_id = response["Vpc"]["VpcId"]
+            self.logger.warn(f"Created new default VPC {vpc_id}")
+            return vpc_id
+
+        if len(vpcs) > 1:
+            # This shouldn't happen, but just in case, warn.
+            self.logger.warn("Multiple default VPCs.  This may lead to undefined behavior.")
+
+        vpc_id = vpcs[0].get("VpcId", "")
+        self.logger.info(f"Using VPC {vpc_id}")
+        return vpc_id
+
     def create_security_group(self):
-        response = self.ec2_boto3_client.describe_vpcs()
-        vpc_id = response.get("Vpcs", [{}])[0].get("VpcId", "")
+        vpc_id = self.get_default_vpc()
         try:
             response = self.ec2_boto3_client.describe_security_groups(
                 GroupNames=[self.ec2_security_group])
@@ -327,13 +346,13 @@ class AWS(CloudInstance):
             self.logger.info("Ingress Successfully Set %s" % data)
             
         ec2_security_group_ids = [security_group_id]
-        self.logger.warn(f"security group id is {ec2_security_group_ids}")
+        self.logger.info(f"security group id is {ec2_security_group_ids}")
         self.ec2_security_group_ids = ec2_security_group_ids
 
     def generate_key_pair(self):
         ec2_keypair = self.ec2_boto3_client.create_key_pair(KeyName=self.ec2_key_name)
         ec2_priv_key = ec2_keypair["KeyMaterial"]
-        self.logger.info(ec2_priv_key)
+        #self.logger.info(ec2_priv_key)
 
         # Since we're writing an SSH key, make sure to write with user-only permissions.
         with open(os.open(self.ssh_key_path, os.O_CREAT | os.O_WRONLY, 0o600), 'w') as f:
@@ -377,11 +396,10 @@ class AWS(CloudInstance):
             ],
         )
 
-        self.logger.info("Have created the instance: ", instances)
-        self.logger.info("type: " + self.ec2_instance_type)
+        self.logger.info(f"Created instance: {instances}, type: {self.ec2_instance_type}")
         instance = instances[0]
         # use the boto3 waiter
-        self.logger.info("wait for launching to finish")
+        self.logger.info("waiting for launching to finish")
         instance.wait_until_running()
         self.logger.info("launch finished")
         # reload instance object
@@ -393,7 +411,7 @@ class AWS(CloudInstance):
             instance.reload()
             self.logger.info("waiting for launching to finish")
             self.public_ip = instance.public_ip_address
-        self.logger.warn("EC2 instance is created with ip address: " + self.public_ip)
+        self.logger.info("EC2 instance is created with ip address: " + self.public_ip)
         return instance
 
     @staticmethod

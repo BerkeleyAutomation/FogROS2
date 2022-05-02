@@ -10,7 +10,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import logging
+from rclpy import logging
 import select
 import sys
 from time import sleep
@@ -28,7 +28,7 @@ class SCP_Client:
         self.ip = ip
         self.ssh_key = paramiko.RSAKey.from_private_key_file(ssh_key_path)
         self.ssh_client = paramiko.SSHClient()
-        self.logger = logging.getLogger(__name__)
+        self.logger = logging.get_logger(__name__)
 
     def connect(self):
         self.ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -45,9 +45,9 @@ class SCP_Client:
             # TODO: Handle specific exceptions differently?
             # See https://docs.paramiko.org/en/stable/api/client.html
             except Exception as e:
-                self.logger.warn("Exception occured when connecting scp" + str(e) + ", retrying...")
+                self.logger.warn(f"{e}, retrying...")
                 sleep(1)
-        self.logger.info("SCP connection succeeds!")
+        self.logger.info("SCP connected!")
 
     def send_file(self, src_path, dst_path):
         with SCPClient(self.ssh_client.get_transport()) as scp:
