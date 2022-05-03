@@ -1,6 +1,10 @@
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Changelog for package fogros2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0.1.2 (2022-05-02)
+------------------
+* removed unique name generator and fixed package.xml
+
 0.1.1 (2022-05-02)
 ------------------
 * updates CLI to use AWS APIs to interface with running instances
