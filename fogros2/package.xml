@@ -13,11 +13,10 @@
   <author email="victor@accelerationrobotics.com">Víctor Mayoral-Vilches</author>
   <license>Apache License 2.0</license>
 
-  <depend>boto3</depend>
-  <depend>scp</depend>
-  <depend>paramiko</depend>
+  <depend>python3-boto3</depend>
+  <depend>python3-scp</depend>
+  <depend>python3-paramiko</depend>
   <depend>ros2cli</depend>
-  <depend>unique-names-generator</depend>
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
