@@ -26,6 +26,7 @@ from .scp import SCP_Client
 from .util import make_zip_file
 from botocore.exceptions import ClientError
 from fogros2.util import instance_dir
+from fogros2.name_generator import get_unique_name
 
 class CloudInstance(abc.ABC):
     def __init__(
@@ -44,7 +45,7 @@ class CloudInstance(abc.ABC):
         self.ros_workspace = ros_workspace
         self.logger.info(f"using ROS workspace: {self.ros_workspace}")
         self.ssh_key_path = None
-        self.unique_name = str(random.randint(10, 10000))
+        self.unique_name = get_unique_name()
         self.logger.info(f"New instance name: {self.unique_name}")
         self.working_dir = os.path.join(working_dir_base, self.unique_name)
         os.makedirs(self.working_dir, exist_ok=True)
