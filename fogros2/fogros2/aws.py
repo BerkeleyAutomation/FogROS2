@@ -12,21 +12,23 @@
 
 import abc
 import json
-from rclpy import logging
 import os
 import random
 import subprocess
 import threading
 
 import boto3
+from botocore.exceptions import ClientError
+from rclpy import logging
+
+from fogros2.name_generator import get_unique_name
+from fogros2.util import instance_dir
 
 from .command_builder import BashBuilder
 from .dds_config_builder import CycloneConfigBuilder
 from .scp import SCP_Client
 from .util import make_zip_file
-from botocore.exceptions import ClientError
-from fogros2.util import instance_dir
-from fogros2.name_generator import get_unique_name
+
 
 class CloudInstance(abc.ABC):
     def __init__(
@@ -37,7 +39,6 @@ class CloudInstance(abc.ABC):
     ):
         # others
         self.logger = logging.get_logger(__name__)
-        #self.logger.setLevel(logging.INFO)
 
         self.cyclone_builder = None
         self.scp = None
@@ -135,7 +136,6 @@ class CloudInstance(abc.ABC):
         self.scp.execute_cmd("sudo update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8")
         self.scp.execute_cmd("export LANG=en_US.UTF-8")
 
-
         # install ros2 packages
         self.apt_install(f"ros-{self.ros_distro}-desktop")
 
@@ -167,7 +167,6 @@ class CloudInstance(abc.ABC):
             "curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo apt-key add -"
         )
 
-        #self.scp.execute_cmd("sudo apt-get update")
         self.apt_install("python3-colcon-common-extensions")
 
     def push_ros_workspace(self):
@@ -204,7 +203,7 @@ class CloudInstance(abc.ABC):
         cmd_builder.append("cd /home/ubuntu/fog_ws && colcon build --merge-install --cmake-clean-cache")
         cmd_builder.append(". /home/ubuntu/fog_ws/install/setup.bash")
         cmd_builder.append(self.cyclone_builder.env_cmd)
-        ros_domain_id = os.environ.get('ROS_DOMAIN_ID')
+        ros_domain_id = os.environ.get("ROS_DOMAIN_ID")
         if not ros_domain_id:
             ros_domain_id = 0
         cmd_builder.append(f"ROS_DOMAIN_ID={ros_domain_id} ros2 launch fogros2 cloud.launch.py")
@@ -300,10 +299,9 @@ class AWS(CloudInstance):
         return self.ssh_key
 
     def get_default_vpc(self):
-        response = self.ec2_boto3_client.describe_vpcs(
-            Filters=[{"Name":"is-default", "Values":["true"]}])
+        response = self.ec2_boto3_client.describe_vpcs(Filters=[{"Name": "is-default", "Values": ["true"]}])
         vpcs = response.get("Vpcs", [])
-        
+
         if len(vpcs) == 0:
             self.logger.warn("No default VPC found.  Creating one.")
             response = self.ec2_boto3_client.create_default_vpc()
@@ -322,13 +320,12 @@ class AWS(CloudInstance):
     def create_security_group(self):
         vpc_id = self.get_default_vpc()
         try:
-            response = self.ec2_boto3_client.describe_security_groups(
-                GroupNames=[self.ec2_security_group])
+            response = self.ec2_boto3_client.describe_security_groups(GroupNames=[self.ec2_security_group])
             security_group_id = response["SecurityGroups"][0]["GroupId"]
         except ClientError as e:
             # check if the group does not exist. we'll create one in
             # that case.  Any other error is unexpected and re-thrown.
-            if e.response['Error']['Code'] != 'InvalidGroup.NotFound':
+            if e.response["Error"]["Code"] != "InvalidGroup.NotFound":
                 raise e
 
             self.logger.warn("security group does not exist, creating.")
@@ -352,7 +349,7 @@ class AWS(CloudInstance):
                 ],
             )
             self.logger.info("Ingress Successfully Set %s" % data)
-            
+
         ec2_security_group_ids = [security_group_id]
         self.logger.info(f"security group id is {ec2_security_group_ids}")
         self.ec2_security_group_ids = ec2_security_group_ids
@@ -360,10 +357,9 @@ class AWS(CloudInstance):
     def generate_key_pair(self):
         ec2_keypair = self.ec2_boto3_client.create_key_pair(KeyName=self.ec2_key_name)
         ec2_priv_key = ec2_keypair["KeyMaterial"]
-        #self.logger.info(ec2_priv_key)
 
         # Since we're writing an SSH key, make sure to write with user-only permissions.
-        with open(os.open(self.ssh_key_path, os.O_CREAT | os.O_WRONLY, 0o600), 'w') as f:
+        with open(os.open(self.ssh_key_path, os.O_CREAT | os.O_WRONLY, 0o600), "w") as f:
             f.write(ec2_priv_key)
 
         self.ssh_key = ec2_priv_key
@@ -381,17 +377,9 @@ class AWS(CloudInstance):
             InstanceType=self.ec2_instance_type,
             KeyName=self.ec2_key_name,
             SecurityGroupIds=self.ec2_security_group_ids,
-            ClientToken="FogROS2-"+self.unique_name,
+            ClientToken="FogROS2-" + self.unique_name,
             TagSpecifications=[
-                {
-                    "ResourceType":"instance",
-                    "Tags": [
-                        {
-                            "Key":"FogROS2-Name",
-                            "Value":self.unique_name
-                        }
-                    ]
-                }
+                {"ResourceType": "instance", "Tags": [{"Key": "FogROS2-Name", "Value": self.unique_name}]}
             ],
             BlockDeviceMappings=[
                 {

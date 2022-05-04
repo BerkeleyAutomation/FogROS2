@@ -10,14 +10,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from fogros2 import FogROSLaunchDescription
 from launch_ros.actions import Node
 
 import fogros2
 
 
 def generate_launch_description():
-    ld = FogROSLaunchDescription()
+    ld = fogros2.FogROSLaunchDescription()
     machine1 = fogros2.AWS(region="us-west-1", ec2_instance_type="t2.medium", ami_image="ami-00f25057ddc9b310b")
 
     # run this command locally:

@@ -9,14 +9,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from fogros2 import FogROSLaunchDescription
 from launch_ros.actions import Node
 
 import fogros2
 
 
 def generate_launch_description():
-    ld = FogROSLaunchDescription()
+    ld = fogros2.FogROSLaunchDescription()
     machine1 = fogros2.AWS(region="us-west-1", ec2_instance_type="t2.medium", ami_image="ami-00f25057ddc9b310b")
 
     # machine1.add_docker_container("sudo docker run --net=host --env RMW_IMPLEMENTATION=rmw_cyclonedds_cpp --env CYCLONEDDS_URI=file:///tmp/cyclonedds.xml -v $(pwd)/install/share/fogros2/configs/cyclonedds.xml:/tmp/cyclonedds.xml --rm -it keplerc/gqcnn_ros:pj ros2 launch gqcnn_ros client.launch.py")

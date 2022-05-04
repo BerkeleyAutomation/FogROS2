@@ -17,7 +17,6 @@
 from typing import TYPE_CHECKING, Iterable, List, Optional, Text, Tuple
 
 import launch.logging
-
 from launch.action import Action
 from launch.actions import DeclareLaunchArgument
 from launch.launch_context import LaunchContext

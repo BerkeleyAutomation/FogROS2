@@ -10,12 +10,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from rclpy import logging
 import select
 import sys
 from time import sleep
 
 import paramiko
+from rclpy import logging
 from scp import SCPClient
 
 # ec2 console coloring

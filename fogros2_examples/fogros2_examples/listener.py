@@ -10,10 +10,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import socket
+
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import String
-import socket
+
 
 class MinimalSubscriber(Node):
     def __init__(self):

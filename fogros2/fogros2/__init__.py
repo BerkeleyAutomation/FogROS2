@@ -10,7 +10,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .aws import *
+from .aws import AWS
 from .cloud_node import CloudNode
+from .launch_description import FogROSLaunchDescription
 from .vpn import VPN
-from .fogros_launch_description import *

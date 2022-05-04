@@ -1,9 +1,10 @@
-import os
 import errno
+import os
 import shutil
 
 _work_dir_cache = None
 _instance_dir_cache = None
+
 
 def _mkdir(path, mode=0o700):
     try:
@@ -11,6 +12,7 @@ def _mkdir(path, mode=0o700):
     except OSError as e:
         if e.errno != errno.EEXIST:
             raise
+
 
 def work_dir():
     global _work_dir_cache
@@ -21,6 +23,7 @@ def work_dir():
         _work_dir_cache = path
     return _work_dir_cache
 
+
 def instance_dir():
     global _instance_dir_cache
     if _instance_dir_cache is None:
@@ -28,6 +31,7 @@ def instance_dir():
         _mkdir(path)
         _instance_dir_cache = path
     return _instance_dir_cache
+
 
 def make_zip_file(dir_name, target_path):
     root_dir, workspace_name = os.path.split(dir_name)

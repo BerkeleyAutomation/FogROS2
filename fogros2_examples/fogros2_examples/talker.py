@@ -10,9 +10,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import socket
+
 import rclpy
 from std_msgs.msg import String
-import socket
+
 
 def main(args=None):
     rclpy.init(args=args)

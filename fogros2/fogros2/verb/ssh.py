@@ -2,8 +2,9 @@ import os
 
 import boto3
 from botocore.exceptions import NoRegionError
-from fogros2.util import instance_dir
 from ros2cli.verb import VerbExtension
+
+from fogros2.util import instance_dir
 
 
 class SSHVerb(VerbExtension):
