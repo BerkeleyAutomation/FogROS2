@@ -2,14 +2,15 @@ ARG DISTRO=rolling
 FROM ubuntu:jammy
 
 ARG DISTRO
+ENV TZ=America/Vancouver
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 RUN apt update && apt install -y curl gnupg2 lsb-release sudo && \
     curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
     
 RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu jammy main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
-RUN apt update && DEBIAN_FRONTEND=noninteractive apt install -y ros-rolling-desktop
-
-RUN apt update && sudo apt install -y \
+RUN apt update && DEBIAN_FRONTEND=noninteractive sudo apt install -y \
+  ros-${DISTRO}-desktop \
   build-essential \
   cmake \
   python3-colcon-common-extensions \
@@ -24,27 +25,8 @@ RUN apt update && sudo apt install -y \
   ssh
 
 RUN rm -rf /var/lib/apt/lists/*
- 
-# install some pip packages needed for testing
-RUN python3 -m pip install --no-cache-dir -U \
-  argcomplete \
-  flake8 \
-  flake8-blind-except \
-  flake8-builtins \
-  flake8-class-newline \
-  flake8-comprehensions \
-  flake8-deprecated \
-  flake8-docstrings \
-  flake8-import-order \
-  flake8-quotes \
-  pytest-repeat \
-  pytest-rerunfailures \
-  pytest \
-  pytest-cov \
-  pytest-runner 
 
 RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-
 RUN unzip awscliv2.zip && rm awscliv2.zip
 RUN ./aws/install
 RUN python3 -m pip install --no-cache-dir -U boto3 paramiko scp wgconfig
