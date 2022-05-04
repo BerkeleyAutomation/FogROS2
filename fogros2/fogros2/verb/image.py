@@ -1,8 +1,9 @@
 import json
 import os
+
 import boto3
-from ros2cli.verb import VerbExtension
 from fogros2.util import work_dir
+from ros2cli.verb import VerbExtension
 
 
 class ImageVerb(VerbExtension):
@@ -16,7 +17,7 @@ class ImageVerb(VerbExtension):
         info_path = os.path.join(pwd, "info")
         if not os.path.isfile(info_path):
             print("the info file does not exist, likely that the instance is not fully initialized")
-            return 
+            return
         with open(info_path) as f:
             instance_info = json.loads(f.read())
 
@@ -25,7 +26,7 @@ class ImageVerb(VerbExtension):
 
             image_name = "AWS_FogROS_image_" + instance
             client = boto3.client("ec2", region_name=instance_info["ec2_region"])
-            client.create_image(InstanceId=instance_info["ec2_instance_id"],  Name=image_name)
+            client.create_image(InstanceId=instance_info["ec2_instance_id"], Name=image_name)
 
             images = client.describe_images(Owners=["self"])["Images"]
             for image in images:
