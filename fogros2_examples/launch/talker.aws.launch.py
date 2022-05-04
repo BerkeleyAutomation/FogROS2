@@ -10,8 +10,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from fogros2 import FogROSLaunchDescription, CloudNode, AWS
 from launch_ros.actions import Node
+
+from fogros2 import AWS, CloudNode, FogROSLaunchDescription
+
 
 def ami_image():
     # An AMI is an Amazon Web Services virtual machine image with a
@@ -20,8 +22,9 @@ def ami_image():
     # support Ubuntu 20.04 and 22.04.
 
     import lsb_release
-    ubuntu_release = lsb_release.get_os_release()['RELEASE']
-    
+
+    ubuntu_release = lsb_release.get_os_release()["RELEASE"]
+
     if ubuntu_release == "20.04":
         return "ami-00f25057ddc9b310b"
     if ubuntu_release == "22.04":
@@ -38,9 +41,7 @@ def generate_launch_description():
     machine1 = AWS(region="us-west-1", ec2_instance_type="t2.micro", ami_image=ami_image())
 
     listener_node = Node(package="fogros2_examples", executable="listener", output="screen")
-    talker_node = CloudNode(
-        package="fogros2_examples", executable="talker", output="screen", machine=machine1
-    )
+    talker_node = CloudNode(package="fogros2_examples", executable="talker", output="screen", machine=machine1)
     ld.add_action(talker_node)
     ld.add_action(listener_node)
     return ld

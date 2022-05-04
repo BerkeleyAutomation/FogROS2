@@ -12,7 +12,8 @@
 
 import lsb_release
 
-ubuntu_release = lsb_release.get_os_release()['RELEASE']
+ubuntu_release = lsb_release.get_os_release()["RELEASE"]
+
 
 class DDSConfigBuilder:
     def __init__(self, ip_addresses):
@@ -48,7 +49,7 @@ class CycloneConfigBuilder(DDSConfigBuilder):
                 <NetworkInterface name="wg0"/>
             </Interfaces>
             """
-            
+
         template = f"""
 <?xml version="1.0" encoding="UTF-8" ?>
 <CycloneDDS xmlns="https://cdds.io/config" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://cdds.io/config https://raw.githubusercontent.com/eclipse-cyclonedds/cyclonedds/master/etc/cyclonedds.xsd">
@@ -64,6 +65,6 @@ class CycloneConfigBuilder(DDSConfigBuilder):
     </Domain>
 </CycloneDDS>
         """
-        
+
         with open(self.config_save_path, "w+") as f:
             f.write(template)
