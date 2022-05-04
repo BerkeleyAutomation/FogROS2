@@ -43,6 +43,7 @@ class CloudInstance(abc.ABC):
         self.scp = None
         self.public_ip = None
         self.ros_workspace = ros_workspace
+        self.ros_distro = os.getenv("ROS_DISTRO")
         self.logger.info(f"using ROS workspace: {self.ros_workspace}")
         self.ssh_key_path = None
         self.unique_name = get_unique_name()
@@ -136,14 +137,14 @@ class CloudInstance(abc.ABC):
 
 
         # install ros2 packages
-        self.apt_install("ros-rolling-desktop")
+        self.apt_install(f"ros-{self.ros_distro}-desktop")
 
         # source environment
-        self.scp.execute_cmd("source /opt/ros/rolling/setup.bash")
+        self.scp.execute_cmd(f"source /opt/ros/{self.ros_distro}/setup.bash")
 
     def configure_rosbridge(self):
         # install rosbridge
-        self.apt_install("ros-rolling-rosbridge-suite")
+        self.apt_install(f"ros-{self.ros_distro}-rosbridge-suite")
 
         # source ros and launch rosbridge through ssh
         subprocess.call("chmod 400 " + self.ssh_key_path, shell=True)
@@ -152,7 +153,7 @@ class CloudInstance(abc.ABC):
             + self.ssh_key_path
             + " ubuntu@"
             + self.public_ip
-            + ' "source /opt/ros/rolling/setup.bash && ros2 launch rosbridge_server rosbridge_websocket_launch.xml &"'
+            + f' "source /opt/ros/{self.ros_distro}/setup.bash && ros2 launch rosbridge_server rosbridge_websocket_launch.xml &"'
         )
         print(rosbridge_launch_script)
         subprocess.Popen(rosbridge_launch_script, shell=True)
@@ -199,7 +200,7 @@ class CloudInstance(abc.ABC):
 
     def launch_cloud_node(self):
         cmd_builder = BashBuilder()
-        cmd_builder.append("source /opt/ros/rolling/setup.bash")
+        cmd_builder.append(f"source /opt/ros/{self.ros_distro}/setup.bash")
         cmd_builder.append("cd /home/ubuntu/fog_ws && colcon build --merge-install --cmake-clean-cache")
         cmd_builder.append(". /home/ubuntu/fog_ws/install/setup.bash")
         cmd_builder.append(self.cyclone_builder.env_cmd)
