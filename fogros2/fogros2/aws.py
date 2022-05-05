@@ -35,9 +35,9 @@ class CloudInstance(abc.ABC):
         working_dir_base=instance_dir(),
         vis=False,
     ):
-        if not ("RMW_IMPLEMENTATION" or "CYCLONEDDS_URI") in os.environ:
-            raise Exception("RMW_IMPLEMENTATION or CYCLONEDDS_URI environment variables not set.")
-        
+        assert "RMW_IMPLEMENTATION" in os.environ, "RMW_IMPLEMENTATION environment variable not set"
+        assert "CYCLONEDDS_URI" in os.environ, "CYCLONEDDS_URI environment variable not set"
+            
         # others
         self.logger = logging.get_logger(__name__)
 
