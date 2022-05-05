@@ -21,13 +21,11 @@ import boto3
 from botocore.exceptions import ClientError
 from rclpy import logging
 
-from fogros2.name_generator import get_unique_name
-from fogros2.util import instance_dir
-
 from .command_builder import BashBuilder
 from .dds_config_builder import CycloneConfigBuilder
+from .name_generator import get_unique_name
 from .scp import SCP_Client
-from .util import make_zip_file
+from .util import instance_dir, make_zip_file
 
 
 class CloudInstance(abc.ABC):

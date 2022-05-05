@@ -5,7 +5,7 @@ import boto3
 from botocore.exceptions import NoRegionError
 from ros2cli.verb import VerbExtension
 
-from fogros2.util import instance_dir
+from ..util import instance_dir
 
 
 class DeleteVerb(VerbExtension):
@@ -47,18 +47,14 @@ class DeleteVerb(VerbExtension):
                 print(f"    terminating instance {inst['InstanceId']}")
                 if not dry_run:
                     response = client.terminate_instances(InstanceIds=[inst["InstanceId"]])
-                    if (
-                        "TerminatingInstances" not in response
-                        or response["TerminatingInstances"]["InstanceId"] != inst["InstanceId"]
+                    if "TerminatingInstances" not in response or inst["InstanceId"] not in map(
+                        lambda x: x["InstanceId"], response["TerminatingInstances"]
                     ):
                         raise RuntimeError(f"Could not terminate instance {inst['InstanceId']}!")
                 print(f"    deleting key pair {inst['KeyName']}")
                 if not dry_run:
                     response = client.delete_key_pair(KeyName=inst["KeyName"])
-                    if (
-                        "TerminatingInstances" not in response
-                        or response["TerminatingInstances"]["InstanceId"] != inst["InstanceId"]
-                    ):
+                    if response["ResponseMetadata"]["HTTPStatusCode"] != 200:
                         raise RuntimeError(f"Could not delete key pair {inst['KeyName']}!")
                 if "FogROS2-Name" in tag_map:
                     inst_dir = os.path.join(instance_dir(), tag_map["FogROS2-Name"])

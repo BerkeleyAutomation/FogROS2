@@ -4,7 +4,7 @@ import os
 import boto3
 from ros2cli.verb import VerbExtension
 
-from fogros2.util import work_dir
+from ..util import work_dir
 
 
 class ImageVerb(VerbExtension):
