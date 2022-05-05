@@ -33,11 +33,10 @@ class CloudInstance(abc.ABC):
         self,
         ros_workspace=os.path.dirname(os.getenv("COLCON_PREFIX_PATH")),
         working_dir_base=instance_dir(),
-        vis=False,
+        launch_foxglove=False,
     ):
         # others
         self.logger = logging.get_logger(__name__)
-
         self.cyclone_builder = None
         self.scp = None
         self.public_ip = None
@@ -53,7 +52,7 @@ class CloudInstance(abc.ABC):
         self.ready_state = False
         self.cloud_service_provider = None
         self.dockers = []
-        self.vis = vis
+        self.launch_foxglove = launch_foxglove
 
     def create(self):
         raise NotImplementedError("Cloud SuperClass not implemented")
@@ -153,7 +152,7 @@ class CloudInstance(abc.ABC):
             + self.public_ip
             + f' "source /opt/ros/{self.ros_distro}/setup.bash && ros2 launch rosbridge_server rosbridge_websocket_launch.xml &"'
         )
-        print(rosbridge_launch_script)
+        self.logger.info(rosbridge_launch_script)
         subprocess.Popen(rosbridge_launch_script, shell=True)
 
     def install_colcon(self):
@@ -205,15 +204,16 @@ class CloudInstance(abc.ABC):
         if not ros_domain_id:
             ros_domain_id = 0
         cmd_builder.append(f"ROS_DOMAIN_ID={ros_domain_id} ros2 launch fogros2 cloud.launch.py")
-        print(cmd_builder.get())
+        self.logger.info(cmd_builder.get())
         self.scp.execute_cmd(cmd_builder.get())
 
     def add_docker_container(self, cmd):
         self.dockers.append(cmd)
 
     def launch_cloud_dockers(self):
-        # launch foxglove docker (if vis specified)
-        if self.vis:
+        # launch foxglove docker (if launch_foxglove specified)
+        if self.launch_foxglove:
+            self.configure_rosbridge()
             self.scp.execute_cmd("sudo docker run -d --rm -p '8080:8080' ghcr.io/foxglove/studio:latest")
 
         # launch user specified dockers
@@ -273,7 +273,6 @@ class AWS(CloudInstance):
         self.info(flush_to_disk=True)
         self.connect()
         self.install_ros()
-        self.configure_rosbridge()
         self.install_colcon()
         self.install_cloud_dependencies()
         self.push_ros_workspace()
