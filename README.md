@@ -106,10 +106,10 @@ source install/setup.bash
 export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
 export CYCLONEDDS_URI=file://$(pwd)/install/share/fogros2/configs/cyclonedds.xml
 
-# if use Ubuntu 20.04
+# if using Ubuntu 20.04
 ros2 launch fogros2_examples talker.ubuntu.2004.launch.py
 
-# if use Ubuntu 22.04 or container 
+# if using Ubuntu 22.04 or container 
 ros2 launch fogros2_examples talker.ubuntu.2204.launch.py
 ```
 
