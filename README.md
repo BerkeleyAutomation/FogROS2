@@ -129,7 +129,7 @@ you may also `git clone` your development repo to the docker instead.
 
 Step 2: Write the FogROSlaunch file. Examples of launch files can be found in the talker*.launch.py in https://github.com/BerkeleyAutomation/FogROS2/tree/humble/fogros2_examples/launch
 
-Note a few points that are different from https://github.com/SimeonOA/orb_slam_2_ros/blob/fogros2/TUTORIAL.md example launch file:
+Note a few points that are different from the https://github.com/SimeonOA/orb_slam_2_ros/blob/fogros2/TUTORIAL.md example launch file:
 1. use `FogROSLaunchDescription` instead of `LaunchDescription` class
 2. tag your `Node` with `to_cloud`. FogROS will only push nodes that `to_cloud=True`
 
@@ -143,7 +143,7 @@ where each tuple is just a pair of `(TOPIC_NAME, TRANSPORT_TYPE)` values.
 
 Valid `TRANSPORT_TYPE` values are `compressed`, `theora`, and `raw` if only `image-transport` and `image-transport-plugins` are installed on the system. `h264` is another valid `TRANSPORT_TYPE` if step 3 is followed.
 
-Optional Step 3: If using H.264, please also clone the H.264 decoder found [here](https://github.com/clydemcqueen/h264_image_transport) into the workspace's src directory. The current repo only contains the encoder and the full image transport pipeline will not work without the decoder also.
+Step 3 (Optional): If using H.264, please also clone the H.264 decoder found [here](https://github.com/clydemcqueen/h264_image_transport) into the workspace's src directory. The current repo only contains the encoder and the full image transport pipeline will not work without the decoder also.
 
 Example of `stream_topics` argument:
 
@@ -160,11 +160,11 @@ We currently support the following CLIs for easier debugging and development.
 # list the existing FogROS instances
 ros2 fog list
 
-# SSH to the corresponding instance
+# SSH to the corresponding instance (e.g. 368)
 # the -n name can be found by the above list command
 ros2 fog connect -n 368
 
-# delete the existing FogROS instance
+# delete the existing FogROS instance (e.g. 368)
 ros2 fog delete -n 368
 # or all of the existing instances
 ros2 fog delete -a
@@ -172,7 +172,7 @@ ros2 fog delete -a
 
 ## Developer
 
-Here are several commands that one may find it useful when developing:
+Here are some commands that one may find it useful when developing:
 ```bash
 
 # starting the second terminal for fogros docker
@@ -198,7 +198,7 @@ Step 2: Right-click on the FogROS instance, and choose Create Image from the men
 
 Step 3: In the Create Image dialog box, type a unique name and description, and then choose Create Image. 
 
-Note that Amazon EC2 shuts down the instance by deafult before creating the AMI and then reboots the instance. Choose the No reboot option if you don't want your instance to be shut down.
+Note that Amazon EC2 shuts down the instance by default before creating the AMI and then reboots the instance. Choose the No reboot option if you don't want your instance to be shut down.
 
 ## Running Examples:
 # NOTE: (mjd3) These should likely be moved to the examples repo
