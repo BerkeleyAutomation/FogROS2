@@ -88,7 +88,7 @@ colcon build --merge-install
 sudo apt install awscli
 ```
 
-14. Configure AWS Basic Settings. To run the next command, you need to have your security credentials, an output format and AWS Region. (https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html)
+14. Configure AWS Basic Settings. To run the next command, you need to have your [security credentials, an output format and AWS Region.](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html)
 
 ```
 aws configure
