@@ -230,7 +230,7 @@ in ros workspace.
 ## Some Common Issues
 1. Warning: _2 packages has stderr outputs: fogros2 fogros2_examples_ after running colcon build. This is not an error. See https://github.com/BerkeleyAutomation/FogROS2/issues/45. Your installatiion should still work.  
 2. _[WARN] [1652044293.921367226] [fogros2.scp]: [Errno None] Unable to connect to port 22 on xx.xx.xx.xxx, retrying..._ . You need to wait. This is caused when AWS has not started the instance (yet). 
-3. _WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. _ This is fine. Your setup should still work nontheless
+3. _WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv_. This is fine. Your setup should still work nontheless
 _
 
 
