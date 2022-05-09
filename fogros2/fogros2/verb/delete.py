@@ -22,7 +22,7 @@ class DeleteVerb(VerbExtension):
         except NoRegionError:
             raise RuntimeError("AWS is not configured! Please run `aws configure` first.")
 
-        if args.name == "all":
+        if "all" in args.name:
             # Any instance with a FogROS2-Name tag.
             tag_filter = {"Name": "tag-key", "Values": ["FogROS2-Name"]}
         else:

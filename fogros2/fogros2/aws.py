@@ -172,14 +172,12 @@ class CloudInstance(abc.ABC):
     def push_ros_workspace(self):
         # configure ROS env
         workspace_path = self.ros_workspace  # os.getenv("COLCON_PREFIX_PATH")
-        workspace_folder_name = workspace_path.split("/")[-1]
         zip_dst = "/tmp/ros_workspace"
         make_zip_file(workspace_path, zip_dst)
         self.scp.execute_cmd("echo removing old workspace")
         self.scp.execute_cmd("rm -rf ros_workspace.zip ros2_ws fog_ws")
         self.scp.send_file(zip_dst + ".zip", "/home/ubuntu/")
         self.scp.execute_cmd("unzip -q /home/ubuntu/ros_workspace.zip")
-        self.scp.execute_cmd("mv " + workspace_folder_name + " fog_ws")
         self.scp.execute_cmd("echo successfully extracted new workspace")
 
     def push_to_cloud_nodes(self):
