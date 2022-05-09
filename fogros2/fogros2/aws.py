@@ -164,7 +164,7 @@ class CloudInstance(abc.ABC):
             "curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo apt-key add -"
         )
 
-        self.apt_install("python3-colcon-common-extensions")
+        self.pip_install("colcon-common-extensions")
 
     def push_ros_workspace(self):
         # configure ROS env
