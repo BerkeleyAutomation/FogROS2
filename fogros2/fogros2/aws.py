@@ -35,6 +35,9 @@ class CloudInstance(abc.ABC):
         working_dir_base=instance_dir(),
         launch_foxglove=False,
     ):
+        assert "RMW_IMPLEMENTATION" in os.environ, "RMW_IMPLEMENTATION environment variable not set"
+        assert "CYCLONEDDS_URI" in os.environ, "CYCLONEDDS_URI environment variable not set"
+            
         # others
         self.logger = logging.get_logger(__name__)
         self.cyclone_builder = None
