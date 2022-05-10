@@ -11,6 +11,7 @@ TODO:introduce citation in here before going public
 
 - [FogROS2](#fogros2)
   - [Install](#install)
+    - [Quickstart](#quickstart)
     - [Docker (Recommended)](#docker-recommended)
     - [Natively](#natively)
       - [Install Dependencies](#install-dependencies)
@@ -28,6 +29,8 @@ TODO:introduce citation in here before going public
       - [TODO](#todo)
 
 ## Install
+### Quickstart
+If you are new to ROS and Ubuntu, and want to install FogROS 2 (and ROS 2) and its requisites from scratch, follow instructions [here.](https://github.com/BerkeleyAutomation/FogROS2/blob/humble/QUICKSTART.md)
 ### Docker (Recommended)
 Alternatively, you can simplify reproduction using an OS virtualization environment with Docker:
 ```bash
