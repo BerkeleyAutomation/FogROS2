@@ -106,14 +106,14 @@ ros2 launch fogros2_examples talker.ubuntu.2204.launch.py
 ### Native
 ```bash
 source install/setup.bash
-export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
-export CYCLONEDDS_URI=file://$(pwd)/install/share/fogros2/configs/cyclonedds.xml
+export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp 
 
 # if using Ubuntu 20.04
-ros2 launch fogros2_examples talker.ubuntu.2004.launch.py
+export CYCLONEDDS_URI=file://$(pwd)/install/share/fogros2/configs/cyclonedds.ubuntu.2004.xml
+# if using Ubuntu 22.04
+export CYCLONEDDS_URI=file://$(pwd)/install/share/fogros2/configs/cyclonedds.ubuntu.2204.xml
 
-# if using Ubuntu 22.04 or container 
-ros2 launch fogros2_examples talker.ubuntu.2204.launch.py
+ros2 launch fogros2_examples talker.aws.launch.py
 ```
 
 ## Run your own robotics applications
