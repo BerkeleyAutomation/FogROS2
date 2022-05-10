@@ -108,7 +108,7 @@ pip3 install boto3 paramiko scp wgconfig unique-names-generator
 sudo apt install ros-rolling-rmw-cyclonedds-cpp
 ```
    
-17. Run basic example. Note that the last command may take some time to complete running especially the first time it is run. If your setup is correct, you should see the talker node publishing.
+17. Run basic example. Note that the last command may take some time to complete especially the first time it is run. If your setup is correct, you should see the talker node publishing.
 
 ```
 cd ~/fog_ws
