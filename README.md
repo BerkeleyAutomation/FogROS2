@@ -34,7 +34,7 @@ If you are new to ROS and Ubuntu, and want to install FogROS 2 (and ROS 2) and i
 ### Docker (Recommended)
 Alternatively, you can simplify reproduction using an OS virtualization environment with Docker:
 ```bash
-git clone https://github.com/BerkeleyAutomation/FogROS2
+git clone -b humble https://github.com/BerkeleyAutomation/FogROS2
 cd FogROS2
 docker build -t fogros2 .
 ```
