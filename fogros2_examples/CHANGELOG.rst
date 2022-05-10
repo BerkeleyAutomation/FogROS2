@@ -1,6 +1,10 @@
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Changelog for package fogros2_examples
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0.1.3 (2022-05-09)
+------------------
+* fixed talker and listener example naming
+
 0.1.1 (2022-05-02)
 ------------------
 * updated examples to detect Ubuntu release and use the correct AMI and cyclonedds.xml

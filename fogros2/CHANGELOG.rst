@@ -1,6 +1,14 @@
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Changelog for package fogros2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0.1.3 (2022-05-09)
+------------------
+* readded human readable instance name generation
+* added checks and interterpretable feedback for client errors
+* added environment variable checks
+* updated documentation to include new potential issues and remove unnecessary instructions
+* fixed colcon warning message about arg parsing in the cloud instance
+
 0.1.2 (2022-05-02)
 ------------------
 * removed unique name generator and fixed package.xml
