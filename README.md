@@ -157,12 +157,12 @@ We currently support the following CLIs for easier debugging and development.
 # list the existing FogROS instances
 ros2 fog list
 
-# SSH to the corresponding instance (e.g. 368)
+# SSH to the corresponding instance (e.g. named "ascent-corona")
 # the -n name can be found by the above list command
-ros2 fog connect -n 368
+ros2 fog connect ascent-corona
 
-# delete the existing FogROS instance (e.g. 368)
-ros2 fog delete -n 368
+# delete the existing FogROS instance (e.g. named "ascent-corona")
+ros2 fog delete ascent-corona
 # or all of the existing instances
 ros2 fog delete -a
 ```
