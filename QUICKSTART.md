@@ -108,7 +108,7 @@ pip3 install boto3 paramiko scp wgconfig unique-names-generator
 sudo apt install ros-rolling-rmw-cyclonedds-cpp
 ```
    
-17. Run basic example
+17. Run basic example. Note that the last command may take some time to complete running especially the first time it is run. If your setup is correct, you should see the talker node publishing.
 
 ```
 cd ~/fog_ws
@@ -121,6 +121,5 @@ export CYCLONEDDS_URI=file://$(pwd)/install/share/fogros2/configs/cyclonedds.ubu
 
 ros2 launch fogros2_examples talker.aws.launch.py
 ```
-Note that the last command may take some time to complete running especially the first time it is run. If your setup is correct, you should see the talker node publishing.
 
 18. You are done. Refer to our [README](https://github.com/BerkeleyAutomation/FogROS2/blob/main/README.md) for additional information including [Command Line Interface commmands](https://github.com/BerkeleyAutomation/FogROS2#command-line-interface) and [Docker installation](https://github.com/BerkeleyAutomation/FogROS2#docker).
