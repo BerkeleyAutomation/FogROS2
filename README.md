@@ -36,6 +36,14 @@ Alternatively, you can simplify reproduction using an OS virtualization environm
 ```bash
 git clone -b humble https://github.com/BerkeleyAutomation/FogROS2
 cd FogROS2
+
+#Install AWS CL
+sudo apt install awscli
+
+#Configure AWS Basic Settings. To run the next command, you need to have your security credentials, an output format and AWS Region.
+aws configure
+
+#Build Docker Image
 docker build -t fogros2 .
 ```
 
