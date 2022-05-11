@@ -96,9 +96,6 @@ docker run -it --rm --net=host --cap-add=NET_ADMIN fogros2
 # configure cloud provider CLI wrappers (e.g. AWS)
 aws configure
 
-source install/setup.bash
-export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
-export CYCLONEDDS_URI=file://$(pwd)/install/share/fogros2/configs/cyclonedds.xml
 # launch talker node on the cloud
 ros2 launch fogros2_examples talker.ubuntu.2204.launch.py
 ```
