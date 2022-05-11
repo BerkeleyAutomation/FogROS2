@@ -92,7 +92,7 @@ TODO: replace this with fogros2 tooling that's cloud-agnostic. E.g. `ros2 fog co
 
 ```bash
 # launch fogros2 container
-docker run -it --rm --net=host --cap-add=NET_ADMIN fogros2
+docker run -it --rm --net=host -v $HOME/.aws:/root/.aws --cap-add=NET_ADMIN fogros2
 # configure cloud provider CLI wrappers (e.g. AWS)
 aws configure
 
