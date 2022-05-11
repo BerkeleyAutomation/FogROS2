@@ -197,6 +197,13 @@ Step 3: In the Create Image dialog box, type a unique name and description, and 
 
 Note that Amazon EC2 shuts down the instance by default before creating the AMI and then reboots the instance. Choose the No reboot option if you don't want your instance to be shut down.
 
+
+## Some Common Issues
+1. Warning: _2 packages has stderr outputs: fogros2 fogros2_examples_ after running colcon build. This is not an error. See https://github.com/BerkeleyAutomation/FogROS2/issues/45. Your installatiion should still work.  
+2. _[WARN] [1652044293.921367226] [fogros2.scp]: [Errno None] Unable to connect to port 22 on xx.xx.xx.xxx, retrying..._ . You need to wait. This is caused when AWS has not started the instance (yet). 
+3. _WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv_. This is fine. Your setup should still work nontheless
+
+
 ## Running Examples:
 # NOTE: (mjd3) These should likely be moved to the examples repo
 
@@ -226,8 +233,3 @@ in ros workspace.
 
 #### TODO
 - Streamline the launch process for client docker images.
-
-## Some Common Issues
-1. Warning: _2 packages has stderr outputs: fogros2 fogros2_examples_ after running colcon build. This is not an error. See https://github.com/BerkeleyAutomation/FogROS2/issues/45. Your installatiion should still work.  
-2. _[WARN] [1652044293.921367226] [fogros2.scp]: [Errno None] Unable to connect to port 22 on xx.xx.xx.xxx, retrying..._ . You need to wait. This is caused when AWS has not started the instance (yet). 
-3. _WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv_. This is fine. Your setup should still work nontheless
