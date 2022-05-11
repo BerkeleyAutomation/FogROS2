@@ -127,7 +127,7 @@ docker run -it --rm \
 you may also `git clone` your development repo to the docker instead.
 
 
-Step 2: Write the FogROSlaunch file. Examples of launch files can be found in the talker*.launch.py in https://github.com/BerkeleyAutomation/FogROS2/tree/humble/fogros2_examples/launch
+Step 2: Write the FogROSlaunch file. Examples of launch files can be found in the talker*.launch.py in [here.](https://github.com/BerkeleyAutomation/FogROS2/tree/humble/fogros2_examples/launch)
 
 
 ## Setting Up Automatic Image Transport
