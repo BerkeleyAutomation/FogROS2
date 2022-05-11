@@ -97,7 +97,7 @@ docker run -it --rm --net=host --cap-add=NET_ADMIN fogros2
 aws configure
 
 # launch talker node on the cloud
-ros2 launch fogros2_examples talker.ubuntu.2204.launch.py
+ros2 launch fogros2_examples talker.aws.launch.py
 ```
 
 ### Native
