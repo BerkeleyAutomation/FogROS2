@@ -31,10 +31,12 @@ from .util import instance_dir, make_zip_file
 class CloudInstance(abc.ABC):
     def __init__(
         self,
-        ros_workspace=os.path.dirname(os.getenv("COLCON_PREFIX_PATH")),
+        ros_workspace=None,
         working_dir_base=instance_dir(),
         launch_foxglove=False,
     ):
+        if not ros_workspace: 
+            ros_workspace = os.path.dirname(os.getenv("COLCON_PREFIX_PATH")
         assert "RMW_IMPLEMENTATION" in os.environ, "RMW_IMPLEMENTATION environment variable not set"
         assert "CYCLONEDDS_URI" in os.environ, "CYCLONEDDS_URI environment variable not set"
             
