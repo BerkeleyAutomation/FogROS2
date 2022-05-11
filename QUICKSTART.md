@@ -68,7 +68,7 @@ mkdir -p ~/fog_ws/src
 
 ```
 cd ~/fog_ws/src
-git clone -b humble --recurse-submodules https://github.com/BerkeleyAutomation/FogROS2.git
+git clone -b humble https://github.com/BerkeleyAutomation/FogROS2.git
 # if using Ubuntu 20.04
 cp FogROS2/fogros2/configs/cyclonedds.ubuntu.2004.xml ../cyclonedds.xml
 # if using Ubuntu 22.04
