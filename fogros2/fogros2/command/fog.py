@@ -1,3 +1,17 @@
+# Copyright 2022 The Regents of the University of California (Regents)
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
 # Copyright ©2022. The Regents of the University of California (Regents).
 # All Rights Reserved. Permission to use, copy, modify, and distribute this
 # software and its documentation for educational, research, and not-for-profit
@@ -22,7 +36,10 @@ from ros2cli.command import CommandExtension, add_subparsers_on_demand
 
 
 class FogCommand(CommandExtension):
+    """Base 'fog' command ROS 2 CLI extension."""
+
     def add_arguments(self, parser, cli_name):
+        """Add verb parsers."""
         self._subparser = parser
         # add arguments and sub-commands of verbs
         add_subparsers_on_demand(
@@ -30,11 +47,17 @@ class FogCommand(CommandExtension):
         )
 
     def main(self, *, parser, args):
+        """
+        Handle fog command.
+
+        Take in args from CLI, pass to verbs if specified,
+        otherwise print help.
+        """
+        # in case no verb was passed
         if not hasattr(args, "_verb"):
-            # in case no verb was passed
             self._subparser.print_help()
             return 0
 
-        extension = getattr(args, "_verb")
         # call the verb's main method
+        extension = getattr(args, "_verb")
         return extension.main(args=args)

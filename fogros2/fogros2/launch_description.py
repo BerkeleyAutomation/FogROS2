@@ -1,3 +1,17 @@
+# Copyright 2022 The Regents of the University of California (Regents)
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
 # Copyright ©2022. The Regents of the University of California (Regents).
 # All Rights Reserved. Permission to use, copy, modify, and distribute this
 # software and its documentation for educational, research, and not-for-profit
@@ -57,6 +71,8 @@ class VPN:
 
     def generate_key_pairs(self, machines):
         """
+        Create key pair for each machine.
+
         @param machines: List<machine>
         """
         for machine in machines:
@@ -151,11 +167,7 @@ class FogROSLaunchDescription(LaunchDescriptionEntity):
     def visit(
         self, context: LaunchContext
     ) -> Optional[List[LaunchDescriptionEntity]]:
-        """
-        Override visit from LaunchDescriptionEntity
-        to visit contained entities.
-        """
-
+        """Override LaunchDescriptionEntity to visit contained entities."""
         # dump the to cloud nodes into different files
         for key, value in self.__to_cloud_entities.items():
             with open("/tmp/to_cloud_" + key, "wb+") as f:
@@ -201,18 +213,14 @@ class FogROSLaunchDescription(LaunchDescriptionEntity):
         return self.__entities
 
     def describe_sub_entities(self) -> List[LaunchDescriptionEntity]:
-        """
-        Override describe_sub_entities from LaunchDescriptionEntity
-        to return sub entities.
-        """
+        """Override from LaunchDescriptionEntity to return sub entities."""
         return self.__entities
 
     def get_launch_arguments(
         self, conditional_inclusion=False
     ) -> List[DeclareLaunchArgument]:
         """
-        Return a list of :py:class:`launch.actions.DeclareLaunchArgument`
-        actions.
+        Return list of :py:class:`launch.actions.DeclareLaunchArgument`.
 
         See
         :py:method:`get_launch_arguments_with_include_launch_description_actions()`
@@ -230,8 +238,7 @@ class FogROSLaunchDescription(LaunchDescriptionEntity):
         self, conditional_inclusion=False
     ) -> List[Tuple[DeclareLaunchArgument, List["IncludeLaunchDescription"]]]:
         """
-        Return a list of launch arguments with its associated include launch
-        descriptions actions.
+        Return list of launch args with associated actions.
 
         The first element of the tuple is a declare launch argument action.
         The second is `None` if the argument was declared at the top level of
@@ -342,7 +349,7 @@ class FogROSLaunchDescription(LaunchDescriptionEntity):
     def add_image_transport_entities(
         self, topic_name, intermediate_transport, machine
     ):
-        """Adds image transport nodes to the cloud and robot."""
+        """Add image transport nodes to the cloud and robot."""
         from launch_ros.actions import Node
 
         import fogros2
