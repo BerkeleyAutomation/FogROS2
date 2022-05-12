@@ -1,3 +1,17 @@
+# Copyright 2022 The Regents of the University of California (Regents)
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
 # Copyright ©2022. The Regents of the University of California (Regents).
 # All Rights Reserved. Permission to use, copy, modify, and distribute this
 # software and its documentation for educational, research, and not-for-profit
@@ -17,7 +31,6 @@
 # PROVIDED HEREUNDER IS PROVIDED "AS IS". REGENTS HAS NO OBLIGATION TO PROVIDE
 # MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
-from .aws import AWS                                     # noqa: F401
-from .cloud_node import CloudNode                        # noqa: F401
+from .aws import AWS  # noqa: F401
+from .cloud_node import CloudNode  # noqa: F401
 from .launch_description import FogROSLaunchDescription  # noqa: F401
-from .vpn import VPN                                     # noqa: F401

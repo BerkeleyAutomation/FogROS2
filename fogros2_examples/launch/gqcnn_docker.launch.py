@@ -1,3 +1,17 @@
+# Copyright 2022 The Regents of the University of California (Regents)
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
 # Copyright ©2022. The Regents of the University of California (Regents).
 # All Rights Reserved. Permission to use, copy, modify, and distribute this
 # software and its documentation for educational, research, and not-for-profit
@@ -30,12 +44,14 @@ def generate_launch_description():
         ami_image="ami-00f25057ddc9b310b",
     )
 
-    server_side_command = ("sudo docker run --net=host "
-            "--env RMW_IMPLEMENTATION=rmw_cyclonedds_cpp "
-            "--env CYCLONEDDS_URI=file:///tmp/cyclonedds.xml "
-            "-v /home/ubuntu/cyclonedds.xml:/tmp/cyclonedds.xml "
-            "--rm -it keplerc/gqcnn_ros:pj "
-            "ros2 launch gqcnn_ros planner.launch.py")
+    server_side_command = (
+        "sudo docker run --net=host "
+        "--env RMW_IMPLEMENTATION=rmw_cyclonedds_cpp "
+        "--env CYCLONEDDS_URI=file:///tmp/cyclonedds.xml "
+        "-v /home/ubuntu/cyclonedds.xml:/tmp/cyclonedds.xml "
+        "--rm -it keplerc/gqcnn_ros:pj "
+        "ros2 launch gqcnn_ros planner.launch.py"
+    )
     machine1.add_docker_container(server_side_command)
 
     talker_node = Node(

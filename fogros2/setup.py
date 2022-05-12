@@ -17,6 +17,7 @@
 # PROVIDED HEREUNDER IS PROVIDED "AS IS". REGENTS HAS NO OBLIGATION TO PROVIDE
 # MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
+import os
 from glob import glob
 
 from setuptools import find_packages, setup
@@ -29,11 +30,17 @@ setup(
     data_files=[
         (
             "share/ament_index/resource_index/packages",
-            ["resource/" + package_name],
+            [os.path.join("resource", package_name)],
         ),
-        ("share/" + package_name, ["package.xml"]),
-        ("share/" + package_name + "/launch", glob("launch/*.launch.py")),
-        ("share/" + package_name + "/configs", glob("configs/*.xml")),
+        (os.path.join("share", package_name), ["package.xml"]),
+        (
+            os.path.join("share", package_name, "launch"),
+            glob("launch/*.launch.py"),
+        ),
+        (
+            os.path.join("share", package_name, "configs"),
+            glob("configs/*.xml"),
+        ),
     ],
     install_requires=["setuptools"],
     zip_safe=True,
@@ -41,9 +48,10 @@ setup(
     author_email="kych@berkeley.edu, v.mayoralv@gmail.com",
     maintainer="Kaiyuan (Eric) Chen",
     maintainer_email="kych@berkeley.edu",
-    description="""A ROS 2 extension for the cloud deployment of computational
-                   graphs in a cloud-provider agnostic and security-conscious
-                   manner.""",
+    description="ROS 2 extension for cloud computational graph deployment",
+    long_description="""A ROS 2 extension for the cloud deployment
+                        of computational graphs in a cloud-provider agnostic
+                        and security-conscious manner.""",
     license="Apache License, Version 2.0",
     tests_require=["pytest"],
     entry_points={
