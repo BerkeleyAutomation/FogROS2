@@ -1,14 +1,21 @@
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# Copyright ©2022. The Regents of the University of California (Regents).
+# All Rights Reserved. Permission to use, copy, modify, and distribute this
+# software and its documentation for educational, research, and not-for-profit
+# purposes, without fee and without a signed licensing agreement, is hereby
+# granted, provided that the above copyright notice, this paragraph and the
+# following two paragraphs appear in all copies, modifications, and
+# distributions. Contact The Office of Technology Licensing, UC Berkeley, 2150
+# Shattuck Avenue, Suite 510, Berkeley, CA 94720-1620, (510) 643-7201,
+# otl@berkeley.edu, http://ipira.berkeley.edu/industry-info for commercial
+# licensing opportunities. IN NO EVENT SHALL REGENTS BE LIABLE TO ANY PARTY
+# FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES,
+# INCLUDING LOST PROFITS, ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS
+# DOCUMENTATION, EVEN IF REGENTS HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH
+# DAMAGE. REGENTS SPECIFICALLY DISCLAIMS ANY WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+# PARTICULAR PURPOSE. THE SOFTWARE AND ACCOMPANYING DOCUMENTATION, IF ANY,
+# PROVIDED HEREUNDER IS PROVIDED "AS IS". REGENTS HAS NO OBLIGATION TO PROVIDE
+# MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 import abc
 import json
@@ -35,11 +42,15 @@ class CloudInstance(abc.ABC):
         working_dir_base=instance_dir(),
         launch_foxglove=False,
     ):
-        if not ros_workspace: 
-            ros_workspace = os.path.dirname(os.getenv("COLCON_PREFIX_PATH")
-        assert "RMW_IMPLEMENTATION" in os.environ, "RMW_IMPLEMENTATION environment variable not set"
-        assert "CYCLONEDDS_URI" in os.environ, "CYCLONEDDS_URI environment variable not set"
-            
+        if not ros_workspace:
+            ros_workspace = os.path.dirname(os.getenv("COLCON_PREFIX_PATH"))
+        assert (
+            "RMW_IMPLEMENTATION" in os.environ
+        ), "RMW_IMPLEMENTATION environment variable not set"
+        assert (
+            "CYCLONEDDS_URI" in os.environ
+        ), "CYCLONEDDS_URI environment variable not set"
+
         # others
         self.logger = logging.get_logger(__name__)
         self.cyclone_builder = None
@@ -108,7 +119,9 @@ class CloudInstance(abc.ABC):
         return ready
 
     def apt_install(self, args):
-        self.scp.execute_cmd(f"sudo DEBIAN_FRONTEND=noninteractive apt-get install -y {args}")
+        self.scp.execute_cmd(
+            f"sudo DEBIAN_FRONTEND=noninteractive apt-get install -y {args}"
+        )
 
     def pip_install(self, args):
         self.scp.execute_cmd(f"sudo pip3 install {args}")
@@ -123,10 +136,16 @@ class CloudInstance(abc.ABC):
         self.scp.execute_cmd("sudo add-apt-repository universe")
         # self.apt_install("curl gnupg lsb-release")
         self.scp.execute_cmd(
-            "sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg"
+            "sudo curl -sSL "
+            "https://raw.githubusercontent.com/ros/rosdistro/master/ros.key "
+            "-o /usr/share/keyrings/ros-archive-keyring.gpg"
         )
         self.scp.execute_cmd(
-            """echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(source /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null"""
+            "echo \"deb [arch=$(dpkg --print-architecture) "
+            "signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] "
+            "http://packages.ros.org/ros2/ubuntu $(source /etc/os-release && "
+            "echo $UBUNTU_CODENAME) main\" | "
+            "sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null"
         )
 
         # Run apt-get update after adding universe and ROS2 repos.
@@ -135,7 +154,9 @@ class CloudInstance(abc.ABC):
         # set locale
         self.apt_install("locales")
         self.scp.execute_cmd("sudo locale-gen en_US en_US.UTF-8")
-        self.scp.execute_cmd("sudo update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8")
+        self.scp.execute_cmd(
+            "sudo update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8"
+        )
         self.scp.execute_cmd("export LANG=en_US.UTF-8")
 
         # install ros2 packages
@@ -152,10 +173,11 @@ class CloudInstance(abc.ABC):
         subprocess.call("chmod 400 " + self.ssh_key_path, shell=True)
         rosbridge_launch_script = (
             "ssh -o StrictHostKeyChecking=no -i "
-            + self.ssh_key_path
-            + " ubuntu@"
-            + self.public_ip
-            + f' "source /opt/ros/{self.ros_distro}/setup.bash && ros2 launch rosbridge_server rosbridge_websocket_launch.xml &"'
+            f"{self.ssh_key_path}"
+            " ubuntu@"
+            f"{self.public_ip}"
+            f" \"source /opt/ros/{self.ros_distro}/setup.bash && "
+            "ros2 launch rosbridge_server rosbridge_websocket_launch.xml &\""
         )
         self.logger.info(rosbridge_launch_script)
         subprocess.Popen(rosbridge_launch_script, shell=True)
@@ -163,10 +185,14 @@ class CloudInstance(abc.ABC):
     def install_colcon(self):
         # ros2 repository
         self.scp.execute_cmd(
-            """sudo sh -c 'echo "deb [arch=amd64,arm64] http://repo.ros2.org/ubuntu/main `lsb_release -cs` main" > /etc/apt/sources.list.d/ros2-latest.list'"""
+            "sudo sh -c 'echo \"deb [arch=amd64,arm64] "
+            "http://repo.ros2.org/ubuntu/main `lsb_release -cs` main\" > "
+            "/etc/apt/sources.list.d/ros2-latest.list'"
         )
         self.scp.execute_cmd(
-            "curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo apt-key add -"
+            "curl -s"
+            " https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc"
+            " | sudo apt-key add -"
         )
 
         self.pip_install("colcon-common-extensions")
@@ -183,12 +209,17 @@ class CloudInstance(abc.ABC):
         self.scp.execute_cmd("echo successfully extracted new workspace")
 
     def push_to_cloud_nodes(self):
-        self.scp.send_file("/tmp/to_cloud_" + self.unique_name, "/tmp/to_cloud_nodes")
+        self.scp.send_file(
+            "/tmp/to_cloud_" + self.unique_name, "/tmp/to_cloud_nodes"
+        )
 
     def push_and_setup_vpn(self):
-        self.scp.send_file("/tmp/fogros-cloud.conf" + self.unique_name, "/tmp/fogros-aws.conf")
+        self.scp.send_file(
+            "/tmp/fogros-cloud.conf" + self.unique_name, "/tmp/fogros-aws.conf"
+        )
         self.scp.execute_cmd(
-            "sudo cp /tmp/fogros-aws.conf /etc/wireguard/wg0.conf && sudo chmod 600 /etc/wireguard/wg0.conf && sudo wg-quick up wg0"
+            "sudo cp /tmp/fogros-aws.conf /etc/wireguard/wg0.conf && "
+            "sudo chmod 600 /etc/wireguard/wg0.conf && sudo wg-quick up wg0"
         )
 
     def configure_DDS(self):
@@ -200,13 +231,19 @@ class CloudInstance(abc.ABC):
     def launch_cloud_node(self):
         cmd_builder = BashBuilder()
         cmd_builder.append(f"source /opt/ros/{self.ros_distro}/setup.bash")
-        cmd_builder.append("cd /home/ubuntu/fog_ws && colcon build --merge-install --cmake-clean-cache")
+        cmd_builder.append(
+            "cd /home/ubuntu/fog_ws && "
+            "colcon build --merge-install --cmake-clean-cache"
+        )
         cmd_builder.append(". /home/ubuntu/fog_ws/install/setup.bash")
         cmd_builder.append(self.cyclone_builder.env_cmd)
         ros_domain_id = os.environ.get("ROS_DOMAIN_ID")
         if not ros_domain_id:
             ros_domain_id = 0
-        cmd_builder.append(f"ROS_DOMAIN_ID={ros_domain_id} ros2 launch fogros2 cloud.launch.py")
+        cmd_builder.append(
+            f"ROS_DOMAIN_ID={ros_domain_id} "
+            "ros2 launch fogros2 cloud.launch.py"
+        )
         self.logger.info(cmd_builder.get())
         self.scp.execute_cmd(cmd_builder.get())
 
@@ -217,7 +254,10 @@ class CloudInstance(abc.ABC):
         # launch foxglove docker (if launch_foxglove specified)
         if self.launch_foxglove:
             self.configure_rosbridge()
-            self.scp.execute_cmd("sudo docker run -d --rm -p '8080:8080' ghcr.io/foxglove/studio:latest")
+            self.scp.execute_cmd(
+                "sudo docker run -d --rm -p '8080:8080' "
+                "ghcr.io/foxglove/studio:latest"
+            )
 
         # launch user specified dockers
         for docker_cmd in self.dockers:
@@ -243,7 +283,14 @@ class RemoteMachine(CloudInstance):
 
 
 class AWS(CloudInstance):
-    def __init__(self, ami_image, region="us-west-1", ec2_instance_type="t2.micro", disk_size=30, **kwargs):
+    def __init__(
+        self,
+        ami_image,
+        region="us-west-1",
+        ec2_instance_type="t2.micro",
+        disk_size=30,
+        **kwargs,
+    ):
         super().__init__(**kwargs)
         self.cloud_service_provider = "AWS"
 
@@ -255,7 +302,9 @@ class AWS(CloudInstance):
         # key & security group names
         self.ec2_security_group = "FOGROS2_SECURITY_GROUP"
         self.ec2_key_name = "FogROS2KEY-" + self.unique_name
-        self.ssh_key_path = os.path.join(self.working_dir, self.ec2_key_name + ".pem")
+        self.ssh_key_path = os.path.join(
+            self.working_dir, self.ec2_key_name + ".pem"
+        )
 
         # aws objects
         self.ec2_instance = None
@@ -299,7 +348,9 @@ class AWS(CloudInstance):
         return self.ssh_key
 
     def get_default_vpc(self):
-        response = self.ec2_boto3_client.describe_vpcs(Filters=[{"Name": "is-default", "Values": ["true"]}])
+        response = self.ec2_boto3_client.describe_vpcs(
+            Filters=[{"Name": "is-default", "Values": ["true"]}]
+        )
         vpcs = response.get("Vpcs", [])
 
         if len(vpcs) == 0:
@@ -311,7 +362,9 @@ class AWS(CloudInstance):
 
         if len(vpcs) > 1:
             # This shouldn't happen, but just in case, warn.
-            self.logger.warn("Multiple default VPCs.  This may lead to undefined behavior.")
+            self.logger.warn(
+                "Multiple default VPCs.  This may lead to undefined behavior."
+            )
 
         vpc_id = vpcs[0].get("VpcId", "")
         self.logger.info(f"Using VPC {vpc_id}")
@@ -320,7 +373,9 @@ class AWS(CloudInstance):
     def create_security_group(self):
         vpc_id = self.get_default_vpc()
         try:
-            response = self.ec2_boto3_client.describe_security_groups(GroupNames=[self.ec2_security_group])
+            response = self.ec2_boto3_client.describe_security_groups(
+                GroupNames=[self.ec2_security_group]
+            )
             security_group_id = response["SecurityGroups"][0]["GroupId"]
         except ClientError as e:
             # check if the group does not exist. we'll create one in
@@ -331,11 +386,15 @@ class AWS(CloudInstance):
             self.logger.warn("security group does not exist, creating.")
             response = self.ec2_boto3_client.create_security_group(
                 GroupName=self.ec2_security_group,
-                Description="Security group used by FogROS 2 (safe to delete when FogROS 2 is not in use)",
+                Description=("Security group used by FogROS 2 (safe to delete"
+                             " when FogROS 2 is not in use)"),
                 VpcId=vpc_id,
             )
             security_group_id = response["GroupId"]
-            self.logger.info("Security Group Created %s in vpc %s." % (security_group_id, vpc_id))
+            self.logger.info(
+                "Security Group Created %s in vpc %s."
+                % (security_group_id, vpc_id)
+            )
 
             data = self.ec2_boto3_client.authorize_security_group_ingress(
                 GroupId=security_group_id,
@@ -355,11 +414,16 @@ class AWS(CloudInstance):
         self.ec2_security_group_ids = ec2_security_group_ids
 
     def generate_key_pair(self):
-        ec2_keypair = self.ec2_boto3_client.create_key_pair(KeyName=self.ec2_key_name)
+        ec2_keypair = self.ec2_boto3_client.create_key_pair(
+            KeyName=self.ec2_key_name
+        )
         ec2_priv_key = ec2_keypair["KeyMaterial"]
 
-        # Since we're writing an SSH key, make sure to write with user-only permissions.
-        with open(os.open(self.ssh_key_path, os.O_CREAT | os.O_WRONLY, 0o600), "w") as f:
+        # Since we're writing an SSH key, make sure to write with
+        # user-only permissions.
+        with open(
+            os.open(self.ssh_key_path, os.O_CREAT | os.O_WRONLY, 0o600), "w"
+        ) as f:
             f.write(ec2_priv_key)
 
         self.ssh_key = ec2_priv_key
@@ -379,7 +443,12 @@ class AWS(CloudInstance):
             SecurityGroupIds=self.ec2_security_group_ids,
             ClientToken="FogROS2-" + self.unique_name,
             TagSpecifications=[
-                {"ResourceType": "instance", "Tags": [{"Key": "FogROS2-Name", "Value": self.unique_name}]}
+                {
+                    "ResourceType": "instance",
+                    "Tags": [
+                        {"Key": "FogROS2-Name", "Value": self.unique_name}
+                    ],
+                }
             ],
             BlockDeviceMappings=[
                 {
@@ -392,7 +461,9 @@ class AWS(CloudInstance):
             ],
         )
 
-        self.logger.info(f"Created instance: {instances}, type: {self.ec2_instance_type}")
+        self.logger.info(
+            f"Created instance: {instances}, type: {self.ec2_instance_type}"
+        )
         instance = instances[0]
         # use the boto3 waiter
         self.logger.info("waiting for launching to finish")
@@ -406,7 +477,9 @@ class AWS(CloudInstance):
             instance.reload()
             self.logger.info("waiting for launching to finish")
             self.public_ip = instance.public_ip_address
-        self.logger.info("EC2 instance is created with ip address: " + self.public_ip)
+        self.logger.info(
+            "EC2 instance is created with ip address: " + self.public_ip
+        )
         return instance
 
     @staticmethod

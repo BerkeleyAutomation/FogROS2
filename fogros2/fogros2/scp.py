@@ -1,14 +1,21 @@
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# Copyright ©2022. The Regents of the University of California (Regents).
+# All Rights Reserved. Permission to use, copy, modify, and distribute this
+# software and its documentation for educational, research, and not-for-profit
+# purposes, without fee and without a signed licensing agreement, is hereby
+# granted, provided that the above copyright notice, this paragraph and the
+# following two paragraphs appear in all copies, modifications, and
+# distributions. Contact The Office of Technology Licensing, UC Berkeley, 2150
+# Shattuck Avenue, Suite 510, Berkeley, CA 94720-1620, (510) 643-7201,
+# otl@berkeley.edu, http://ipira.berkeley.edu/industry-info for commercial
+# licensing opportunities. IN NO EVENT SHALL REGENTS BE LIABLE TO ANY PARTY
+# FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES,
+# INCLUDING LOST PROFITS, ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS
+# DOCUMENTATION, EVEN IF REGENTS HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH
+# DAMAGE. REGENTS SPECIFICALLY DISCLAIMS ANY WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+# PARTICULAR PURPOSE. THE SOFTWARE AND ACCOMPANYING DOCUMENTATION, IF ANY,
+# PROVIDED HEREUNDER IS PROVIDED "AS IS". REGENTS HAS NO OBLIGATION TO PROVIDE
+# MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 import select
 import sys
@@ -55,7 +62,9 @@ class SCP_Client:
 
     def execute_cmd(self, cmd):
         timeout = 300
-        stdin, stdout, stderr = self.ssh_client.exec_command(cmd, get_pty=False)
+        stdin, stdout, stderr = self.ssh_client.exec_command(
+            cmd, get_pty=False
+        )
         # for line in iter(stdout.readline, ""):
         #     print("ec2 (out): " + CRED + line + CEND, end="")
         # See https://stackoverflow.com/a/32758464
@@ -69,7 +78,9 @@ class SCP_Client:
                     sys.stdout.buffer.write(c.recv(len(c.in_buffer)))
                     sys.stdout.buffer.flush()
                 if c.recv_stderr_ready():
-                    sys.stderr.buffer.write(c.recv_stderr(len(c.in_stderr_buffer)))
+                    sys.stderr.buffer.write(
+                        c.recv_stderr(len(c.in_stderr_buffer))
+                    )
                     sys.stderr.buffer.flush()
         stdout.close()
         stderr.close()
