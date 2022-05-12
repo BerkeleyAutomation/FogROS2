@@ -46,5 +46,6 @@ class CloudNode(Node):
         del state["machine"]
         return state
 
-    def get_unique_id(self):
-        return self.machine.get_name()
+    @property
+    def unique_id(self):
+        return self.machine.name

@@ -59,7 +59,7 @@ class VPN:
         @param machines: List<machine>
         """
         for machine in machines:
-            name = machine.get_name()
+            name = machine.name
             cloud_private_key = wgexec.generate_privatekey()
             self.cloud_name_to_priv_key_path[name] = cloud_private_key
             cloud_public_key = wgexec.get_publickey(cloud_private_key)
@@ -71,15 +71,13 @@ class VPN:
         # generate cloud configs
         counter = 2  # start the static ip addr counter from 2
         for machine in machines:
-            name = machine.get_name()
+            name = machine.name
             machine_config_pwd = self.cloud_key_path + name
             machine_priv_key = self.cloud_name_to_priv_key_path[name]
             aws_config = wgconfig.WGConfig(machine_config_pwd)
             aws_config.add_attr(None, "PrivateKey", machine_priv_key)
             aws_config.add_attr(None, "ListenPort", 51820)
-            aws_config.add_attr(
-                None, "Address", "10.0.0." + str(counter) + "/24"
-            )
+            aws_config.add_attr(None, "Address", f"10.0.0.{counter:d}/24")
             aws_config.add_peer(self.robot_public_key, "# fogROS Robot")
             aws_config.add_attr(
                 self.robot_public_key, "AllowedIPs", "10.0.0.1/32"
@@ -93,30 +91,19 @@ class VPN:
         robot_config.add_attr(None, "ListenPort", 51820)
         robot_config.add_attr(None, "Address", "10.0.0.1/24")
         for machine in machines:
-            name = machine.get_name()
-            ip = machine.get_ip()
-            robot_config.add_peer(
-                self.cloud_name_to_pub_key_path[name], "# AWS" + name
-            )
-            robot_config.add_attr(
-                self.cloud_name_to_pub_key_path[name],
-                "AllowedIPs",
-                "10.0.0.2/32",
-            )
-            robot_config.add_attr(
-                self.cloud_name_to_pub_key_path[name],
-                "Endpoint",
-                f"{ip}:51820",
-            )
-            robot_config.add_attr(
-                self.cloud_name_to_pub_key_path[name], "PersistentKeepalive", 3
-            )
+            name = machine.name
+            ip = machine.ip
+            cloud_pub_key = self.cloud_name_to_pub_key_path[name]
+            robot_config.add_peer(cloud_pub_key, f"# AWS{name}")
+            robot_config.add_attr(cloud_pub_key, "AllowedIPs", "10.0.0.2/32")
+            robot_config.add_attr(cloud_pub_key, "Endpoint", f"{ip}:51820")
+            robot_config.add_attr(cloud_pub_key, "PersistentKeepalive", 3)
         robot_config.write_file()
 
     def start_robot_vpn(self):
         # Copy /tmp/fogros-local.conf to /etc/wireguard/wg0.conf locally.
         # TODO: This needs root. Move this to a separate script with setuid.
-        os.system("sudo wg-quick down wg0")
         os.system("sudo cp /tmp/fogros-local.conf /etc/wireguard/wg0.conf")
         os.system("sudo chmod 600 /etc/wireguard/wg0.conf")
+        os.system("sudo wg-quick down wg0")
         os.system("sudo wg-quick up wg0")

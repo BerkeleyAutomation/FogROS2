@@ -38,7 +38,7 @@ import fogros2
 
 def generate_launch_description():
     ld = fogros2.FogROSLaunchDescription()
-    machine1 = fogros2.AWS(
+    machine1 = fogros2.AWSCloudInstance(
         region="us-west-1",
         ec2_instance_type="t2.medium",
         ami_image="ami-00f25057ddc9b310b",

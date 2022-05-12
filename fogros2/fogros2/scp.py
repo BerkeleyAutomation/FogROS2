@@ -37,14 +37,14 @@ from time import sleep
 
 import paramiko
 from rclpy import logging
-from scp import SCPClient
+from scp import SCPClient as SCPClientBase
 
 # ec2 console coloring
 CRED = "\033[91m"
 CEND = "\033[0m"
 
 
-class SCP_Client:
+class SCPClient:
     def __init__(self, ip, ssh_key_path):
         self.ip = ip
         self.ssh_key = paramiko.RSAKey.from_private_key_file(ssh_key_path)
@@ -71,7 +71,7 @@ class SCP_Client:
         self.logger.info("SCP connected!")
 
     def send_file(self, src_path, dst_path):
-        with SCPClient(self.ssh_client.get_transport()) as scp:
+        with SCPClientBase(self.ssh_client.get_transport()) as scp:
             scp.put(src_path, dst_path)
 
     def execute_cmd(self, cmd):
@@ -79,8 +79,7 @@ class SCP_Client:
         stdin, stdout, stderr = self.ssh_client.exec_command(
             cmd, get_pty=False
         )
-        # for line in iter(stdout.readline, ""):
-        #     print("ec2 (out): " + CRED + line + CEND, end="")
+
         # See https://stackoverflow.com/a/32758464
         ch = stdout.channel  # channel shared by stdin, stdout, stderr
         stdin.close()  # we don't need stdin
