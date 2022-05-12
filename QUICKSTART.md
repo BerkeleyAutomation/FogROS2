@@ -79,7 +79,7 @@ cp FogROS2/fogros2/configs/cyclonedds.ubuntu.2204.xml ../cyclonedds.xml
 
 ```
 cd ~/fog_ws
-colcon build --merge-install
+colcon build
 ```
 
 13. Install AWS CLI
