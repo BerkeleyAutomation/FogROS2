@@ -46,7 +46,11 @@ from .command_builder import BashBuilder
 from .dds_config_builder import CycloneConfigBuilder
 from .name_generator import get_unique_name
 from .scp import SCP_Client
-from .util import instance_dir, make_zip_file
+from .util import (
+    MissingEnvironmentVariableException,
+    instance_dir,
+    make_zip_file,
+)
 
 
 class CloudInstance(abc.ABC):
@@ -58,12 +62,14 @@ class CloudInstance(abc.ABC):
     ):
         if not ros_workspace:
             ros_workspace = os.path.dirname(os.getenv("COLCON_PREFIX_PATH"))
-        assert (
-            "RMW_IMPLEMENTATION" in os.environ
-        ), "RMW_IMPLEMENTATION environment variable not set"
-        assert (
-            "CYCLONEDDS_URI" in os.environ
-        ), "CYCLONEDDS_URI environment variable not set"
+        if "RMW_IMPLEMENTATION" not in os.environ:
+            raise MissingEnvironmentVariableException(
+                "RMW_IMPLEMENTATION environment variable not set!"
+            )
+        if "CYCLONEDDS_URI" not in os.environ:
+            raise MissingEnvironmentVariableException(
+                "CYCLONEDDS_URI environment variable not set!"
+            )
 
         # others
         self.logger = logging.get_logger(__name__)
