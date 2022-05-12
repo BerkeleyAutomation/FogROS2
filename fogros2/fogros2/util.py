@@ -39,6 +39,10 @@ _work_dir_cache = None
 _instance_dir_cache = None
 
 
+class MissingEnvironmentVariableException(Exception):
+    pass
+
+
 def _mkdir(path, mode=0o700):
     try:
         os.mkdir(path, mode=mode)
