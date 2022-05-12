@@ -23,10 +23,6 @@ TODO:introduce citation in here before going public
   - [Command Line Interface](#command-line-interface)
   - [Developer](#developer)
   - [Running Examples:](#running-examples)
-- [NOTE: (mjd3) These should likely be moved to the examples repo](#note-mjd3-these-should-likely-be-moved-to-the-examples-repo)
-      - [To run gqcnn](#to-run-gqcnn)
-      - [To run vslam](#to-run-vslam)
-      - [TODO](#todo)
 
 ## Install
 ### Quickstart
