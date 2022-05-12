@@ -2,4 +2,3 @@ boto3
 scp
 wgconfig
 paramiko
-unique-names-generator

@@ -1,22 +1,24 @@
-ARG DISTRO=rolling
-FROM ubuntu:jammy
+ARG UBUNTU_DISTRO=jammy
+ARG ROS_DISTRO=rolling
+FROM ubuntu:${UBUNTU_DISTRO}
 
-ARG DISTRO
+ARG UBUNTU_DISTRO
+ARG ROS_DISTRO
 ENV TZ=America/Vancouver
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-RUN apt update && apt install -y curl gnupg2 lsb-release sudo && \
+RUN apt update && apt install -y curl gnupg2 lsb-release && \
     curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
     
-RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu jammy main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
-RUN apt update && DEBIAN_FRONTEND=noninteractive sudo apt install -y \
-  ros-${DISTRO}-desktop \
+RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu ${UBUNTU_DISTRO} main" | tee /etc/apt/sources.list.d/ros2.list > /dev/null
+RUN apt update && DEBIAN_FRONTEND=noninteractive apt install -y \
+  ros-${ROS_DISTRO}-desktop \
   build-essential \
   cmake \
   python3-colcon-common-extensions \
   python3-pip \
   python3-vcstool \
-  ros-${DISTRO}-rmw-cyclonedds-cpp \
+  ros-${ROS_DISTRO}-rmw-cyclonedds-cpp \
   unzip \
   wireguard \
   iproute2 \
@@ -38,11 +40,11 @@ WORKDIR ${ROS_WS}/src
 COPY .  ${ROS_WS}/src/
 
 WORKDIR ${ROS_WS}
-RUN . /opt/ros/${DISTRO}/setup.sh && \
-      colcon build --merge-install --cmake-clean-cache
+RUN . /opt/ros/${ROS_DISTRO}/setup.sh && \
+      colcon build --cmake-clean-cache
 
 # setup entrypoint
-ENV ROS_DISTRO=${DISTRO}
+ENV ROS_DISTRO=${ROS_DISTRO}
 COPY ./ros_entrypoint.sh /
 RUN chmod +x /ros_entrypoint.sh
 

@@ -31,6 +31,6 @@
 # PROVIDED HEREUNDER IS PROVIDED "AS IS". REGENTS HAS NO OBLIGATION TO PROVIDE
 # MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
-from .aws import AWS  # noqa: F401
+from .aws_cloud_instance import AWSCloudInstance  # noqa: F401
 from .cloud_node import CloudNode  # noqa: F401
 from .launch_description import FogROSLaunchDescription  # noqa: F401

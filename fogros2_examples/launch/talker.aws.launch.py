@@ -33,7 +33,7 @@
 
 from launch_ros.actions import Node
 
-from fogros2 import AWS, CloudNode, FogROSLaunchDescription
+import fogros2
 
 
 def ami_image():
@@ -56,8 +56,8 @@ def ami_image():
 
 def generate_launch_description():
     """Talker example that launches the listener on AWS."""
-    ld = FogROSLaunchDescription()
-    machine1 = AWS(
+    ld = fogros2.FogROSLaunchDescription()
+    machine1 = fogros2.AWSCloudInstance(
         region="us-west-1", ec2_instance_type="t2.micro", ami_image=ami_image()
     )
 
@@ -65,7 +65,7 @@ def generate_launch_description():
         package="fogros2_examples", executable="listener", output="screen"
     )
 
-    talker_node = CloudNode(
+    talker_node = fogros2.CloudNode(
         package="fogros2_examples",
         executable="talker",
         output="screen",

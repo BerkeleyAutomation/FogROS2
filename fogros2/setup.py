@@ -62,7 +62,6 @@ setup(
             "list = fogros2.verb.list:ListVerb",
             "delete = fogros2.verb.delete:DeleteVerb",
             "connect = fogros2.verb.ssh:SSHVerb",
-            "image = fogros2.verb.image:ImageVerb",
         ],
     },
 )

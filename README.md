@@ -5,7 +5,7 @@
 If you find this useful, please cite our work:
 
 ```
-TODO:introduce citation in here before going public
+TODO: Add citation here before going public
 ```
 
 
@@ -22,11 +22,13 @@ TODO:introduce citation in here before going public
   - [Setting Up Automatic Image Transport](#setting-up-automatic-image-transport)
   - [Command Line Interface](#command-line-interface)
   - [Developer](#developer)
+  - [Some Common Issues](#some-common-issues)
   - [Running Examples:](#running-examples)
+  - [TODO](#todo)
 
 ## Install
 ### Quickstart
-If you are new to ROS and Ubuntu, and want to install FogROS 2 (and ROS 2) and its requisites from scratch, follow instructions [here.](https://github.com/BerkeleyAutomation/FogROS2/blob/humble/QUICKSTART.md)
+If you are new to ROS and Ubuntu, and want to install FogROS 2 (and ROS 2) and its requisites from scratch, follow instructions [here](https://github.com/BerkeleyAutomation/FogROS2/blob/humble/QUICKSTART.md).
 ### Docker (Recommended)
 Alternatively, you can simplify reproduction using an OS virtualization environment with Docker:
 ```bash
@@ -82,7 +84,7 @@ sudo ./aws/install
 cd <your-ros2-workspace>/src
 git clone https://github.com/BerkeleyAutomation/FogROS2
 cd ../
-colcon build --merge-install  # re-build the workspace
+colcon build  # re-build the workspace
 source install/setup.bash
 ```
 
@@ -168,7 +170,7 @@ ros2 fog connect ascent-corona
 # delete the existing FogROS instance (e.g. named "ascent-corona")
 ros2 fog delete ascent-corona
 # or all of the existing instances
-ros2 fog delete -a
+ros2 fog delete all
 ```
 
 ## Developer
@@ -180,36 +182,13 @@ Here are some commands that one may find it useful when developing:
 docker exec -it $(docker ps | grep fogros2 | awk '{print $1}') /bin/bash
 ```
 
-
-## Creating an AMI Image from An Existing Launched FogRos Instance
-
-This can be easily done using our CLI command:
-
-```bash
-# make image from fogros instance
-ros2 fog image -n instance_name
-```
-Alternatively, you can create your AMI image from the AWS website:
-
-See more information [here.](https://docs.aws.amazon.com/toolkit-for-visual-studio/latest/user-guide/tkv-create-ami-from-instance.html)
-
-Step 1: Log into your AWS account and locate your list of instances. 
-
-Step 2: Right-click on the FogROS instance, and choose Create Image from the menu options.
-
-Step 3: In the Create Image dialog box, type a unique name and description, and then choose Create Image. 
-
-Note that Amazon EC2 shuts down the instance by default before creating the AMI and then reboots the instance. Choose the No reboot option if you don't want your instance to be shut down.
-
-
 ## Some Common Issues
-1. Warning: _2 packages has stderr outputs: fogros2 fogros2_examples_ after running colcon build. This is not an error. See https://github.com/BerkeleyAutomation/FogROS2/issues/45. Your installatiion should still work.  
-2. _[WARN] [1652044293.921367226] [fogros2.scp]: [Errno None] Unable to connect to port 22 on xx.xx.xx.xxx, retrying..._ . You need to wait. This is caused when AWS has not started the instance (yet). 
-3. _WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv_. This is fine. Your setup should still work nontheless
-
+1. Warning: _2 packages has stderr outputs: fogros2 fogros2_examples_ after running colcon build. This is not an error. See https://github.com/BerkeleyAutomation/FogROS2/issues/45. Your installation should still work.  
+2. _[WARN] [1652044293.921367226] [fogros2.scp]: [Errno None] Unable to connect to port 22 on xx.xx.xx.xxx, retrying..._ . You need to wait. This is caused when AWS has not started the instance (yet).
+3. _WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behavior with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv_. This is fine. Your setup should still work nontheless.
 
 ## Running Examples:
 We have used FogROS for 3 example use-cases (motion planning, grasp planning, and SLAM map building). Please see our [examples repo](https://github.com/BerkeleyAutomation/fogros2-examples) for these and how to run them. 
 
-#### TODO
+## TODO
 - Streamline the launch process for client docker images.
