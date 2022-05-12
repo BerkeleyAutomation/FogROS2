@@ -175,7 +175,6 @@ ros2 fog delete -a
 
 Here are some commands that one may find it useful when developing:
 ```bash
-
 # starting the second terminal for fogros docker
 docker exec -it $(docker ps | grep fogros2 | awk '{print $1}') /bin/bash
 ```
@@ -210,6 +209,26 @@ Note that Amazon EC2 shuts down the instance by default before creating the AMI 
 
 ## Running Examples:
 We have used FogROS for 3 example use-cases (motion planning, grasp planning, and SLAM map building). Please see our [examples repo](https://github.com/BerkeleyAutomation/fogros2-examples) for these and how to run them. 
+
+#### To run turtlesim
+```
+ros2 launch fogros2_examples turtlesim.launch.py
+```
+Open port 8080 on the ec2 instance's public IPv4 address from the ec2 console to access [FoxGlove Studio](https://foxglove.dev/) and open a connection to rosbridge on port 9090 of the ec2 instance's address. 
+
+<img src="https://foxglove.dev/images/blog/introducing-foxglove-studios-new-data-source-dialog/hero.png" width="50%" height="50%" />
+
+Select the Plot panel and the Teleop panel.
+
+<img src="https://foxglove.dev/images/docs/studio/panels/tab.png" width="25%" height="25%" />
+
+In the Teleop panel, configure the publish topic to /turtle/cmd_vel. 
+
+In the Plot panel, add /turtle1/pose.x and /turtle1/pose.y as the custom values to plot on the x-axis and y-axis, respectively.
+
+Use the Teleop panel to navigate the turtle around. The plot's values should change as the turtle’s position changes.
+
+<img src="https://foxglove.dev/images/blog/running-your-first-ros-node/plot.png" width="50%" height="50%" />
 
 #### TODO
 - Streamline the launch process for client docker images.
