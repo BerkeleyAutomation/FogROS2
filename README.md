@@ -40,7 +40,7 @@ cd FogROS2
 sudo apt install awscli
 
 #Configure cloud provider CLI wrappers (e.g. AWS)
-#Configure AWS Basic Settings. To run the next command, you need to have your [security credentials, an output format and AWS Region.](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html)
+#Configure AWS Basic Settings. To run the next command, you need to have your security credentials, an output format and AWS Region. See https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html
 aws configure
 
 #Build Docker Image
