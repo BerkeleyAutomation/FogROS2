@@ -35,10 +35,12 @@ Alternatively, you can simplify reproduction using an OS virtualization environm
 git clone -b humble https://github.com/BerkeleyAutomation/FogROS2
 cd FogROS2
 
-#Install AWS CL
+# Install cloud provider CLI wrappers (e.g. AWS)
+#Install AWS CLI
 sudo apt install awscli
 
-#Configure AWS Basic Settings. To run the next command, you need to have your security credentials, an output format and AWS Region.
+#Configure cloud provider CLI wrappers (e.g. AWS)
+#Configure AWS Basic Settings. To run the next command, you need to have your [security credentials, an output format and AWS Region.](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html)
 aws configure
 
 #Build Docker Image
@@ -99,8 +101,6 @@ TODO: replace this with fogros2 tooling that's cloud-agnostic. E.g. `ros2 fog co
 ```bash
 # launch fogros2 container
 docker run -it --rm --net=host -v $HOME/.aws:/root/.aws --cap-add=NET_ADMIN fogros2
-# configure cloud provider CLI wrappers (e.g. AWS)
-aws configure
 
 # launch talker node on the cloud
 ros2 launch fogros2_examples talker.aws.launch.py
