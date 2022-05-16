@@ -124,6 +124,6 @@ ros2 fog list
 #To delete a FogROS2 instance
 ros2 fog delete [name]
 
-Typing CTRL-C kills the local instance (e.g. listener) the first time and then the cloud instance the second time
+Typing CTRL-C kills the local instance (e.g., listener) the first time and then the cloud instance the second time
 
 ```

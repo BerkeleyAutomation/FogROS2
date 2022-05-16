@@ -40,7 +40,7 @@ By default, this command will build a docker image for ROS Rolling and Ubuntu 22
 *Note: the Dockerfile is cooked for x86_64. If you're using a workstation with an Arm-based architecture (e.g. an M1), build the container with the `docker build --platform linux/amd64 -t fogros2 .`*.
 
 ### Natively
-`FogROS2` is actually a ROS meta-package, so you can just fetch it in your a workspace, build it, source the workspace as an overlay and start using its capabilities.
+`FogROS2` is actually a ROS meta-package, so you can just fetch it in your workspace, build it, source the workspace as an overlay and start using its capabilities.
 
 #### Install Dependencies
 
