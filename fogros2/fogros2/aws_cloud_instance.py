@@ -117,6 +117,7 @@ class AWSCloudInstance(CloudInstance):
         self.install_ros()
         self.install_colcon()
         self.install_cloud_dependencies()
+        self.do_wireguard_preconfig()
         self.push_ros_workspace()
         self.info(flush_to_disk=True)
         self._is_created = True
