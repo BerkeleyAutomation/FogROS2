@@ -40,7 +40,7 @@ By default, this command will build a docker image for ROS Rolling and Ubuntu 22
 *Note: the Dockerfile is cooked for x86_64. If you're using a workstation with an Arm-based architecture (e.g. an M1), build the container with the `docker build --platform linux/amd64 -t fogros2 .`*.
 
 ### Natively
-`FogROS2` is actually a ROS meta-package, so you can just fetch it in your favorite workspace, build it, source the workspace as an overlay and start using its capabilities.
+`FogROS2` is actually a ROS meta-package, so you can just fetch it in your a workspace, build it, source the workspace as an overlay and start using its capabilities.
 
 #### Install Dependencies
 
@@ -64,7 +64,8 @@ aws configure
 
 ```bash
 source /opt/ros/<your-ros2-distro>/setup.bash
-cd <your-ros2-workspace>/src
+mkdir -p ~/fog_ws/src
+cd ~/fog_ws/src
 git clone -b humble https://github.com/BerkeleyAutomation/FogROS2
 cd ../
 colcon build  # re-build the workspace
@@ -110,10 +111,10 @@ docker run -it --rm \
        ...
     keplerc/ros2:latest /bin/bash
 ```
-you may also `git clone` your development repo to the docker instead.
+You may also `git clone` your development repo to the docker container instead.
 
 
-Step 2: Write the FogROS launch file. Examples of launch files can be found in the talker*.launch.py [here](https://github.com/BerkeleyAutomation/FogROS2/tree/humble/fogros2_examples/launch).
+Step 2: Write the FogROS2 launch file. Examples of launch files can be found in the talker*.launch.py [here](https://github.com/BerkeleyAutomation/FogROS2/tree/humble/fogros2_examples/launch).
 
 
 ## Setting Up Automatic Image Transport
