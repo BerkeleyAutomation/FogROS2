@@ -116,3 +116,14 @@ ros2 launch fogros2_examples talker.aws.launch.py
 ```
 
 18. You are done. Refer to our [README](https://github.com/BerkeleyAutomation/FogROS2/blob/main/README.md) for additional information including [Command Line Interface commands](https://github.com/BerkeleyAutomation/FogROS2#command-line-interface), which allow you do a lot with your cloud instances from the command line, and [Docker installation](https://github.com/BerkeleyAutomation/FogROS2#docker).
+
+```
+#To see the name of a FogROS2 instance
+ros2 fog list
+
+#To delete a FogROS2 instance
+ros2 fog delete [name]
+
+Typing CTRL-C kills the local instance (e.g. listener) the first time and then the cloud instance the second time
+
+```
