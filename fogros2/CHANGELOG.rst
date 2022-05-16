@@ -1,6 +1,13 @@
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Changelog for package fogros2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0.1.4 (2022-05-15)
+------------------
+* fixed QUICKSTART.md documentation and removed unnecessary dependencies
+* prepared package.xml with list of authors and maintainers for release
+* changed environment variable checks from asserts to exceptions
+* cleaned up README.md
+
 0.1.3 (2022-05-09)
 ------------------
 * readded human readable instance name generation
