@@ -8,7 +8,7 @@ echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc
 echo "source $ROS_WS/install/setup.bash" >> ~/.bashrc
 
 # work with CycloneDDS DDS implementation
-ver=$(lsb_release -a 2>&1 | awk 'FNR==4 {gsub(/\./, ""); print $2}')
+ver=$(lsb_release -rs | sed 's/\.//')
 export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
 export CYCLONEDDS_URI=file://$(pwd)/install/fogros2/share/fogros2/configs/cyclonedds.ubuntu.$ver.xml
 

@@ -69,10 +69,7 @@ mkdir -p ~/fog_ws/src
 ```
 cd ~/fog_ws/src
 git clone -b humble https://github.com/BerkeleyAutomation/FogROS2.git
-# if using Ubuntu 20.04
-cp FogROS2/fogros2/configs/cyclonedds.ubuntu.2004.xml ../cyclonedds.xml
-# if using Ubuntu 22.04
-cp FogROS2/fogros2/configs/cyclonedds.ubuntu.2204.xml ../cyclonedds.xml
+cp FogROS2/fogros2/configs/cyclonedds.ubuntu.$(lsb_release -rs | sed 's/\.//').xml ../cyclonedds.xml
 ```
 
 12. Build
@@ -113,10 +110,7 @@ sudo apt install ros-rolling-rmw-cyclonedds-cpp
 cd ~/fog_ws
 source install/setup.bash
 export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp 
-# if using Ubuntu 20.04
-export CYCLONEDDS_URI=file://$(pwd)/install/fogros2/share/fogros2/configs/cyclonedds.ubuntu.2004.xml
-# if using Ubuntu 22.04
-export CYCLONEDDS_URI=file://$(pwd)/install/fogros2/share/fogros2/configs/cyclonedds.ubuntu.2204.xml
+export CYCLONEDDS_URI=file://$(pwd)/install/fogros2/share/fogros2/configs/cyclonedds.ubuntu.$(lsb_release -rs | sed 's/\.//').xml
 
 ros2 launch fogros2_examples talker.aws.launch.py
 ```
