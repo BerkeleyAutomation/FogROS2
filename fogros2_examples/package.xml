@@ -4,7 +4,10 @@
   <name>fogros2_examples</name>
   <version>0.1.3</version>
   <description>Examples using FogROS2</description>
+  <maintainer email="jeffi@berkeley.edu">Jeff Ichnowski</maintainer>
   <maintainer email="kych@berkeley.edu">Kaiyuan (Eric) Chen</maintainer>
+  <maintainer email="kdharmarajan@berkeley.edu">Karthik Dharmarajan</maintainer>
+  <maintainer email="simeon.adebola@berkeley.edu">Simeon Adebola</maintainer>
   <author email="jeffi@berkeley.edu">Jeff Ichnowski</author>
   <author email="kych@berkeley.edu">Kaiyuan (Eric) Chen</author>
   <author email="kdharmarajan@berkeley.edu">Karthik Dharmarajan</author>
