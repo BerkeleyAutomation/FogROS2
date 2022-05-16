@@ -103,6 +103,8 @@ ros2 launch fogros2_examples talker.aws.launch.py
 ```
 
 ## Run your own robotics applications
+If using, for example, Docker take the following steps: 
+
 Step 1: Mount your robotics application to docker's folder.
 For example,
 ```
@@ -161,7 +163,7 @@ ros2 fog delete all
 Here are some commands that one may find it useful when developing:
 ```bash
 
-# starting the second terminal for fogros docker
+# starting a second terminal for FogROS2 docker
 docker exec -it $(docker ps | grep fogros2 | awk '{print $1}') /bin/bash
 ```
 
