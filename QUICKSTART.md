@@ -75,6 +75,7 @@ cp FogROS2/fogros2/configs/cyclonedds.ubuntu.$(lsb_release -rs | sed 's/\.//').x
 12. Build
 
 ```
+#If you see a warning like this, you are fine “On Ubuntu 22.04 this may generate deprecation warnings.  These may be ignored.”
 cd ~/fog_ws
 colcon build
 ```
