@@ -51,7 +51,7 @@ source /opt/ros/rolling/setup.bash
 export ROS_DOMAIN_ID=99
 echo 'export ROS_DOMAIN_ID=99' >> ~/.bashrc
 ```
-9. Install colcon, git, and h.264 dependencies
+9. Install colcon and git
 
 ```
 sudo apt install python3-colcon-common-extensions
