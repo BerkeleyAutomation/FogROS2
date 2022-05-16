@@ -52,6 +52,10 @@ ROS 2 dependencies:
 ```
 sudo sh -c 'echo "deb [arch=amd64,arm64] http://repo.ros2.org/ubuntu/main `lsb_release -cs` main" > /etc/apt/sources.list.d/ros2-latest.list'
 curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo apt-key add -
+
+# If using Ubuntu 22.04
+sudo apt install ros-rolling-rmw-cyclonedds-cpp
+
 ```
 
 FogROS 2 dependencies:
@@ -59,15 +63,18 @@ FogROS 2 dependencies:
 sudo apt install python3-pip wireguard unzip
 sudo pip3 install wgconfig boto3 paramiko scp
 
-# install AWS CLI
-curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-unzip awscliv2.zip
-sudo ./aws/install
+# Install cloud provider CLI wrappers (e.g. AWS)
+#Install AWS CLI
+sudo apt install awscli
+
+#Configure cloud provider CLI wrappers (e.g. AWS)
+#Configure AWS Basic Settings. To run the next command, you need to have your security credentials, an output format and AWS Region. See https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html
+aws configure
 ```
 
 ```bash
 cd <your-ros2-workspace>/src
-git clone https://github.com/BerkeleyAutomation/FogROS2
+git clone -b humble https://github.com/BerkeleyAutomation/FogROS2
 cd ../
 colcon build  # re-build the workspace
 source install/setup.bash
@@ -95,9 +102,9 @@ source install/setup.bash
 export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp 
 
 # if using Ubuntu 20.04
-export CYCLONEDDS_URI=file://$(pwd)/install/share/fogros2/configs/cyclonedds.ubuntu.2004.xml
+export CYCLONEDDS_URI=file://$(pwd)/install/fogros2/share/fogros2/configs/cyclonedds.ubuntu.2004.xml
 # if using Ubuntu 22.04
-export CYCLONEDDS_URI=file://$(pwd)/install/share/fogros2/configs/cyclonedds.ubuntu.2204.xml
+export CYCLONEDDS_URI=file://$(pwd)/install/fogros2/share/fogros2/configs/cyclonedds.ubuntu.2204.xml
 
 ros2 launch fogros2_examples talker.aws.launch.py
 ```
