@@ -98,8 +98,7 @@ aws configure
 
 ```
 sudo apt install build-essential cmake git python3-colcon-common-extensions python3-pip python3-vcstool wget emacs-nox unzip wireguard iproute2 curl net-tools ssh
-sudo apt install emacs-gtk
-pip3 install boto3 paramiko scp wgconfig unique-names-generator
+pip3 install boto3 paramiko scp wgconfig
 ```
 
 16. If using Ubuntu 22.04
