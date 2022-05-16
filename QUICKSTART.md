@@ -97,8 +97,8 @@ aws configure
 15. Install additional dependencies
 
 ```
-sudo apt install build-essential cmake git python3-colcon-common-extensions python3-pip python3-vcstool wget emacs-nox unzip wireguard iproute2 curl net-tools ssh
-pip3 install boto3 paramiko scp wgconfig
+sudo apt install python3-pip wireguard
+pip install boto3 paramiko scp wgconfig
 ```
 
 16. If using Ubuntu 22.04
