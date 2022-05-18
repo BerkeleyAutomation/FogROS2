@@ -109,7 +109,8 @@ export CYCLONEDDS_URI=file://$(pwd)/install/fogros2/share/fogros2/configs/cyclon
 ros2 launch fogros2_examples talker.aws.launch.py
 ```
 
-18. You are done. Refer to our [README](https://github.com/BerkeleyAutomation/FogROS2/blob/main/README.md) for additional information including [Command Line Interface commands](https://github.com/BerkeleyAutomation/FogROS2#command-line-interface), which allow you do a lot with your cloud instances from the command line, and [Docker installation](https://github.com/BerkeleyAutomation/FogROS2#docker)
+18. You are done. Refer to other relevant pages including  [README](https://github.com/BerkeleyAutomation/FogROS2/blob/main/README.md) for additional information including [Command Line Interface commands](https://berkeleyautomation.github.io/FogROS2/cli), which allow you do a lot with your cloud instances from the command line, and [Docker installation](https://github.com/BerkeleyAutomation/FogROS2#docker) for those who want to use FogROS2 in a Docker environment
+
 ```bash
 #To see the name of a FogROS2 instance
 ros2 fog list
