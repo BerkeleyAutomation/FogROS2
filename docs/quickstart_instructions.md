@@ -19,8 +19,7 @@ sudo apt upgrade
 3. Reboot
 
 4. Get UTF-8 locale installed
-
-```
+```bash
 sudo apt install locales
 sudo locale-gen en_US en_US.UTF-8
 sudo update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
@@ -28,8 +27,7 @@ export LANG=en_US.UTF-8
 ```
 
 5. Setup sources for ROS 2 (https://docs.ros.org/en/rolling/Installation/Ubuntu-Install-Debians.html)
-
-```
+```bash
 sudo apt update
 sudo apt install curl gnupg2 lsb-release
 sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key  -o /usr/share/keyrings/ros-archive-keyring.gpg
@@ -37,82 +35,71 @@ echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-a
 ```
 
 6. Install ROS 2 Packages (https://docs.ros.org/en/rolling/Installation/Ubuntu-Install-Debians.html)
-
-```
+```bash
 sudo apt update
 sudo apt install ros-rolling-desktop
 ```
 
 7. Add env to startup
-
-```
+```bash
 echo "source /opt/ros/rolling/setup.bash" >> ~/.bashrc
 source /opt/ros/rolling/setup.bash
 ```
 
 8. Choose and set a `ROS_DOMAIN_ID` (in range 0 to 101) (https://docs.ros.org/en/rolling/Concepts/About-Domain-ID.html)
-
-```
+```bash
 export ROS_DOMAIN_ID=99
 echo 'export ROS_DOMAIN_ID=99' >> ~/.bashrc
 ```
-9. Install colcon and git
 
-```
+9. Install colcon and git
+```bash
 sudo apt install python3-colcon-common-extensions
 sudo apt install git
 ```
 
 10. Create a workspace
-
-```
+```bash
 mkdir -p ~/fog_ws/src
 ```
 
 11. Clone
-
-```
+```bash
 cd ~/fog_ws/src
 git clone -b humble https://github.com/BerkeleyAutomation/FogROS2.git
 cp FogROS2/fogros2/configs/cyclonedds.ubuntu.$(lsb_release -rs | sed 's/\.//').xml ../cyclonedds.xml
 ```
 
 12. Build
-
-```
+```bash
 #If you see a warning like this, you are fine “On Ubuntu 22.04 this may generate deprecation warnings.  These may be ignored.”
 cd ~/fog_ws
 colcon build
 ```
 
 13. Install AWS CLI
-
-```
+```bash
 sudo apt install awscli
 ```
 
 14. Configure AWS Basic Settings. To run the next command, you need to have your [security credentials, an output format and AWS Region.](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html)
-
-```
+```bash
 aws configure
 ```
 
 15. Install additional dependencies
-
-```
+```bash
 sudo apt install python3-pip wireguard
 pip install boto3 paramiko scp wgconfig
 ```
 
 16. If using Ubuntu 22.04
-
-```
+```bash
 sudo apt install ros-rolling-rmw-cyclonedds-cpp
 ```
    
 17. Run basic example. Note that the last command may take some time to complete especially the first time it is run. If your setup is correct, you should see the talker node publishing.
-
-```
+```bash
 cd ~/fog_ws
 source install/setup.bash
 export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp 
@@ -122,8 +109,7 @@ ros2 launch fogros2_examples talker.aws.launch.py
 ```
 
 18. You are done. Refer to our [README](https://github.com/BerkeleyAutomation/FogROS2/blob/main/README.md) for additional information including [Command Line Interface commands](https://github.com/BerkeleyAutomation/FogROS2#command-line-interface), which allow you do a lot with your cloud instances from the command line, and [Docker installation](https://github.com/BerkeleyAutomation/FogROS2#docker).
-
-```
+```bash
 #To see the name of a FogROS2 instance
 ros2 fog list
 
