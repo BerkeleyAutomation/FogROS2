@@ -1,29 +1,31 @@
 ---
 layout: page
 title: CLI
-permalink: /cli/
+permalink: /cli
+nav_order: 3
 ---
 
-# Command Line Interface (CLI)
-FogROS2 uses Python entry points to extend the commands and verbs for ROS 2's CLI. Specifically, the `fogros2` package adds the `fog` command with three verbs, `list`, `connect` and `delete` for easy viewing of, interaction with, and termination of remote instances, respectively. More information about commands or verbs can be found by running `ros2 fog --help` or `ros2 fog <verb> --help`.
+# Command Line Interface (CLI) 
+{: .no_toc }
+FogROS 2 uses Python entry points to extend the commands and verbs for ROS 2's CLI. Specifically, the `fogros2` package adds the `fog` command with three verbs, `list`, `connect` and `delete` for easy viewing of, interaction with, and termination of remote instances, respectively. More information about commands or verbs can be found by running `ros2 fog --help` or `ros2 fog <verb> --help`.
 
 <details open markdown="block">
   <summary>
     CLI Commands
   </summary>
   {: .text-delta }
-  1. TOC
+  - TOC
 {:toc}
 </details>
 
 ## list
-Prints information about existing FogROS2 instances.
+Prints information about existing FogROS 2 instances.
 
 ### Usage
 **ros2 fog list** *[-h] [\-\-region REGION [REGION ...]]*
 
 ### Description
-Prints a list of details -- instance name, cloud service provider (currently always AWS), region, instance type, region, id, IP address, SSH key, disk size, AMI, and state -- for existing FogROS2 instances. With no *REGION* specified, this command defaults to listing instances in the region set in the user's AWS configuration or in the corresponding environment variable. Otherwise, it lists all FogROS2 instances in *REGION* or in multiple regions if specified.
+Prints a list of details -- instance name, cloud service provider (currently always AWS), region, instance type, region, id, IP address, SSH key, disk size, AMI, and state -- for existing FogROS 2 instances. With no *REGION* specified, this command defaults to listing instances in the region set in the user's AWS configuration or in the corresponding environment variable. Otherwise, it lists all FogROS 2 instances in *REGION* or in multiple regions if specified.
 
 ### Options
 **\-h, \-\-help**  
@@ -70,7 +72,7 @@ Opens a shell connection to an existing instance.
 **ros2 fog connect** *[\-h] [\-\-region [REGION [REGION ...]]] [\-\-user [USER]] NAME*
 
 ### Description
-Connects via SSH to an existing FogROS2 instance with name *NAME*, allowing the user to run commands from a shell directly on the instance. FogROS2 instance names can be found using the `list` command. If no instances with name *NAME* are found in the specified region, this command will print "No matching instance found" and exit.
+Connects via SSH to an existing FogROS 2 instance with name *NAME*, allowing the user to run commands from a shell directly on the instance. FogROS 2 instance names can be found using the `list` command. If no instances with name *NAME* are found in the specified region, this command will print "No matching instance found" and exit.
 
 ### Options
 **\-h, \-\-help**  
@@ -114,7 +116,7 @@ Terminates a running instance.
 **ros2 fog delete** *[\-h] [\-\-region [REGION [REGION ...]]] [\-\-dry-run] NAME*
 
 ### Description
-Terminates an existing FogROS2 instance with name *NAME* and removes the key pair and data folder associated with the instance. If *NAME* is `all`, then all FogROS2 instances in the specified regions will be terminated. FogROS2 instance names can be found using the `list` command. If no instances with name *NAME* are found in the specified region, this command will print "No EC2 instances found with the specified name; check list to be sure name is correct!
+Terminates an existing FogROS 2 instance with name *NAME* and removes the key pair and data folder associated with the instance. If *NAME* is `all`, then all FogROS 2 instances in the specified regions will be terminated. FogROS 2 instance names can be found using the `list` command. If no instances with name *NAME* are found in the specified region, this command will print "No EC2 instances found with the specified name; check list to be sure name is correct!
 No instances deleted" and exit.
 
 ### Options
