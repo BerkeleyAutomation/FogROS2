@@ -29,7 +29,7 @@ To understand bandwidth or bitrate, try out an internet speed test tool.
 
 To understand the latency to the cloud, try out [cloudping.info](https://cloudping.info/).  This tool sends a small packet to the different data centers and measures the time before the response comes back.  You can expect response times in the 10 to 40 ms range for nearby data centers.
 
-With [cloudping.info](https://cloudping.info/), you can quickly understand which data center you should use for you cloud robotics applications.
+With [cloudping.info](https://cloudping.info/), you can quickly understand which data center you should use for your cloud robotics applications.
 
 What is the edge?
 ---
