@@ -34,7 +34,7 @@ An ```AWSCloudInstance``` is an object that represents an AWS EC2 instance that 
 
 ```region```: The AWS region the machine will be launched in. By default, this is ```us-west-1```.
 
-```ec2_instance_type```: The type of machine that will be launched by AWS. For help deciding what machine to launch, please visit [Getting Started]({{site.baseurl}}/getting_started/). By default, this is a ```t2.micro``` instance, which is a lower compute free instance type.
+```ec2_instance_type```: The type of machine that will be launched by AWS. For help deciding what machine to launch, please visit [Getting Started]({{site.baseurl}}/getting_started). By default, this is a ```t2.micro``` instance, which is a lower compute free instance type.
 
 ```disk_size```: The size of the disk of the EC2 instance in gigabytes. The default is 30GB.
 
@@ -49,7 +49,7 @@ A ```CloudNode``` is a ROS 2 node that is executing in the cloud.
 #### Parameters
 ```machine```: machine is the ```fogros2.AWSCloudInstance``` created in step 3.
 
-```stream_topics```: stream_topics is used to specify any topics that are used for video streaming so that appropriate compression can be deployed. For more details, visit [Video Compression (H.264)]({{site.baseurl}}/video_compression/)
+```stream_topics```: stream_topics is used to specify any topics that are used for video streaming so that appropriate compression can be deployed. For more details, visit [Video Compression (H.264)]({{site.baseurl}}/video_compression).
 
 Make sure to leave in any normal arguments that are a part of a normal ROS 2 node. An example will be provided to make the transition more clear.
 
