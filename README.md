@@ -22,7 +22,7 @@
 ### Quickstart
 If you are new to ROS and Ubuntu, and want to install FogROS 2 (and ROS 2) and its requisites from scratch, follow instructions [here](https://github.com/BerkeleyAutomation/FogROS2/blob/humble/QUICKSTART.md).
 ### Docker (Recommended)
-Alternatively, you can simplify reproduction using an OS virtualization environment with Docker:
+Alternatively, you can simplify reproduction using an OS virtualization environment with Docker. You can also watch our video tutorial [here](https://www.youtube.com/embed/oEnmZXojkcI?start=1&end=800). 
 ```bash
 git clone -b humble https://github.com/BerkeleyAutomation/FogROS2
 cd FogROS2
@@ -76,6 +76,7 @@ source install/setup.bash
 ## Launch ROS 2 computational graphs in the cloud
 
 ### Docker (Recommended)
+You can see this in our video tutorial [here](https://www.youtube.com/embed/oEnmZXojkcI?start=801)
 
 ```bash
 # launch fogros2 container
