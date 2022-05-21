@@ -1,7 +1,7 @@
 Install FogROS 2 and ROS 2 from Scratch
 ---
 
-This is a quick start guide for installing FogROS 2 (and ROS 2) and its requisites from scratch (e.g., in a VM).  New contributors to the project can start here.
+This is a quick start guide for installing FogROS 2 (and ROS 2) and its requisites from scratch (e.g., in a VM).  New contributors to the project can start here. You can also watch our video tutorials here: [part 1](https://youtu.be/IfR0JjOytuE) and [part 2](https://youtu.be/tXH0kxx7LqU) 
 
 1. Install Ubuntu 20.04 or Ubuntu 22.04. See [here](https://ubuntu.com/tutorials/install-ubuntu-desktop#1-overview) for a tutorial. 
 
