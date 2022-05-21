@@ -12,6 +12,9 @@ sudo apt upgrade
 ```
 
 3. Reboot
+```bash
+reboot
+```
 
 4. Get UTF-8 locale installed
 
@@ -118,7 +121,7 @@ ros2 launch fogros2_examples talker.aws.launch.py
 
 18. You are done. Refer to our [README](https://github.com/BerkeleyAutomation/FogROS2/blob/main/README.md) for additional information including [Command Line Interface commands](https://github.com/BerkeleyAutomation/FogROS2#command-line-interface), which allow you do a lot with your cloud instances from the command line, and [Docker installation](https://github.com/BerkeleyAutomation/FogROS2#docker).
 
-Next we’ll terminate the demo by typing CTRL-C twice.  The first one terminates the cloud node, the second one terminates the robot node.
+Next we’ll terminate the demo by typing CTRL-C twice.  The first one terminates the robot node, the second one terminates the cloud node.
 
 We can see the cloud computer that FogROS 2 launched for us using the FogROS command-line interface or CLI.  “Ros2 fog list” shows that we have one running instance with the name XXX.  Finally, we terminate the instance so that we are no longer being charged for it by running “ros2 fog delete XXX”.  You can verify that it is being deleted and by running “ros2 fog list” again.  Observe the “status shutting down” line. After a short while, running ros2 fog list will show nothing, indicating that the instance is terminated and you are no longer being charged. 
 
