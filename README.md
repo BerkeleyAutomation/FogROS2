@@ -40,7 +40,7 @@ By default, this command will build a docker image for ROS Rolling and Ubuntu 22
 *Note: the Dockerfile is cooked for x86_64. If you're using a workstation with an Arm-based architecture (e.g. an M1), build the container with the `docker build --platform linux/amd64 -t fogros2 .`*.
 
 ### Natively
-`FogROS2` is actually a ROS meta-package, so you can just fetch it in your workspace, build it, source the workspace as an overlay and start using its capabilities.
+`FogROS2` is actually a ROS meta-package, so you can just fetch it in your workspace, build it, source the workspace as an overlay and start using its capabilities. You can also watch our video tutorial [here](https://www.youtube.com/embed/JlV4DhArb8Q?start=1&end=402). 
 
 #### Install Dependencies
 
@@ -89,7 +89,7 @@ ros2 launch fogros2_examples talker.aws.launch.py
 (*Note: the Dockerfile is cooked for x86_64. If you're using a workstation with an Arm-based architecture (e.g. an M1), run the container with the `docker run -it --platform linux/amd64 --rm --net=host --cap-add=NET_ADMIN fogros2`*.)
 
 ### Native
-Note: These commands must be run from the root of your ROS workspace.
+Note: These commands must be run from the root of your ROS workspace. You can see this in our video tutorial [here.](https://www.youtube.com/embed/JlV4DhArb8Q?start=403)
 ```bash
 source /opt/ros/<your-ros2-distro>/setup.bash
 source install/setup.bash
