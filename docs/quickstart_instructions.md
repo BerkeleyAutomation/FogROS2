@@ -7,7 +7,7 @@ nav_order: 4
 
 Quickstart Instructions
 ===
-This is a quick start guide for installing FogROS 2 (and ROS 2) and its requisites from scratch (e.g., in a VM). New contributors to the project can start here.
+This is a quick start guide for installing FogROS 2 (and ROS 2) and its requisites from scratch (e.g., in a VM). New contributors to the project can start here. You can also watch our video tutorials here: [part 1](https://youtu.be/IfR0JjOytuE) and [part 2](https://youtu.be/tXH0kxx7LqU) 
 1. Install Ubuntu 20.04 or Ubuntu 22.04. See [here](https://ubuntu.com/tutorials/install-ubuntu-desktop#1-overview) for a tutorial. 
 
 2. Upgrade
@@ -17,6 +17,9 @@ sudo apt upgrade
 ```
 
 3. Reboot
+```bash
+reboot
+```
 
 4. Get UTF-8 locale installed
 ```bash
@@ -109,7 +112,11 @@ export CYCLONEDDS_URI=file://$(pwd)/install/fogros2/share/fogros2/configs/cyclon
 ros2 launch fogros2_examples talker.aws.launch.py
 ```
 
-18. You are done. Refer to other relevant pages including  [README](https://github.com/BerkeleyAutomation/FogROS2/blob/main/README.md) for additional information including [Command Line Interface commands](https://berkeleyautomation.github.io/FogROS2/cli), which allow you do a lot with your cloud instances from the command line, and [Docker installation](https://github.com/BerkeleyAutomation/FogROS2#docker) for those who want to use FogROS2 in a Docker environment 
+18. You are done. Refer to other relevant pages including  [README](https://github.com/BerkeleyAutomation/FogROS2/blob/main/README.md) for additional information including [Command Line Interface commands](https://berkeleyautomation.github.io/FogROS2/cli), which allow you do a lot with your cloud instances from the command line, and [Docker installation](https://github.com/BerkeleyAutomation/FogROS2#docker) for those who want to use FogROS2 in a Docker environment.
+
+Next we’ll terminate the demo by typing CTRL-C twice. The first one terminates the robot node, the second one terminates the cloud node.
+
+We can see the cloud computer that FogROS 2 launched for us using the FogROS command-line interface or CLI. “ros2 fog list” shows that we have one running instance with the name XXX. Finally, we terminate the instance so that we are no longer being charged for it by running “ros2 fog delete XXX”. You can verify that it is being deleted and by running “ros2 fog list” again. Observe the “status shutting down” line. After a short while, running ros2 fog list will show nothing, indicating that the instance is terminated and you are no longer being charged.
                                                   
 ```bash
 #To see the name of a FogROS2 instance
