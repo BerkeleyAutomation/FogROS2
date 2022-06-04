@@ -20,6 +20,8 @@
   <author email="nikhiljha@berkeley.edu">Nikhil Jha</author>
   <license>Apache License 2.0</license>
 
+  <depend>ros-humble-fogros2</depend>
+
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
   <test_depend>ament_pep257</test_depend>
