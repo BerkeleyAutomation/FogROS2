@@ -27,6 +27,7 @@
   <depend>python3-scp</depend>
   <depend>python3-paramiko</depend>
   <depend>ros2cli</depend>
+  <depend>rmw_cyclonedds_cpp</depend>
   <depend>awscli</depend>
 
   <test_depend>ament_copyright</test_depend>
