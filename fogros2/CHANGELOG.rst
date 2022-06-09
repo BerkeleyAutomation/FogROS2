@@ -1,6 +1,10 @@
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Changelog for package fogros2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0.1.5 (2022-06-08)
+------------------
+* added dependencies to package.xml to reduce those that are manually downloaded
+
 0.1.4 (2022-05-15)
 ------------------
 * fixed QUICKSTART.md documentation and removed unnecessary dependencies
