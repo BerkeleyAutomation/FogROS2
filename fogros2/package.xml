@@ -27,9 +27,8 @@
   <depend>python3-scp</depend>
   <depend>python3-paramiko</depend>
   <depend>ros2cli</depend>
-  <depend>ros-humble-rmw-cyclonedds-cpp</depend>
+  <depend>rmw-cyclonedds-cpp</depend>
   <depend>awscli</depend>
-  <depend>wireguard</depend>
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
