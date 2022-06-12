@@ -1,0 +1,57 @@
+[tool.poetry]
+name = "fogros2"
+version = "0.1.5"
+description = "A ROS 2 extension for the cloud deployment of computational graphs in a cloud-provider agnostic and security-conscious manner."
+authors = ["Berkeley AutoLAB <autolab@berkeley.edu>"]
+license = "Apache-2.0"
+
+# Poetry
+
+[tool.poetry.dependencies]
+python = "^3.8"
+boto3 = "^1.24.7"
+scp = "^0.14.4"
+wgconfig = "^0.2.2"
+paramiko = "^2.11.0"
+
+[tool.poetry.dev-dependencies]
+black = "^22.3.0"
+mypy = "^0.961"
+types-boto3 = "^1.0.2"
+flake8 = "^4.0.1"
+isort = "^5.10.1"
+pytest = "^7.1.2"
+coverage = "^6.4.1"
+pre-commit = "^2.19.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+# Dev-Dependency Configuration
+
+[tool.isort]
+profile = "black"
+
+[tool.coverage.run]
+source = ["fogros2"]
+branch = true
+
+# ROS
+
+[tool.colcon-poetry-ros.data-files]
+"share/ament_index/resource_index/packages" = ["resource/fogros2"]
+"share/fogros2" = ["package.xml"]
+"share/fogros2/launch" = ["launch/cloud.launch.py"]
+"share/fogros2/configs" = [
+    "configs/cyclonedds.ubuntu.2004.xml",
+    "configs/cyclonedds.ubuntu.2204.xml",
+]
+
+[tool.poetry.plugins."ros2cli.command"]
+"fog" = "fogros2.command.fog:FogCommand"
+
+[tool.poetry.plugins."fogros2.verb"]
+"list" = "fogros2.verb.list:ListVerb"
+"delete" = "fogros2.verb.delete:DeleteVerb"
+"connect" = "fogros2.verb.ssh:SSHVerb"
