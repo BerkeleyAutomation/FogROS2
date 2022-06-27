@@ -134,7 +134,7 @@ ros2 fog delete [name]
 
 Typing CTRL-C kills the local instance (e.g., listener) the first time and then the cloud instance the second time
 ```
-19. Our video tutorials for Docker installation and native installations are include below.
+19. Our video tutorials for Docker installation and a native installation are included below.
 
 Docker:
 <iframe width="560" height="315" src="https://www.youtube.com/embed/oEnmZXojkcI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
