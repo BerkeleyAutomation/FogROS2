@@ -119,7 +119,7 @@ export CYCLONEDDS_URI=file://$(pwd)/install/fogros2/share/fogros2/configs/cyclon
 ros2 launch fogros2_examples talker.aws.launch.py
 ```
 
-18. You are done. Refer to other relevant pages including  [README](https://github.com/BerkeleyAutomation/FogROS2/blob/main/README.md) for additional information including [Command Line Interface commands](https://berkeleyautomation.github.io/FogROS2/cli), which allow you do a lot with your cloud instances from the command line, and [Docker installation](https://github.com/BerkeleyAutomation/FogROS2#docker) for those who want to use FogROS2 in a Docker environment.
+18. You are done. Refer to other relevant github pages including  [README](https://github.com/BerkeleyAutomation/FogROS2/blob/main/README.md) for additional information including [Command Line Interface commands](https://berkeleyautomation.github.io/FogROS2/cli), which allow you do a lot with your cloud instances from the command line, and [Docker installation](https://github.com/BerkeleyAutomation/FogROS2#docker) for those who want to use FogROS2 in a Docker environment.
 
 Next we’ll terminate the demo by typing CTRL-C twice. The first one terminates the robot node, the second one terminates the cloud node.
 
@@ -134,3 +134,12 @@ ros2 fog delete [name]
 
 Typing CTRL-C kills the local instance (e.g., listener) the first time and then the cloud instance the second time
 ```
+19. Our video tutorials for Docker installation and native installations are include below.
+
+Docker:
+<iframe width="560" height="315" src="https://www.youtube.com/embed/oEnmZXojkcI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+Native Installation:
+<iframe width="560" height="315" src="https://www.youtube.com/embed/JlV4DhArb8Q" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+
