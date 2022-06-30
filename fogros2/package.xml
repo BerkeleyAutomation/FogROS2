@@ -29,6 +29,8 @@
   <depend>ros2cli</depend>
   <depend>rmw_cyclonedds_cpp</depend>
   <depend>awscli</depend>
+  <depend>wireguard</depend>
+  <depend>python3-wgconfig-pip</depend>
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>

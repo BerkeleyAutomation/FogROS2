@@ -1,6 +1,10 @@
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Changelog for package fogros2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0.1.6 (2022-06-29)
+------------------
+* added wgconfig and wireguard as dependencies
+
 0.1.5 (2022-06-08)
 ------------------
 * added dependencies to package.xml to reduce those that are manually downloaded
