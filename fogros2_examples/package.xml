@@ -2,7 +2,7 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>fogros2_examples</name>
-  <version>0.1.5</version>
+  <version>0.1.6</version>
   <description>Examples using FogROS2</description>
   <maintainer email="jeffi@berkeley.edu">Jeff Ichnowski</maintainer>
   <maintainer email="kych@berkeley.edu">Kaiyuan (Eric) Chen</maintainer>
