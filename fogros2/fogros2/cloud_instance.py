@@ -129,6 +129,13 @@ class CloudInstance(abc.ABC):
 
     def install_cloud_dependencies(self):
         self.apt_install("wireguard unzip docker.io python3-pip")
+    
+    def do_wireguard_preconfig(self):
+        self.scp.execute_cmd("sudo touch /etc/wireguard/wg0.conf")
+        self.scp.execute_cmd("sudo chmod 770 /etc/wireguard")
+        self.scp.execute_cmd("sudo chmod 770 /etc/wireguard/wg0.conf")
+        self.scp.execute_cmd("sudo chown root:wheel /etc/wireguard/wg0.conf")
+        self.scp.execute_cmd("echo '%wheel ALL = (ALL) NOPASSWD: /usr/bin/wg-quick' | sudo EDITOR='tee -a' visudo")
 
     def install_ros(self):
         # setup sources
