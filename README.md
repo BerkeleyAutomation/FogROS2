@@ -1,6 +1,6 @@
 # FogROS2
 
-[`FogROS2`](https://github.com/BerkeleyAutomation/FogROS2) extends ROS 2 for cloud deployment of computational graphs in a security-conscious manner. It allows researchers to easily and securely deploy ROS abstractions across cloud providers with minimal effort, thus gaining access to additional computing substrates including CPU cores, GPUs, FPGAs, or TPUs, as well as pre-deployed software made available by other researchers. To do so, `FogROS2` extends the ROS 2 launch system, introducing additional syntax to allow roboticists to specify at launch time which components of their architecture will be deployed to the cloud and which components will be deployed on the edge.
+[`FogROS2`](https://github.com/BerkeleyAutomation/FogROS2) extends ROS 2 [[1]](#1) for cloud deployment of computational graphs in a security-conscious manner. It allows researchers to easily and securely deploy ROS abstractions across cloud providers with minimal effort, thus gaining access to additional computing substrates including CPU cores, GPUs, FPGAs, or TPUs, as well as pre-deployed software made available by other researchers. To do so, `FogROS2` extends the ROS 2 launch system, introducing additional syntax to allow roboticists to specify at launch time which components of their architecture will be deployed to the cloud and which components will be deployed on the edge.
 
 
 - [FogROS2](#fogros2)
@@ -162,3 +162,11 @@ ros2 fog delete all
 
 ## Running Examples:
 We have used FogROS for 3 example use-cases (motion planning, grasp planning, and SLAM map building). Please see our [examples repo](https://github.com/BerkeleyAutomation/fogros2-examples) for these and how to run them.
+
+
+## References
+<a id="1">[1]</a> 
+Macenski Steven, Foote Tully, Gerkey Brian, Lalancette Chris, and Woodall William, 
+“Robot Operating System 2: Design, architecture, and uses in the wild,” 
+Science Robotics, vol. 7, no. 66, p. eabm6074, doi: 10.1126/scirobotics.abm6074.
+
