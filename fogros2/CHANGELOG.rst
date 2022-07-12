@@ -1,6 +1,10 @@
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Changelog for package fogros2
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+0.1.7 (2022-07-11)
+------------------
+* temporarily removing awscli as dependency due to regression
+
 0.1.6 (2022-06-29)
 ------------------
 * added wgconfig and wireguard as dependencies
