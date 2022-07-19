@@ -84,6 +84,7 @@ class CloudInstance(abc.ABC):
         self.cloud_service_provider = None
         self.dockers = []
         self.launch_foxglove = launch_foxglove
+        self._username = 'ubuntu'
 
     @abc.abstractmethod
     def create(self):
@@ -104,7 +105,7 @@ class CloudInstance(abc.ABC):
         return info_dict
 
     def connect(self):
-        self.scp = SCPClient(self._ip, self._ssh_key_path)
+        self.scp = SCPClient(self._ip, self._ssh_key_path, username=self._username)
         self.scp.connect()
 
     @property
@@ -173,7 +174,7 @@ class CloudInstance(abc.ABC):
         rosbridge_launch_script = (
             "ssh -o StrictHostKeyChecking=no -i "
             f"{self._ssh_key_path}"
-            " ubuntu@"
+            f" {self._username}@"
             f"{self._ip}"
             f' "source /opt/ros/{self.ros_distro}/setup.bash && '
             'ros2 launch rosbridge_server rosbridge_websocket_launch.xml &"'
@@ -203,8 +204,8 @@ class CloudInstance(abc.ABC):
         make_zip_file(workspace_path, zip_dst)
         self.scp.execute_cmd("echo removing old workspace")
         self.scp.execute_cmd("rm -rf ros_workspace.zip ros2_ws fog_ws")
-        self.scp.send_file(f"{zip_dst}.zip", "/home/ubuntu/")
-        self.scp.execute_cmd("unzip -q /home/ubuntu/ros_workspace.zip")
+        self.scp.send_file(f"{zip_dst}.zip", f"/home/{self._username}/")
+        self.scp.execute_cmd(f"unzip -q /home/{self._username}/ros_workspace.zip")
         self.scp.execute_cmd("echo successfully extracted new workspace")
 
     def push_to_cloud_nodes(self):
@@ -223,7 +224,7 @@ class CloudInstance(abc.ABC):
 
     def configure_DDS(self):
         # configure DDS
-        self.cyclone_builder = CycloneConfigBuilder(["10.0.0.1"])
+        self.cyclone_builder = CycloneConfigBuilder(["10.0.0.1"], username=self._username)
         self.cyclone_builder.generate_config_file()
         self.scp.send_file("/tmp/cyclonedds.xml", "~/cyclonedds.xml")
 
@@ -231,9 +232,9 @@ class CloudInstance(abc.ABC):
         cmd_builder = BashBuilder()
         cmd_builder.append(f"source /opt/ros/{self.ros_distro}/setup.bash")
         cmd_builder.append(
-            "cd /home/ubuntu/fog_ws && colcon build --cmake-clean-cache"
+            f"cd /home/{self._username}/fog_ws && colcon build --cmake-clean-cache"
         )
-        cmd_builder.append(". /home/ubuntu/fog_ws/install/setup.bash")
+        cmd_builder.append(f". /home/{self._username}/fog_ws/install/setup.bash")
         cmd_builder.append(self.cyclone_builder.env_cmd)
         ros_domain_id = os.environ.get("ROS_DOMAIN_ID")
         if not ros_domain_id:
