@@ -162,6 +162,8 @@ class CloudInstance(abc.ABC):
         # install ros2 packages
         self.apt_install(f"ros-{self.ros_distro}-desktop")
 
+        self.apt_install('python3-colcon-common-extensions')
+
         # source environment
         self.scp.execute_cmd(f"source /opt/ros/{self.ros_distro}/setup.bash")
 

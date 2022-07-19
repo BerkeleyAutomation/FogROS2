@@ -42,27 +42,26 @@ from .cloud_instance import CloudInstance
 
 
 class GCPCloudInstance(CloudInstance):
-    """GCP Implementation of CloudInstance."""
+    """Kubernetes Implementation of CloudInstance."""
 
     def __init__(
             self,
             project_id,
-            ami_image='projects/ubuntu-os-cloud/global/images/ubuntu-2204-jammy-v20220712a',
+            container_image='ubuntu',
             zone="us-central1-a",
-            machine_type="e2-medium",
-            disk_size=10,
+            mCpu=500,
+            mB=200,
             **kwargs,
     ):
         super().__init__(**kwargs)
-        self.cloud_service_provider = "GCP"
+        self.cloud_service_provider = "Kubernetes"
 
         id_ = str(uuid.uuid4())[0:8]
         self._name = f'fog-{id_}-{self._name}'
 
         self.zone = zone
         self.type = machine_type
-        self.compute_instance_disk_size = disk_size  # GB
-        self.gcp_ami_image = ami_image
+        self.container_image = container_image
 
         self._working_dir = os.path.join(self._working_dir_base, self._name)
         os.makedirs(self._working_dir, exist_ok=True)
@@ -98,41 +97,6 @@ class GCPCloudInstance(CloudInstance):
         return info_dict
 
     def create_compute_engine_instance(self):
-        os.system(f'gcloud config set project {self._project_id}')
-
-        ip = subprocess.check_output(f'gcloud compute instances create {self._name} '
-                                     f'--project={self._project_id} --zone={self.zone} --machine-type={self.type} '
-                                     '--network-interface=network-tier=PREMIUM,subnet=default '
-                                     '--maintenance-policy=MIGRATE --provisioning-model=STANDARD '
-                                     '--scopes=https://www.googleapis.com/auth/devstorage.read_only,'
-                                     'https://www.googleapis.com/auth/logging.write,'
-                                     'https://www.googleapis.com/auth/monitoring.write,'
-                                     'https://www.googleapis.com/auth/servicecontrol,'
-                                     'https://www.googleapis.com/auth/service.management.readonly,'
-                                     'https://www.googleapis.com/auth/trace.append '
-                                     '--create-disk=auto-delete=yes,'
-                                     'boot=yes,'
-                                     f'device-name={self._name},'
-                                     f'image={self.gcp_ami_image},'
-                                     'mode=rw,'
-                                     f'size={self.compute_instance_disk_size},'
-                                     f'type=projects/{self._project_id}/zones/{self.zone}/diskTypes/pd-balanced '
-                                     '--no-shielded-secure-boot '
-                                     '--shielded-vtpm '
-                                     '--shielded-integrity-monitoring '
-                                     '--reservation-affinity=any | '
-                                     "awk '{print $5}' | "
-                                     "sed -n 2p", shell=True).decode().strip()
-
-        # Verifies the response was an ip
-        if len(ip.split('.')) != 4:
-            raise Exception(f'Error creating instance: {ip}')
-
-        self._ip = ip
-
-        # Generate SSH keys
-        os.system(f"printf '\n\n' | gcloud compute ssh {self._name} --zone {self.zone}")
-
         user = subprocess.check_output('whoami').decode().strip()
 
         # Username
@@ -146,3 +110,17 @@ class GCPCloudInstance(CloudInstance):
             f"Created {self.type} instance named {self._name} "
             f"with id {self._name} and public IP address {self._ip}"
         )
+
+        command = 'useradd "$USERNAME" -m -s /bin/bash && ' \
+                  'mkdir "/home/$USERNAME/.ssh" && ' \
+                  'echo "$SSH_PUBKEY" >> "/home/$USERNAME/.ssh/authorized_keys" && ' \
+                  'chmod -R u=rwX "/home/$USERNAME/.ssh" && ' \
+                  'chown -R "$USERNAME:$USERNAME" "/home/$USERNAME/.ssh" && ' \
+                  'echo "$USERNAME ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/shade && ' \
+                  'service ssh restart && ' \
+                  'wg-quick the vpn configuration && ' \
+                  'echo "$VPN_CONFIG" | base64 --decode > /home/app/vpn.conf && ' \
+                  'cp /home/app/vpn.conf /etc/wireguard/wg0.conf && ' \
+                  'chmod 600 /etc/wireguard/wg0.conf && ' \
+                  'sudo wg-quick up wg0 && ' \
+                  'sleep infinity'
