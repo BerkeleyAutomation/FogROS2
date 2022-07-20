@@ -35,10 +35,11 @@ import json
 import os
 
 import subprocess
-import time
 import uuid
 
 from .cloud_instance import CloudInstance
+
+from .util import extract_bash_column
 
 
 class GCPCloudInstance(CloudInstance):
@@ -100,29 +101,30 @@ class GCPCloudInstance(CloudInstance):
     def create_compute_engine_instance(self):
         os.system(f'gcloud config set project {self._project_id}')
 
-        ip = subprocess.check_output(f'gcloud compute instances create {self._name} '
-                                     f'--project={self._project_id} --zone={self.zone} --machine-type={self.type} '
-                                     '--network-interface=network-tier=PREMIUM,subnet=default '
-                                     '--maintenance-policy=MIGRATE --provisioning-model=STANDARD '
-                                     '--scopes=https://www.googleapis.com/auth/devstorage.read_only,'
-                                     'https://www.googleapis.com/auth/logging.write,'
-                                     'https://www.googleapis.com/auth/monitoring.write,'
-                                     'https://www.googleapis.com/auth/servicecontrol,'
-                                     'https://www.googleapis.com/auth/service.management.readonly,'
-                                     'https://www.googleapis.com/auth/trace.append '
-                                     '--create-disk=auto-delete=yes,'
-                                     'boot=yes,'
-                                     f'device-name={self._name},'
-                                     f'image={self.gcp_ami_image},'
-                                     'mode=rw,'
-                                     f'size={self.compute_instance_disk_size},'
-                                     f'type=projects/{self._project_id}/zones/{self.zone}/diskTypes/pd-balanced '
-                                     '--no-shielded-secure-boot '
-                                     '--shielded-vtpm '
-                                     '--shielded-integrity-monitoring '
-                                     '--reservation-affinity=any | '
-                                     "awk '{print $5}' | "
-                                     "sed -n 2p", shell=True).decode().strip()
+        result = subprocess.check_output(f'gcloud compute instances create {self._name} '
+                                         f'--project={self._project_id} --zone={self.zone} --machine-type={self.type} '
+                                         '--network-interface=network-tier=PREMIUM,subnet=default '
+                                         '--maintenance-policy=MIGRATE --provisioning-model=STANDARD '
+                                         '--scopes=https://www.googleapis.com/auth/devstorage.read_only,'
+                                         'https://www.googleapis.com/auth/logging.write,'
+                                         'https://www.googleapis.com/auth/monitoring.write,'
+                                         'https://www.googleapis.com/auth/servicecontrol,'
+                                         'https://www.googleapis.com/auth/service.management.readonly,'
+                                         'https://www.googleapis.com/auth/trace.append '
+                                         '--create-disk=auto-delete=yes,'
+                                         'boot=yes,'
+                                         f'device-name={self._name},'
+                                         f'image={self.gcp_ami_image},'
+                                         'mode=rw,'
+                                         f'size={self.compute_instance_disk_size},'
+                                         f'type=projects/{self._project_id}/zones/{self.zone}/diskTypes/pd-balanced '
+                                         '--no-shielded-secure-boot '
+                                         '--shielded-vtpm '
+                                         '--shielded-integrity-monitoring '
+                                         '--reservation-affinity=any', shell=True).decode()
+
+        # Grab external IP
+        ip = extract_bash_column(result, 'EXTERNAL_IP')
 
         # Verifies the response was an ip
         if len(ip.split('.')) != 4:
@@ -133,7 +135,7 @@ class GCPCloudInstance(CloudInstance):
         # Generate SSH keys
         os.system(f"printf '\n\n' | gcloud compute ssh {self._name} --zone {self.zone}")
 
-        user = subprocess.check_output('whoami').decode().strip()
+        user = subprocess.check_output('whoami', shell=True).decode().strip()
 
         # Username
         self._username = (open(f'/home/{user}/.ssh/google_compute_engine.pub').
