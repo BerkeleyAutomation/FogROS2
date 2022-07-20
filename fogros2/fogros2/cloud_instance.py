@@ -72,6 +72,7 @@ class CloudInstance(abc.ABC):
         self.cyclone_builder = None
         self.scp = None
         self._ip = None
+        self._vpn_ip = None
         self.ros_workspace = ros_workspace
         self.ros_distro = os.getenv("ROS_DISTRO")
         self.logger.debug(f"Using ROS workspace: {self.ros_workspace}")
@@ -111,6 +112,11 @@ class CloudInstance(abc.ABC):
     @property
     def ip(self):
         return self._ip
+
+    @property
+    def vpn_ip(self):
+        # Use this when the VPN IP is not None.
+        return self._vpn_ip
 
     @property
     def is_created(self):

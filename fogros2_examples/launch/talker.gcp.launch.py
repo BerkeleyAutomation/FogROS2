@@ -37,7 +37,7 @@ import fogros2
 
 
 def generate_launch_description():
-    """Talker example that launches the listener on AWS."""
+    """Talker example that launches the listener on Google Compute Engine."""
     ld = fogros2.FogROSLaunchDescription()
     machine1 = fogros2.GCPCloudInstance(
         project_id='shade-prod'
