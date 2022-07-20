@@ -45,11 +45,16 @@ CEND = "\033[0m"
 
 
 class SCPClient:
-    def __init__(self, ip, ssh_key_path):
+    def __init__(self, ip, ssh_key_path, username=None):
         self.ip = ip
         self.ssh_key = paramiko.RSAKey.from_private_key_file(ssh_key_path)
         self.ssh_client = paramiko.SSHClient()
         self.logger = logging.get_logger(__name__)
+
+        if username is None:
+            self.username = 'ubuntu'
+        else:
+            self.username = username
 
     def connect(self):
         self.ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -58,7 +63,7 @@ class SCPClient:
             try:
                 self.ssh_client.connect(
                     hostname=self.ip,
-                    username="ubuntu",
+                    username=self.username,
                     pkey=self.ssh_key,
                     look_for_keys=False,
                 )
