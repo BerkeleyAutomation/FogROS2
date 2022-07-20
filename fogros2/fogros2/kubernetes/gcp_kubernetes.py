@@ -51,8 +51,8 @@ class GCPKubeInstance(CloudInstance):
             self,
             container_image='ubuntu',
             zone="us-central1-a",
-            mcpu=500,
-            mb=200,
+            mcpu=0,
+            mb=0,
             **kwargs,
     ):
         super().__init__(**kwargs)
@@ -104,20 +104,21 @@ class GCPKubeInstance(CloudInstance):
         pod_config: dict = json.loads(open(f'{kube_wd}/pod.json').read())
 
         # Configure the pod
-        pod_config['spec']['containers'][0].image = self.container_image
-        pod_config['spec']['containers'][0].name = self._name
+        pod_config['spec']['containers'][0]["image"] = self.container_image
+        pod_config['spec']['containers'][0]["name"] = self._name
         pod_config['spec']['containers'][0]['resources']['requests']['memory'] = str(self._mmb) + 'Mi'
         pod_config['spec']['containers'][0]['resources']['requests']['cpu'] = str(self._mcpu) + "m"
 
         pod_config['spec']['containers'][0]['resources']['limits']['memory'] = str(self._mmb) + "Mi"
         pod_config['spec']['containers'][0]['resources']['limits']['cpu'] = str(self._mcpu) + "m"
 
-        pod_config['spec']['containers'][0].env.append({
+        pod_config['spec']['containers'][0]["env"].append({
             'name': "SSH_PUBKEY",
-            'value': open(pub_key_path).read()
+            'value': open(pub_key_path).read().strip()
         })
 
         pod_config['metadata'] = {
+            'name': self._name,
             'labels': {
                 'app': self._name
             }
@@ -125,18 +126,18 @@ class GCPKubeInstance(CloudInstance):
 
         # Configure SSH
         ssh_config['metadata']['name'] = f'{self._name}-ssh'
-        ssh_config['selector']['app'] = self._name
+        ssh_config['spec']['selector']['app'] = self._name
 
         # Configure VPN
         vpn_config['metadata']['name'] = f'{self._name}-vpn'
-        vpn_config['selector']['app'] = self._name
+        vpn_config['spec']['selector']['app'] = self._name
 
         ssh_tempfile = tempfile.NamedTemporaryFile()
-        ssh_tempfile.write(json.dumps(ssh_config))
+        open(ssh_tempfile.name, 'w').write(json.dumps(ssh_config))
         vpn_tempfile = tempfile.NamedTemporaryFile()
-        vpn_tempfile.write(json.dumps(vpn_config))
+        open(vpn_tempfile.name, 'w').write(json.dumps(vpn_config))
         pod_tempfile = tempfile.NamedTemporaryFile()
-        pod_tempfile.write(json.dumps(pod_config))
+        open(pod_tempfile.name, 'w').write(json.dumps(pod_config))
 
         print("Creating SSH...")
         os.system(f"kubectl apply -f {ssh_tempfile.name}")
@@ -160,22 +161,9 @@ class GCPKubeInstance(CloudInstance):
                     subprocess.check_output(f'kubectl get service {ssh_config["metadata"]["name"]}', shell=True). \
                             decode():
                 print("Some services still creating...")
-                time.sleep(1)
+                time.sleep(2)
             else:
                 break
-
-        # Setup ssh
-        command = f'useradd "{self._username}" -m -s /bin/bash && ' \
-                  f'mkdir "/home/{self._username}/.ssh" && ' \
-                  f'echo "$SSH_PUBKEY" >> "/home/{self._username}/.ssh/authorized_keys" && ' \
-                  f'chmod -R u=rwX "/home/{self._username}/.ssh" && ' \
-                  f'chown -R "{self._username}:{self._username}" "/home/{self._username}/.ssh" && ' \
-                  f'echo "{self._username} ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/shade && ' \
-                  f'service ssh restart && ' \
-                  'sleep infinity'
-
-        print("Enabling SSH")
-        subprocess.check_output(f'kubectl exec strategy -- /bin/bash -c "{command}"', shell=True)
 
         print("Extracting IPs")
         ssh_data = subprocess.check_output(f'kubectl get service {ssh_config["metadata"]["name"]}', shell=True).decode()
@@ -188,17 +176,19 @@ class GCPKubeInstance(CloudInstance):
         user = subprocess.check_output('whoami', shell=True).decode().strip()
         kube_wd = f'/home/{user}/fog_ws/src/FogROS2/fogros2/fogros2/kubernetes'
 
-        self._ssh_key = f'/home/{user}/.ssh/{self._name}'
-        os.system(f"ssh-keygen -f {self._ssh_key} -q -N ''")
+        self._ssh_key_path = f'/home/{user}/.ssh/{self._name}'
+        os.system(f"ssh-keygen -f {self._ssh_key_path} -q -N ''")
 
-        ssh_ip, vpn_ip = self.create_service_pair(kube_wd, f'{self._ssh_key}.pub')
+        ssh_ip, vpn_ip = self.create_service_pair(kube_wd, f'{self._ssh_key_path}.pub')
 
         self._ip = ssh_ip
         self._vpn_ip = vpn_ip
+
+        self._username = 'ubuntu'
+
+        self._is_created = True
 
         self.logger.info(
             f"Created {self.type} instance named {self._name} "
             f"with id {self._name} and public IP address {self._ip} with VPN ip {self._vpn_ip}"
         )
-
-        self._is_created = True

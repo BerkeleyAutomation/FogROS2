@@ -132,7 +132,7 @@ class CloudInstance(abc.ABC):
         )
 
     def pip_install(self, args):
-        self.scp.execute_cmd(f"sudo pip3 install {args}")
+        self.scp.execute_cmd(f"python3 -m pip install {args}")
 
     def install_cloud_dependencies(self):
         self.apt_install("wireguard unzip docker.io python3-pip")
@@ -168,6 +168,7 @@ class CloudInstance(abc.ABC):
         # install ros2 packages
         self.apt_install(f"ros-{self.ros_distro}-desktop")
 
+        # Installing all deps because cloud launch seems to rely on them
         self.apt_install('python3-colcon-common-extensions')
 
         # source environment
