@@ -49,7 +49,7 @@ from .util import (
 )
 
 
-class regionCloudInstance(abc.ABC):
+class CloudInstance(abc.ABC):
     """Abstract Base Class for Cloud Instances (e.g., AWS, GCP)."""
 
     def __init__(
