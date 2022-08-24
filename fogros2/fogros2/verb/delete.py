@@ -50,11 +50,11 @@ class DeleteVerb(VerbExtension):
             help="""FogROS instance name to delete, or 'all' to delete
                     all FogROS instances""",
         )
-        # parser.add_argument(
-        #     "--region",
-        #     nargs="*",
-        #     help="Set AWS region (overrides config/env settings)",
-        # ) -- the region should already be set up so wouldbe bw able to change it
+        parser.add_argument(
+            "--region",
+            nargs="*",
+            help="Set AWS region (overrides config/env settings)",
+        )
         parser.add_argument(
             "--dry-run",
             action="store_true",
