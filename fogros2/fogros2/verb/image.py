@@ -19,6 +19,11 @@ class ImageVerb(VerbExtension):
                  "'FogROS2KEY-'",
         )
         parser.add_argument(
+            "--region",
+            nargs="*",
+            help="Set AWS region (overrides config/env settings)",
+        )
+        parser.add_argument(
             "--dry-run",
             action="store_true",
             help="Show what would happen, but do not execute",
@@ -31,7 +36,7 @@ class ImageVerb(VerbExtension):
             raise RuntimeError(
                 "AWS is not configured! Please run `aws configure` first."
             )
-
+        print("Instance name: ", name)
         ec2_instances = client.describe_instances(
             Filters=[
                 {
