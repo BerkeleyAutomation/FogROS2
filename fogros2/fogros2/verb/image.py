@@ -87,33 +87,32 @@ class ImageVerb(VerbExtension):
 
         return shutdown_count
 
-    def create_ami(self, client, instances, dry_run):
+    def create_ami(self, client, ec2_instances, dry_run):
         image_count = 0
-        for ec2_instances in instances:
-            for res in ec2_instances["Reservations"]:
-                for inst in res["Instances"]:
-                    tag_map = (
-                        {t["Key"]: t["Value"] for t in inst["Tags"]}
-                        if "Tags" in inst
-                        else {}
-                    )
-                    print(
-                        f"Converting {tag_map.get('FogROS2-Name', '(unknown)')} "
-                        f"{inst['InstanceId']} to AMI."
-                    )
-                    name = tag_map["FogROS2-Name"]
-                    key_name = inst["KeyName"]
-                    inst_id = inst['InstanceId']
+        for res in ec2_instances["Reservations"]:
+            for inst in res["Instances"]:
+                tag_map = (
+                    {t["Key"]: t["Value"] for t in inst["Tags"]}
+                    if "Tags" in inst
+                    else {}
+                )
+                print(
+                    f"Converting {tag_map.get('FogROS2-Name', '(unknown)')} "
+                    f"{inst['InstanceId']} to AMI."
+                )
+                # name = tag_map["FogROS2-Name"]
+                key_name = inst["KeyName"]
+                inst_id = inst['InstanceId']
 
-                    if not dry_run:
-                        response = client.create_image(inst_id, key_name)
-                        if response["ResponseMetadata"]["HTTPStatusCode"] != 200:
-                            raise RuntimeError(
-                                f"Could not create image for {inst['KeyName']}!"
-                            )
+                if not dry_run:
+                    response = client.create_image(inst_id, key_name)
+                    if response["ResponseMetadata"]["HTTPStatusCode"] != 200:
+                        raise RuntimeError(
+                            f"Could not create image for {inst['KeyName']}!"
+                        )
 
-                    print("    done.")
-                    image_count += 1
+                print("    done.")
+                image_count += 1
 
         return image_count
 
@@ -161,17 +160,17 @@ class ImageVerb(VerbExtension):
 
         if len(regions) == 1:
             image_count = self.create_ami(
-                *self.query_region(regions[0], args), args.dry_run
+                 *self.query_region(regions[0], args.name),args.dry_run
             )
             delete_count = self.delete_instances(
-                *self.query_region(regions[0], args), args.dry_run
+                *self.query_region(regions[0], args.name), args.dry_run
             )
         else:
             from concurrent.futures import ThreadPoolExecutor
 
             with ThreadPoolExecutor(max_workers=len(regions)) as executor:
                 futures = [
-                    executor.submit(self.query_region, r, args)
+                    executor.submit(self.query_region, r, args.name)
                     for r in regions
                 ]
                 image_count = sum(
