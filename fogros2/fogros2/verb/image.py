@@ -157,9 +157,9 @@ class ImageVerb(VerbExtension):
             regions = [r["RegionName"] for r in response["Regions"]]
 
         if len(regions) == 1:
-            image_count = self.create_ami(
-                 *self.query_region(regions[0], args.name),args.dry_run
-            )
+            # image_count = self.create_ami(
+            #      *self.query_region(regions[0], args.name),args.dry_run
+            # )
             delete_count = self.delete_instances(
                 *self.query_region(regions[0], args.name), args.dry_run
             )
@@ -171,20 +171,20 @@ class ImageVerb(VerbExtension):
                     executor.submit(self.query_region, r, args.name)
                     for r in regions
                 ]
-                image_count = sum(
-                    [
-                        self.create_ami(*f.result(), args.dry_run)
-                        for f in futures
-                    ]
-                )
+                # image_count = sum(
+                #     [
+                #         self.create_ami(*f.result(), args.dry_run)
+                #         for f in futures
+                #     ]
+                # )
                 delete_count = sum(
                     [
                         self.delete_instances(*f.result(), args.dry_run)
                         for f in futures
                     ]
                 )
-        if image_count == 0:
-            print("No image was created")
+        # if image_count == 0:
+        #     print("No image was created")
         if delete_count == 0:
             print("No instance was deleted")
 
