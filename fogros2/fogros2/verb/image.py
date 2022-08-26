@@ -83,7 +83,6 @@ class ImageVerb(VerbExtension):
                             "Could not terminate instance"
                             f" {inst['InstanceId']}!"
                         )
-                print(f"    deleting key pair {inst['KeyName']}")
 
         return shutdown_count
 
@@ -100,7 +99,7 @@ class ImageVerb(VerbExtension):
                     f"Converting {tag_map.get('FogROS2-Name', '(unknown)')} "
                     f"{inst['InstanceId']} to AMI."
                 )
-                name = tag_map["FogROS2-Name"]
+                name = tag_map["FogROS2-Name"] + "-image"
                 inst_id = inst['InstanceId']
 
                 if not dry_run:
@@ -110,7 +109,7 @@ class ImageVerb(VerbExtension):
                             f"Could not create image for {inst['KeyName']}!"
                         )
 
-                print("    done.")
+                print("done.")
                 image_count += 1
 
         return image_count
@@ -143,7 +142,7 @@ class ImageVerb(VerbExtension):
                         print(f"    removing instance data {inst_dir}")
                         if not dry_run:
                             shutil.rmtree(inst_dir)
-                print("    done.")
+                print("done.")
                 delete_count += 1
 
         return delete_count
