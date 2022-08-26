@@ -100,12 +100,11 @@ class ImageVerb(VerbExtension):
                     f"Converting {tag_map.get('FogROS2-Name', '(unknown)')} "
                     f"{inst['InstanceId']} to AMI."
                 )
-                # name = tag_map["FogROS2-Name"]
-                key_name = inst["KeyName"]
+                name = tag_map["FogROS2-Name"]
                 inst_id = inst['InstanceId']
 
                 if not dry_run:
-                    response = client.create_image(inst_id, key_name)
+                    response = client.create_image(InstanceId=inst_id, Name=name)
                     if response["ResponseMetadata"]["HTTPStatusCode"] != 200:
                         raise RuntimeError(
                             f"Could not create image for {inst['KeyName']}!"
@@ -116,7 +115,7 @@ class ImageVerb(VerbExtension):
 
         return image_count
 
-    def del_instance(self, client, ec2_instances, dry_run):
+    def delete_instances(self, client, ec2_instances, dry_run):
         delete_count = 0
         for res in ec2_instances["Reservations"]:
             for inst in res["Instances"]:
