@@ -157,11 +157,11 @@ class ImageVerb(VerbExtension):
             regions = [r["RegionName"] for r in response["Regions"]]
 
         if len(regions) == 1:
-            shutdown_count = self.create_ami(
+            shutdown_count = self.shutdown(
                 *self.query_region(regions[0], args.name), args.dry_run
             )
             image_count = self.create_ami(
-                 *self.query_region(regions[0], args.name), args.dry_run
+                *self.query_region(regions[0], args.name), args.dry_run
             )
             delete_count = self.delete_instances(
                 *self.query_region(regions[0], args.name), args.dry_run
