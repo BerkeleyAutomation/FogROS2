@@ -12,7 +12,7 @@ class ImageVerb(VerbExtension):
 
     def add_arguments(self, parser, cli_name):
         parser.add_argument(
-            "instance name",
+            "name",
             type=str,
             nargs="*",
             help="Set instance name. Can be found when running 'ros2 fog list' command next to ssh_key after "
@@ -157,9 +157,12 @@ class ImageVerb(VerbExtension):
             regions = [r["RegionName"] for r in response["Regions"]]
 
         if len(regions) == 1:
-            # image_count = self.create_ami(
-            #      *self.query_region(regions[0], args.name),args.dry_run
-            # )
+            shutdown_count = self.create_ami(
+                *self.query_region(regions[0], args.name), args.dry_run
+            )
+            image_count = self.create_ami(
+                 *self.query_region(regions[0], args.name), args.dry_run
+            )
             delete_count = self.delete_instances(
                 *self.query_region(regions[0], args.name), args.dry_run
             )
@@ -171,20 +174,28 @@ class ImageVerb(VerbExtension):
                     executor.submit(self.query_region, r, args.name)
                     for r in regions
                 ]
-                # image_count = sum(
-                #     [
-                #         self.create_ami(*f.result(), args.dry_run)
-                #         for f in futures
-                #     ]
-                # )
+                shutdown_count = sum(
+                    [
+                        self.shutdown(*f.result(), args.dry_run)
+                        for f in futures
+                    ]
+                )
+                image_count = sum(
+                    [
+                        self.create_ami(*f.result(), args.dry_run)
+                        for f in futures
+                    ]
+                )
                 delete_count = sum(
                     [
                         self.delete_instances(*f.result(), args.dry_run)
                         for f in futures
                     ]
                 )
-        # if image_count == 0:
-        #     print("No image was created")
+        if shutdown_count == 0:
+            print("No instance was shutdown")
+        if image_count == 0:
+            print("No image was created")
         if delete_count == 0:
             print("No instance was deleted")
 
