@@ -83,6 +83,8 @@ class ImageVerb(VerbExtension):
                             "Could not terminate instance"
                             f" {inst['InstanceId']}!"
                         )
+                print("done.")
+                shutdown_count += 1
 
         return shutdown_count
 
