@@ -53,7 +53,7 @@ class ImageVerb(VerbExtension):
                 "check list to be sure name is correct!"
             )
 
-        return ec2_instances
+        return [client, ec2_instances]
 
     def shutdown(self, client, ec2_instances, dry_run):
         shutdown_count = 0
@@ -157,12 +157,13 @@ class ImageVerb(VerbExtension):
             client = boto3.client("ec2")
             response = client.describe_regions()
             regions = [r["RegionName"] for r in response["Regions"]]
+    
 
         if len(regions) == 1:
-            shutdown_count = self.shutdown(
+            image_count = self.create_ami(
                 *self.query_region(regions[0], args.name), args.dry_run
             )
-            image_count = self.create_ami(
+            shutdown_count = self.shutdown(
                 *self.query_region(regions[0], args.name), args.dry_run
             )
             delete_count = self.delete_instances(
@@ -176,15 +177,15 @@ class ImageVerb(VerbExtension):
                     executor.submit(self.query_region, r, args.name)
                     for r in regions
                 ]
-                shutdown_count = sum(
-                    [
-                        self.shutdown(*f.result(), args.dry_run)
-                        for f in futures
-                    ]
-                )
                 image_count = sum(
                     [
                         self.create_ami(*f.result(), args.dry_run)
+                        for f in futures
+                    ]
+                )
+                shutdown_count = sum(
+                    [
+                        self.shutdown(*f.result(), args.dry_run)
                         for f in futures
                     ]
                 )
@@ -194,10 +195,10 @@ class ImageVerb(VerbExtension):
                         for f in futures
                     ]
                 )
-        if shutdown_count == 0:
-            print("No instance was shutdown")
         if image_count == 0:
             print("No image was created")
+        if shutdown_count == 0:
+            print("No instance was shutdown")
         if delete_count == 0:
             print("No instance was deleted")
 
