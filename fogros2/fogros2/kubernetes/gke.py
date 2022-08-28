@@ -31,26 +31,16 @@
 # PROVIDED HEREUNDER IS PROVIDED "AS IS". REGENTS HAS NO OBLIGATION TO PROVIDE
 # MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
-from launch_ros.actions import Node
-
-import fogros2
+from .generic import KubeInstance
 
 
-def generate_launch_description():
-    """Talker example that launches the listener on GCP Kube."""
-    ld = fogros2.FogROSLaunchDescription()
-    machine1 = fogros2.KubeInstance()
+class GCPKubeInstance(KubeInstance):
+    """Kubernetes on GCP CloudInstance"""
 
-    listener_node = Node(
-        package="fogros2_examples", executable="listener", output="screen"
-    )
-
-    talker_node = fogros2.CloudNode(
-        package="fogros2_examples",
-        executable="talker",
-        output="screen",
-        machine=machine1,
-    )
-    ld.add_action(talker_node)
-    ld.add_action(listener_node)
-    return ld
+    # TODO: Use this class to provide GKE specific functionality or fixes.
+    def __init__(
+        self,
+        **kwargs,
+    ):
+        self.cloud_service_provider = "GKE"
+        super().__init__(**kwargs)

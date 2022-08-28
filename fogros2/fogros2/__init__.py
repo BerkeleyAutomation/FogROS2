@@ -33,6 +33,7 @@
 
 from .aws_cloud_instance import AWSCloudInstance  # noqa: F401
 from .gcp_cloud_instance import GCPCloudInstance
-from .kubernetes.gcp_kubernetes import GCPKubeInstance
+from .kubernetes.gke import GCPKubeInstance
+from .kubernetes.generic import KubeInstance
 from .cloud_node import CloudNode  # noqa: F401
 from .launch_description import FogROSLaunchDescription  # noqa: F401
