@@ -128,6 +128,7 @@ class CloudInstance(abc.ABC):
         self.scp.execute_cmd(f"sudo pip3 install {args}")
 
     def install_cloud_dependencies(self):
+        self.scp.execute_cmd("sudo apt update")
         self.apt_install("wireguard unzip docker.io python3-pip")
 
     def install_ros(self):
@@ -159,7 +160,7 @@ class CloudInstance(abc.ABC):
         self.scp.execute_cmd("export LANG=en_US.UTF-8")
 
         # install ros2 packages
-        self.apt_install(f"ros-{self.ros_distro}-desktop")
+        # self.apt_install(f"ros-{self.ros_distro}-desktop")
 
         # source environment
         self.scp.execute_cmd(f"source /opt/ros/{self.ros_distro}/setup.bash")

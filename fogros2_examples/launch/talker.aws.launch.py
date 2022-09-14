@@ -34,7 +34,7 @@
 from launch_ros.actions import Node
 
 import fogros2
-
+import time
 
 def ami_image():
     # An AMI is an Amazon Web Services virtual machine image with a
@@ -53,12 +53,21 @@ def ami_image():
 
     raise ValueError(f"No AMI for {ubuntu_release}")
 
+def generic_ubuntu_ami():
+    return {
+        # "us-west-1": { "ami_image": "ami-01154c8b2e9a14885" },
+        # "us-west-2": { "ami_image": "ami-0ddf424f81ddb0720" },
+        "us-east-1": { "ami_image": "ami-08d4ac5b634553e16" },
+        # "us-east-2": { "ami_image": "ami-0960ab670c8bb45f3" },
+    }
 
 def generate_launch_description():
+    start = time.time()
+    print("=========================================================================================")
     """Talker example that launches the listener on AWS."""
     ld = fogros2.FogROSLaunchDescription()
     machine1 = fogros2.AWSCloudInstance(
-        region="us-west-1", ec2_instance_type="t2.micro", ami_image=ami_image()
+        ec2_instance_type="t2.micro", regions=generic_ubuntu_ami()
     )
 
     listener_node = Node(
@@ -73,4 +82,7 @@ def generate_launch_description():
     )
     ld.add_action(talker_node)
     ld.add_action(listener_node)
+    print("=========================================================================================")
+    end = time.time()
+    print(end-start)
     return ld
