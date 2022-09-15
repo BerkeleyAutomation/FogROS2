@@ -35,6 +35,7 @@ import json
 import os
 import requests
 from math import radians, cos, sin, asin, sqrt
+from ping3 import ping
 
 import boto3
 from botocore.exceptions import ClientError
@@ -155,13 +156,24 @@ class AWSCloudInstance(CloudInstance):
         self.generate_key_pair()
         self.create_ec2_instance()
         self.info(flush_to_disk=True)
-        self.connect()
-        self.install_ros()
-        self.install_cloud_dependencies()
-        self.install_colcon()
-        self.push_ros_workspace()
-        self.info(flush_to_disk=True)
-        self._is_created = True
+        self.test_latency()
+        # self.connect()
+        # self.install_ros()
+        # self.install_cloud_dependencies()
+        # self.install_colcon()
+        # self.push_ros_workspace()
+        # self.info(flush_to_disk=True)
+        # self._is_created = True
+
+    def test_latency(self):
+        ping_sum = 0
+        count = 0
+        while count < 100:
+            latency = ping(self._ip)
+            if latency:
+                ping_sum += latency
+                count += 1
+        print(ping_sum / count)
 
     def info(self, flush_to_disk=True):
         info_dict = super().info(flush_to_disk)
