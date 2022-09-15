@@ -54,9 +54,9 @@ def ami_image():
 
 def generic_ubuntu_ami():
     return {
-        # "us-west-1": { "ami_image": "ami-01154c8b2e9a14885" },
-        # "us-west-2": { "ami_image": "ami-0ddf424f81ddb0720" },
-        # "us-east-1": { "ami_image": "ami-08d4ac5b634553e16" },
+        "us-west-1": { "ami_image": "ami-01154c8b2e9a14885" },
+        "us-west-2": { "ami_image": "ami-0ddf424f81ddb0720" },
+        "us-east-1": { "ami_image": "ami-08d4ac5b634553e16" },
         "us-east-2": { "ami_image": "ami-0960ab670c8bb45f3" },
     }
 

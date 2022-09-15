@@ -135,9 +135,9 @@ class AWSCloudInstance(CloudInstance):
             "sa-east-1": (-23.5505, -46.6333),
         }
         ip = json.loads(requests.get("https://ip.seeip.org/jsonip?").text)["ip"]
-        response = requests.get("https://geolocation-db.com/json/" + ip + "&position=true").json()
-        lat = response["latitude"]
-        long = response["longitude"]
+        response = requests.get("http://ip-api.com/json/" + ip).json()
+        lat = response["lat"]
+        long = response["lon"]
         def haversine(lat1, lon1, lat2, lon2):
             lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
             dlon = lon2 - lon1 
