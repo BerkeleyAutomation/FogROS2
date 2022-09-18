@@ -31,8 +31,26 @@
 # PROVIDED HEREUNDER IS PROVIDED "AS IS". REGENTS HAS NO OBLIGATION TO PROVIDE
 # MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
-from .aws_cloud_instance import AWSCloudInstance  # noqa: F401
-from .gcp_cloud_instance import GCPCloudInstance
-from .kubernetes.generic import KubeInstance
-from .cloud_node import CloudNode  # noqa: F401
-from .launch_description import FogROSLaunchDescription  # noqa: F401
+from launch_ros.actions import Node
+
+import fogros2
+
+
+def generate_launch_description():
+    """Talker example that launches the listener on GCP Kube."""
+    ld = fogros2.FogROSLaunchDescription()
+    machine1 = fogros2.KubeInstance()
+
+    listener_node = Node(
+        package="fogros2_examples", executable="listener", output="screen"
+    )
+
+    talker_node = fogros2.CloudNode(
+        package="fogros2_examples",
+        executable="talker",
+        output="screen",
+        machine=machine1,
+    )
+    ld.add_action(talker_node)
+    ld.add_action(listener_node)
+    return ld
