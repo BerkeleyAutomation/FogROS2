@@ -32,8 +32,8 @@
 # MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 from launch_ros.actions import Node
-
 import fogros2
+from utils import region_ami_selection, ec2_instance_type_selection
 
 def ami_image():
     # An AMI is an Amazon Web Services virtual machine image with a
@@ -63,8 +63,14 @@ def generic_ubuntu_ami():
 def generate_launch_description():
     """Talker example that launches the listener on AWS."""
     ld = fogros2.FogROSLaunchDescription()
+
+    region, ami = region_ami_selection.find_nearest_region_and_ami(generic_ubuntu_ami())
+
+    ec2_instance_type = ec2_instance_type_selection.find_cheapest_ec2_instance_type(region)
+
+    print(region, ami, ec2_instance_type)
     machine1 = fogros2.AWSCloudInstance(
-        ec2_instance_type="t2.micro", regions=generic_ubuntu_ami()
+        region=region, ec2_instance_type=ec2_instance_type, ami_image=ami
     )
 
     listener_node = Node(
