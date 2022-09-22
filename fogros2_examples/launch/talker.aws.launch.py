@@ -49,7 +49,8 @@ def ami_image():
     if ubuntu_release == "20.04":
         return "ami-00f25057ddc9b310b"
     if ubuntu_release == "22.04":
-        return "ami-0b6030c78f8b2f076"
+        # "ami-034160df82745c454" is custom AMI
+        return "ami-034160df82745c454" #"ami-0b6030c78f8b2f076" 
 
     raise ValueError(f"No AMI for {ubuntu_release}")
 
@@ -58,7 +59,7 @@ def generate_launch_description():
     """Talker example that launches the listener on AWS."""
     ld = fogros2.FogROSLaunchDescription()
     machine1 = fogros2.AWSCloudInstance(
-        region="us-west-1", ec2_instance_type="t2.micro", ami_image=ami_image()
+        region="us-west-1", ec2_instance_type="c5.4xlarge", ami_image=ami_image()
     )
 
     listener_node = Node(

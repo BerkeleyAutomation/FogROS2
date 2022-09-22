@@ -1,5 +1,6 @@
 ARG UBUNTU_DISTRO=jammy
-ARG ROS_DISTRO=rolling
+#rolling is alternative
+ARG ROS_DISTRO=humble 
 FROM ubuntu:${UBUNTU_DISTRO}
 
 # Set up install, set tzdata
