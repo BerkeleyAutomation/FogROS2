@@ -163,12 +163,6 @@ class ImageVerb(VerbExtension):
             image_count = self.create_ami(
                 *self.query_region(regions[0], args.name), args.dry_run
             )
-            shutdown_count = self.shutdown(
-                *self.query_region(regions[0], args.name), args.dry_run
-            )
-            delete_count = self.delete_instances(
-                *self.query_region(regions[0], args.name), args.dry_run
-            )
         else:
             from concurrent.futures import ThreadPoolExecutor
 
@@ -183,24 +177,8 @@ class ImageVerb(VerbExtension):
                         for f in futures
                     ]
                 )
-                shutdown_count = sum(
-                    [
-                        self.shutdown(*f.result(), args.dry_run)
-                        for f in futures
-                    ]
-                )
-                delete_count = sum(
-                    [
-                        self.delete_instances(*f.result(), args.dry_run)
-                        for f in futures
-                    ]
-                )
         if image_count == 0:
             print("No image was created")
-        if shutdown_count == 0:
-            print("No instance was shutdown")
-        if delete_count == 0:
-            print("No instance was deleted")
 
 
 
