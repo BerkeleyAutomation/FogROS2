@@ -128,7 +128,7 @@ class CloudInstance(abc.ABC):
         self.scp.execute_cmd(f"sudo pip3 install {args}")
 
     def install_cloud_dependencies(self):
-        self.apt_install("wireguard unzip docker.io python3-pip")
+        self.apt_install("wireguard unzip docker.io python3-pip ros-humble-rmw-cyclonedds-cpp")
 
     def install_ros(self):
         # setup sources
@@ -203,8 +203,10 @@ class CloudInstance(abc.ABC):
         make_zip_file(workspace_path, zip_dst)
         self.scp.execute_cmd("echo removing old workspace")
         self.scp.execute_cmd("rm -rf ros_workspace.zip ros2_ws fog_ws")
-        self.scp.send_file(f"{zip_dst}.zip", "/home/ubuntu/")
-        self.scp.execute_cmd("unzip -q /home/ubuntu/ros_workspace.zip")
+        #self.scp.send_file(f"{zip_dst}.zip", "/home/ubuntu/")
+        self.scp.send_file(f"{zip_dst}.tar", "/home/ubuntu/")
+        #self.scp.execute_cmd("unzip -q /home/ubuntu/ros_workspace.zip")
+        self.scp.execute_cmd("tar -xf /home/ubuntu/ros_workspace.tar")
         self.scp.execute_cmd("echo successfully extracted new workspace")
 
     def push_to_cloud_nodes(self):
