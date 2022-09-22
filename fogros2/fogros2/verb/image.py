@@ -55,39 +55,6 @@ class ImageVerb(VerbExtension):
 
         return [client, ec2_instances]
 
-    def shutdown(self, client, ec2_instances, dry_run):
-        shutdown_count = 0
-        for res in ec2_instances["Reservations"]:
-            for inst in res["Instances"]:
-                tag_map = (
-                    {t["Key"]: t["Value"] for t in inst["Tags"]}
-                    if "Tags" in inst
-                    else {}
-                )
-                print(
-                    f"Shutting down  {tag_map.get('FogROS2-Name', '(unknown)')} "
-                    f"{inst['InstanceId']}"
-                )
-                print(f" instance {inst['InstanceId']}")
-                if not dry_run:
-                    response = client.terminate_instances(
-                        InstanceIds=[inst["InstanceId"]]
-                    )
-                    if "TerminatingInstances" not in response or inst[
-                        "InstanceId"
-                    ] not in map(
-                        lambda x: x["InstanceId"],
-                        response["TerminatingInstances"],
-                    ):
-                        raise RuntimeError(
-                            "Could not terminate instance"
-                            f" {inst['InstanceId']}!"
-                        )
-                print("done.")
-                shutdown_count += 1
-
-        return shutdown_count
-
     def create_ami(self, client, ec2_instances, dry_run):
         image_count = 0
         for res in ec2_instances["Reservations"]:
@@ -115,39 +82,6 @@ class ImageVerb(VerbExtension):
                 image_count += 1
 
         return image_count
-
-    def delete_instances(self, client, ec2_instances, dry_run):
-        delete_count = 0
-        for res in ec2_instances["Reservations"]:
-            for inst in res["Instances"]:
-                tag_map = (
-                    {t["Key"]: t["Value"] for t in inst["Tags"]}
-                    if "Tags" in inst
-                    else {}
-                )
-                print(
-                    f"Deleting {tag_map.get('FogROS2-Name', '(unknown)')} "
-                    f"{inst['InstanceId']}"
-                )
-                print(f"    deleting key pair {inst['KeyName']}")
-                if not dry_run:
-                    response = client.delete_key_pair(KeyName=inst["KeyName"])
-                    if response["ResponseMetadata"]["HTTPStatusCode"] != 200:
-                        raise RuntimeError(
-                            f"Could not delete key pair {inst['KeyName']}!"
-                        )
-                if "FogROS2-Name" in tag_map:
-                    inst_dir = os.path.join(
-                        instance_dir(), tag_map["FogROS2-Name"]
-                    )
-                    if os.path.exists(inst_dir):
-                        print(f"    removing instance data {inst_dir}")
-                        if not dry_run:
-                            shutil.rmtree(inst_dir)
-                print("done.")
-                delete_count += 1
-
-        return delete_count
 
     def main(self, *, args):
         regions = args.region
@@ -177,12 +111,7 @@ class ImageVerb(VerbExtension):
                         for f in futures
                     ]
                 )
+
         if image_count == 0:
             print("No image was created")
-
-
-
-
-
-
 
