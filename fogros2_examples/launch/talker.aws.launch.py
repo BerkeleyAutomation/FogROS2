@@ -32,8 +32,9 @@
 # MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 from launch_ros.actions import Node
+
 import fogros2
-from utils import region_ami_selection, ec2_instance_type_selection
+
 
 def ami_image():
     # An AMI is an Amazon Web Services virtual machine image with a
@@ -48,29 +49,17 @@ def ami_image():
     if ubuntu_release == "20.04":
         return "ami-00f25057ddc9b310b"
     if ubuntu_release == "22.04":
-        return "ami-0b6030c78f8b2f076"
+        # "ami-034160df82745c454" is custom AMI
+        return "ami-034160df82745c454" #"ami-0b6030c78f8b2f076" 
 
     raise ValueError(f"No AMI for {ubuntu_release}")
 
-def generic_ubuntu_ami():
-    return {
-        "us-west-1": { "ami_image": "ami-01154c8b2e9a14885" },
-        "us-west-2": { "ami_image": "ami-0ddf424f81ddb0720" },
-        "us-east-1": { "ami_image": "ami-08d4ac5b634553e16" },
-        "us-east-2": { "ami_image": "ami-0960ab670c8bb45f3" },
-    }
 
 def generate_launch_description():
     """Talker example that launches the listener on AWS."""
     ld = fogros2.FogROSLaunchDescription()
-
-    region, ami = region_ami_selection.find_nearest_region_and_ami(generic_ubuntu_ami())
-
-    ec2_instance_type = ec2_instance_type_selection.find_cheapest_ec2_instance_type(region)
-
-    print(region, ami, ec2_instance_type)
     machine1 = fogros2.AWSCloudInstance(
-        region=region, ec2_instance_type=ec2_instance_type, ami_image=ami
+        region="us-west-1", ec2_instance_type="c5.4xlarge", ami_image=ami_image()
     )
 
     listener_node = Node(

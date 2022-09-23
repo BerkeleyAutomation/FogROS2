@@ -115,24 +115,14 @@ class AWSCloudInstance(CloudInstance):
         self.generate_key_pair()
         self.create_ec2_instance()
         self.info(flush_to_disk=True)
-        self.test_latency()
-        # self.connect()
-        # self.install_ros()
-        # self.install_cloud_dependencies()
-        # self.install_colcon()
-        # self.push_ros_workspace()
-        # self.info(flush_to_disk=True)
-        # self._is_created = True
-
-    def test_latency(self):
-        ping_sum = 0
-        count = 0
-        while count < 100:
-            latency = ping(self._ip)
-            if latency:
-                ping_sum += latency
-                count += 1
-        print(ping_sum / count)
+        self.connect()
+        # Uncomment out the next three lines if you are not using a custom AMI
+        #self.install_ros()
+        #self.install_colcon()
+        #self.install_cloud_dependencies()
+        self.push_ros_workspace()
+        self.info(flush_to_disk=True)
+        self._is_created = True
 
     def info(self, flush_to_disk=True):
         info_dict = super().info(flush_to_disk)
