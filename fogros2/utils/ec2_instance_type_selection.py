@@ -1,6 +1,7 @@
 import boto3
 import json
 from pkg_resources import resource_filename
+from .region_ami_selection import haversine, aws_regions
 
 FLT = '[{{"Field": "tenancy", "Value": "shared", "Type": "TERM_MATCH"}},'\
       '{{"Field": "operatingSystem", "Value": "{o}", "Type": "TERM_MATCH"}},'\
@@ -69,4 +70,6 @@ def ec2_instance_types(region_name, cpu_architecture="x86_64", default_cores=2, 
         describe_args['NextToken'] = describe_result['NextToken']
 
 def find_cheapest_ec2_instance_type(region_name, cpu_architecture="x86_64", default_cores=2, default_threads_per_core=1, gpu=False):
+    (lat, lon) = aws_regions[region_name]
+    region_name = min(['us-east-1', 'ap-south-1'], key= lambda region: haversine(region, lat, lon))
     return min(ec2_instance_types(region_name, cpu_architecture, default_cores, default_threads_per_core, gpu), key=lambda instance_type: get_price(region_name, instance_type, 'Linux'))
