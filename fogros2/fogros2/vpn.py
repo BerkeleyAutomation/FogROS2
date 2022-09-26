@@ -80,7 +80,7 @@ class VPN:
             aws_config.add_attr(None, "Address", f"10.0.0.{counter:d}/24")
             aws_config.add_peer(self.robot_public_key, "# fogROS Robot")
             aws_config.add_attr(
-                self.robot_public_key, "AllowedIPs", "10.0.0.1/32"
+                self.robot_public_key, "AllowedIPs", "10.13.13.1/32"
             )
             aws_config.write_file()
             counter += 1
@@ -89,7 +89,7 @@ class VPN:
         robot_config = wgconfig.WGConfig(self.robot_key_path)
         robot_config.add_attr(None, "PrivateKey", self.robot_private_key)
         robot_config.add_attr(None, "ListenPort", 51820)
-        robot_config.add_attr(None, "Address", "10.0.0.1/24")
+        robot_config.add_attr(None, "Address", "10.13.13.1/24")
         for machine in machines:
             name = machine.name
             if hasattr(machine, 'vpn_ip') and machine.vpn_ip is not None:

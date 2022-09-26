@@ -7,8 +7,8 @@
         </General>
         <Discovery>
             <Peers>
-                <Peer address="10.0.0.1"/>
-                <Peer address="10.0.0.2"/>
+                <Peer address="10.13.13.1"/>
+                <Peer address="10.13.13.2"/>
             </Peers>
             <ParticipantIndex>auto</ParticipantIndex>
         </Discovery>
