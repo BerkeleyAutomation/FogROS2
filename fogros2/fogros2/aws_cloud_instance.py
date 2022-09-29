@@ -33,7 +33,6 @@
 
 import json
 import os
-from ping3 import ping
 
 import boto3
 from botocore.exceptions import ClientError
