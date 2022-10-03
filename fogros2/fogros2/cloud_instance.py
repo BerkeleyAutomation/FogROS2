@@ -159,7 +159,7 @@ class CloudInstance(abc.ABC):
         self.scp.execute_cmd("export LANG=en_US.UTF-8")
 
         # install ros2 packages
-        self.apt_install(f"ros-{self.ros_distro}-desktop")
+        # self.apt_install(f"ros-{self.ros_distro}-desktop")
 
         # source environment
         self.scp.execute_cmd(f"source /opt/ros/{self.ros_distro}/setup.bash")
