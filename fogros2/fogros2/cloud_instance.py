@@ -138,7 +138,7 @@ class CloudInstance(abc.ABC):
         self.scp.execute_cmd(f"python3 -m pip install {args}")
 
     def install_cloud_dependencies(self):
-        self.apt_install("wireguard unzip docker.io python3-pip")
+        self.apt_install("wireguard unzip docker.io python3-pip ros-humble-rmw-cyclonedds-cpp")
 
     def install_ros(self):
         # setup sources
@@ -169,7 +169,7 @@ class CloudInstance(abc.ABC):
         self.scp.execute_cmd("export LANG=en_US.UTF-8")
 
         # install ros2 packages
-        self.apt_install(f"ros-{self.ros_distro}-desktop")
+        # self.apt_install(f"ros-{self.ros_distro}-desktop")
 
         # Installing all deps because cloud launch seems to rely on them
         self.apt_install('python3-colcon-common-extensions')
@@ -216,8 +216,10 @@ class CloudInstance(abc.ABC):
         make_zip_file(workspace_path, zip_dst)
         self.scp.execute_cmd("echo removing old workspace")
         self.scp.execute_cmd("rm -rf ros_workspace.zip ros2_ws fog_ws")
-        self.scp.send_file(f"{zip_dst}.zip", f"/home/{self._username}/")
-        self.scp.execute_cmd(f"unzip -q /home/{self._username}/ros_workspace.zip")
+        #self.scp.send_file(f"{zip_dst}.zip", "/home/ubuntu/")
+        self.scp.send_file(f"{zip_dst}.tar", "/home/ubuntu/")
+        #self.scp.execute_cmd("unzip -q /home/ubuntu/ros_workspace.zip")
+        self.scp.execute_cmd("tar -xf /home/ubuntu/ros_workspace.tar")
         self.scp.execute_cmd("echo successfully extracted new workspace")
 
     def push_to_cloud_nodes(self):
