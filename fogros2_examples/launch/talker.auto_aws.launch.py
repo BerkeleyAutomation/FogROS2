@@ -42,6 +42,9 @@ def generic_ubuntu_ami():
         "us-west-2": { "ami_image": "ami-0ddf424f81ddb0720" },
         "us-east-1": { "ami_image": "ami-08d4ac5b634553e16" },
         "us-east-2": { "ami_image": "ami-0960ab670c8bb45f3" },
+        "ap-northeast-1": { "ami_image": "ami-0f8048fa3e3b9e8ff" }, 
+        "ap-northeast-2": { "ami_image": "ami-0ea5eb4b05645aa8a" },
+        "ap-northeast-3": { "ami_image": "ami-0ba140397329ef9ae" },
     }
 
 def generate_launch_description():
