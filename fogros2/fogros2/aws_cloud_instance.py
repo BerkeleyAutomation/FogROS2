@@ -107,6 +107,7 @@ class AWSCloudInstance(CloudInstance):
 
         self.create()
 
+
     def create(self):
         self.logger.info(f"Creating new EC2 instance with name {self._name}")
         self.create_security_group()
@@ -114,9 +115,10 @@ class AWSCloudInstance(CloudInstance):
         self.create_ec2_instance()
         self.info(flush_to_disk=True)
         self.connect()
-        self.install_ros()
-        self.install_colcon()
-        self.install_cloud_dependencies()
+        # Uncomment out the next three lines if you are not using a custom AMI
+        #self.install_ros()
+        #self.install_colcon()
+        #self.install_cloud_dependencies()
         self.push_ros_workspace()
         self.info(flush_to_disk=True)
         self._is_created = True
