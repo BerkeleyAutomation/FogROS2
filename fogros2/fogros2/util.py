@@ -33,7 +33,10 @@
 
 import errno
 import os
+from platform import architecture
 import shutil
+import tarfile 
+
 
 _work_dir_cache = None
 _instance_dir_cache = None
@@ -70,12 +73,34 @@ def instance_dir():
     return _instance_dir_cache
 
 
-def make_zip_file(dir_name, target_path):
+# def make_zip_file(dir_name, target_path):
+#     root_dir, workspace_name = os.path.split(dir_name)
+#     print(root_dir, workspace_name)
+#     return shutil.make_archive(
+#         base_dir=workspace_name,
+#         root_dir=root_dir,
+#         format="zip",
+#         base_name=target_path,
+#     )
+
+#Using Tar not Zip
+def make_zip_file(dir_name, target_path): 
     root_dir, workspace_name = os.path.split(dir_name)
     print(root_dir, workspace_name)
-    return shutil.make_archive(
-        base_dir=workspace_name,
-        root_dir=root_dir,
-        format="zip",
-        base_name=target_path,
-    )
+    base_name = os.path.abspath(target_path)
+    os.chdir(root_dir)
+
+    tar_compression = ''
+    archive_name = base_name + '.tar' + ''
+    archive_dir = os.path.dirname(archive_name)
+
+    EXCLUDE_FILES = ['.git'] #https://stackoverflow.com/questions/16000794/python-tarfile-and-excludes
+
+    if archive_dir and not os.path.exists(archive_dir):
+        os.makedirs(archive_dir)
+    tar = tarfile.open(archive_name, 'w|%s' % tar_compression)
+    try:
+        tar.add(workspace_name, filter=lambda x: None if x.name in EXCLUDE_FILES else x)
+    finally:
+        tar.close()
+    return archive_name
