@@ -38,10 +38,13 @@ from utils import region_ami_selection, ec2_instance_type_selection
 
 def generic_ubuntu_ami():
     return {
-        "us-west-1": { "ami_image": "ami-01154c8b2e9a14885" },
-        "us-west-2": { "ami_image": "ami-0ddf424f81ddb0720" },
-        "us-east-1": { "ami_image": "ami-08d4ac5b634553e16" },
-        "us-east-2": { "ami_image": "ami-0960ab670c8bb45f3" },
+        "us-west-1": { "ami_image": "ami-02ea247e531eb3ce6" },
+        "us-west-2": { "ami_image": "ami-017fecd1353bcc96e" },
+        "us-east-1": { "ami_image": "ami-08c40ec9ead489470" },
+        "us-east-2": { "ami_image": "ami-097a2df4ac947655f" },
+        "ap-northeast-1": { "ami_image": "ami-03f4fa076d2981b45" }, 
+        "ap-northeast-2": { "ami_image": "ami-0e9bfdb247cc8de84" },
+        "ap-northeast-3": { "ami_image": "ami-08c2ee02329b72f26" },
     }
 
 def generate_launch_description():
