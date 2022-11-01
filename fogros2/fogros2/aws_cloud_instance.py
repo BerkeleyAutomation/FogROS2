@@ -116,7 +116,7 @@ class AWSCloudInstance(CloudInstance):
         self.info(flush_to_disk=True)
         self.connect()
         # Uncomment out the next three lines if you are not using a custom AMI
-        #self.install_ros()
+        self.install_ros()
         #self.install_colcon()
         #self.install_cloud_dependencies()
         self.push_ros_workspace()

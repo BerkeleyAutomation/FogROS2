@@ -169,7 +169,7 @@ class CloudInstance(abc.ABC):
         self.scp.execute_cmd("export LANG=en_US.UTF-8")
 
         # install ros2 packages
-        # self.apt_install(f"ros-{self.ros_distro}-desktop")
+        self.apt_install(f"ros-{self.ros_distro}-desktop")
 
         # Installing all deps because cloud launch seems to rely on them
         self.apt_install('python3-colcon-common-extensions')
