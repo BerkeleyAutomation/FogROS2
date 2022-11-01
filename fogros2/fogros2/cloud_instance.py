@@ -139,6 +139,10 @@ class CloudInstance(abc.ABC):
 
     def install_cloud_dependencies(self):
         self.apt_install("wireguard unzip docker.io python3-pip ros-humble-rmw-cyclonedds-cpp")
+        self.pip_install("boto3")
+        self.pip_install("paramiko")
+        self.pip_install("scp")
+        self.pip_install("wgconfig")
 
     def install_ros(self):
         # setup sources
@@ -170,9 +174,6 @@ class CloudInstance(abc.ABC):
 
         # install ros2 packages
         self.apt_install(f"ros-{self.ros_distro}-desktop")
-
-        # Installing all deps because cloud launch seems to rely on them
-        self.apt_install('python3-colcon-common-extensions')
 
         # source environment
         self.scp.execute_cmd(f"source /opt/ros/{self.ros_distro}/setup.bash")
