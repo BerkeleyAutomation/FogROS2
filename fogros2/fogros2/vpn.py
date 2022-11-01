@@ -92,7 +92,10 @@ class VPN:
         robot_config.add_attr(None, "Address", "10.0.0.1/24")
         for machine in machines:
             name = machine.name
-            ip = machine.ip
+            if hasattr(machine, 'vpn_ip') and machine.vpn_ip is not None:
+                ip = machine.vpn_ip
+            else:
+                ip = machine.ip
             cloud_pub_key = self.cloud_name_to_pub_key_path[name]
             robot_config.add_peer(cloud_pub_key, f"# AWS{name}")
             robot_config.add_attr(cloud_pub_key, "AllowedIPs", "10.0.0.2/32")
@@ -102,7 +105,7 @@ class VPN:
 
     def start_robot_vpn(self):
         # Copy /tmp/fogros-local.conf to /etc/wireguard/wg0.conf locally.
-        # TODO: This needs root. Move this to a separate script with setuid.
+        # Do NOT move this to a SUID executable because that will cause trivial LPE.
         os.system("sudo cp /tmp/fogros-local.conf /etc/wireguard/wg0.conf")
         os.system("sudo chmod 600 /etc/wireguard/wg0.conf")
         os.system("sudo wg-quick down wg0")

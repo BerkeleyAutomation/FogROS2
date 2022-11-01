@@ -104,7 +104,8 @@ class FogROSLaunchDescription(LaunchDescriptionEntity):
         ]
         vpn = VPN()
         vpn.generate_wg_config_files(machines)
-        vpn.start_robot_vpn()
+        if any([machine.force_start_vpn() for machine in machines]):
+            vpn.start_robot_vpn()
 
         # tell remote machine to push the to cloud nodes and
         # wait here until all the nodes are done
