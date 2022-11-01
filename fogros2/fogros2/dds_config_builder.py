@@ -64,7 +64,7 @@ class CycloneConfigBuilder(DDSConfigBuilder):
     def generate_config_file(self, extra_peers = []):
         interfaces = """
             <Interfaces>
-                <NetworkInterface autodetermine="true" />
+                <NetworkInterface name="wg0" />
             </Interfaces>
             """
 
@@ -85,8 +85,8 @@ class CycloneConfigBuilder(DDSConfigBuilder):
                 <General>{interfaces}</General>
                 <Discovery>
                     <Peers>
-                        <Peer address="10.13.13.1"/>
-                        <Peer address="10.13.13.2"/>
+                        <Peer address="10.0.0.1"/>
+                        <Peer address="10.0.0.2"/>
                         {peer_xml}
                     </Peers>
                     <ParticipantIndex>auto</ParticipantIndex>

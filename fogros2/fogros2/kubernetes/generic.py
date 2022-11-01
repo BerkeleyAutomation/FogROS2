@@ -40,17 +40,9 @@ import uuid
 import tempfile
 import textwrap
 
-from ..dds_config_builder import CycloneConfigBuilder
-
 from ..util import extract_bash_column
 
 from ..cloud_instance import CloudInstance
-
-try:
-    import importlib.resources as pkg_resources
-except ImportError:
-    import importlib_resources as pkg_resources  # type: ignore
-
 
 class KubeInstance(CloudInstance):
     """Generic Kubernetes CloudInstance"""
@@ -89,6 +81,7 @@ class KubeInstance(CloudInstance):
         self.create_compute_engine_instance()
         self.info(flush_to_disk=True)
         self.connect()
+        self.install_cloud_dependencies()
         self.push_ros_workspace()
         self.info(flush_to_disk=True)
         self._is_created = True
@@ -112,29 +105,39 @@ class KubeInstance(CloudInstance):
             "edu.berkeley.autolab.fogros/instance": self._name,
         }
 
-        from . import manifests
-        import yaml
-
-        with tempfile.NamedTemporaryFile() as file:
-            file.write(yaml.dump_all(manifests.wireguard('fogros2')).encode('utf-8'))
-            subprocess.run(["kubectl", "apply", "-f", "-"], stdin=file)
-
-        while "pending" in subprocess.check_output(f"kubectl get -n fogros2 svc wireguard", shell=True).decode():
-            time.sleep(5)
-
         # SSH Service
         ssh_config: dict = {
             "apiVersion": "v1",
             "kind": "Service",
             "metadata": {"name": f"{self._name}-ssh"},
             "spec": {
-                "type": "ClusterIP",
+                "type": "LoadBalancer",
                 "ports": [
                     {
                         "port": 22,
                         "targetPort": 22,
                         "name": "ssh",
                         "protocol": "TCP",
+                    }
+                ],
+                "selector": selector,
+            },
+        }
+        # VPN Service
+        vpn_config: dict = {
+            "apiVersion": "v1",
+            "kind": "Service",
+            "metadata": {
+                "name": f"{self._name}-vpn",
+            },
+            "spec": {
+                "type": "LoadBalancer",
+                "ports": [
+                    {
+                        "port": 51820,
+                        "targetPort": 51820,
+                        "name": "wg",
+                        "protocol": "UDP",
                     }
                 ],
                 "selector": selector,
@@ -162,8 +165,9 @@ class KubeInstance(CloudInstance):
                         "imagePullPolicy": "Always",
                         "securityContext": {
                             "capabilities": {
-                                "add": ["NET_ADMIN"],
+                                "add": ["NET_ADMIN", "CAP_SYS_ADMIN"],
                             },
+                            "privileged": True,
                         },
                         "resources": {
                             "requests": pod_resources,
@@ -194,7 +198,7 @@ class KubeInstance(CloudInstance):
         }
 
         # TODO: Use the Kubernetes API (pypy/kubernetes) instead of shelling out to kubectl.
-        for config in [ssh_config, pod_config]:
+        for config in [vpn_config, ssh_config, pod_config]:
             file = tempfile.NamedTemporaryFile()
             open(file.name, "w").write(json.dumps(config))
             self.logger.debug(
@@ -214,6 +218,10 @@ class KubeInstance(CloudInstance):
                 in subprocess.check_output(
                     f'kubectl get service {ssh_config["metadata"]["name"]}', shell=True
                 ).decode()
+                or "pending"
+                in subprocess.check_output(
+                    f'kubectl get service {vpn_config["metadata"]["name"]}', shell=True
+                ).decode()
             ):
                 self.logger.info("Some services still creating...")
                 time.sleep(5)
@@ -224,37 +232,12 @@ class KubeInstance(CloudInstance):
         ssh_data = subprocess.check_output(
             f'kubectl get service {ssh_config["metadata"]["name"]}', shell=True
         ).decode()
-        vpn_data = subprocess.check_output(f"kubectl get -n fogros2 svc wireguard", shell=True).decode()
+        vpn_data = subprocess.check_output(
+            f'kubectl get service {vpn_config["metadata"]["name"]}', shell=True
+        ).decode()
 
-        cf = subprocess.check_output("kubectl -n fogros2 exec wireguard -- cat /config/peer1/peer1.conf", shell=True).decode()
-        out = ""
-
-        for line in cf.splitlines():
-            if line.startswith("Endpoint"):
-                out += f"Endpoint = {extract_bash_column(vpn_data, 'EXTERNAL-IP')}:51820\n"
-            else:
-                out += f"{line}\n"
-        
-        with open("/tmp/fogros-local.conf", "w") as f:
-            f.write(out)
-
-        os.system("sudo cp /tmp/fogros-local.conf /etc/wireguard/wg0.conf")
-        os.system("sudo chmod 600 /etc/wireguard/wg0.conf")
-        os.system("sudo wg-quick down wg0")
-        os.system("sudo wg-quick up wg0")
-
-        return extract_bash_column(ssh_data, "CLUSTER-IP"), extract_bash_column(vpn_data, "EXTERNAL-IP")
+        return extract_bash_column(ssh_data, "EXTERNAL-IP"), extract_bash_column(vpn_data, "EXTERNAL-IP")
     
-    def push_and_setup_vpn(self):
-        # We don't need to do this for k8s!
-        pass
-
-    def configure_DDS(self):
-        # configure DDS
-        self.cyclone_builder = CycloneConfigBuilder(["10.13.13.1"], username=self._username)
-        self.cyclone_builder.generate_config_file(extra_peers=[self._ip])
-        self.scp.send_file("/tmp/cyclonedds.xml", "~/cyclonedds.xml")
-
     def create_compute_engine_instance(self):
         # Generate SSH keys
         self._ssh_key_path = os.path.expanduser(f"~/.ssh/{self._name}")
