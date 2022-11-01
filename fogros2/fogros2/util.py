@@ -104,3 +104,27 @@ def make_zip_file(dir_name, target_path):
     finally:
         tar.close()
     return archive_name
+
+def extract_bash_column(subprocess_output: str, column_name: str, row_number: int = 0):
+    """
+    NAME           TYPE           CLUSTER-IP    EXTERNAL-IP   PORT(S)        AGE
+    ssh-balancer   LoadBalancer   10.0.0.15   <pending>     22:32695/TCP   19s
+
+    This util finds the value of any given column value - ex: CLUSTER-IP -> 10.0.015
+    :param subprocess_output: Direct output of subprocess.check_output().decode()
+    :param column_name: The column name to search for ex: CLUSTER-IP
+    :param row_number: Defaults to the first data row, row_number = 1 is second data row
+    :return: String of output value
+    """
+    lines = subprocess_output.split('\n')
+    if column_name not in lines[0]:
+        raise LookupError(f"Could not find column {column_name} in {lines[0].strip()}")
+    column_index = lines[0].index(column_name)
+
+    output_str = ''
+    while column_index != len(lines[row_number+1]) and lines[row_number+1][column_index] != ' ':
+        output_str += lines[row_number+1][column_index]
+        column_index += 1
+
+    return output_str
+
