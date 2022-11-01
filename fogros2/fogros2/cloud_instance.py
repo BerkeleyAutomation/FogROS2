@@ -72,6 +72,7 @@ class CloudInstance(abc.ABC):
         self.cyclone_builder = None
         self.scp = None
         self._ip = None
+        self._vpn_ip = None
         self.ros_workspace = ros_workspace
         self.ros_distro = os.getenv("ROS_DISTRO")
         self.logger.debug(f"Using ROS workspace: {self.ros_workspace}")
@@ -84,6 +85,7 @@ class CloudInstance(abc.ABC):
         self.cloud_service_provider = None
         self.dockers = []
         self.launch_foxglove = launch_foxglove
+        self._username = 'ubuntu'
 
     @abc.abstractmethod
     def create(self):
@@ -102,14 +104,22 @@ class CloudInstance(abc.ABC):
             with open(os.path.join(self._working_dir, "info"), "w+") as f:
                 json.dump(info_dict, f)
         return info_dict
+    
+    def force_start_vpn(self):
+        return True
 
     def connect(self):
-        self.scp = SCPClient(self._ip, self._ssh_key_path)
+        self.scp = SCPClient(self._ip, self._ssh_key_path, username=self._username)
         self.scp.connect()
 
     @property
     def ip(self):
         return self._ip
+
+    @property
+    def vpn_ip(self):
+        # Use this when the VPN IP is not None.
+        return self._vpn_ip
 
     @property
     def is_created(self):
@@ -125,10 +135,14 @@ class CloudInstance(abc.ABC):
         )
 
     def pip_install(self, args):
-        self.scp.execute_cmd(f"sudo pip3 install {args}")
+        self.scp.execute_cmd(f"python3 -m pip install {args}")
 
     def install_cloud_dependencies(self):
         self.apt_install("wireguard unzip docker.io python3-pip ros-humble-rmw-cyclonedds-cpp")
+        self.pip_install("boto3")
+        self.pip_install("paramiko")
+        self.pip_install("scp")
+        self.pip_install("wgconfig")
 
     def install_ros(self):
         # setup sources
@@ -159,7 +173,7 @@ class CloudInstance(abc.ABC):
         self.scp.execute_cmd("export LANG=en_US.UTF-8")
 
         # install ros2 packages
-        # self.apt_install(f"ros-{self.ros_distro}-desktop")
+        self.apt_install(f"ros-{self.ros_distro}-desktop")
 
         # source environment
         self.scp.execute_cmd(f"source /opt/ros/{self.ros_distro}/setup.bash")
@@ -173,7 +187,7 @@ class CloudInstance(abc.ABC):
         rosbridge_launch_script = (
             "ssh -o StrictHostKeyChecking=no -i "
             f"{self._ssh_key_path}"
-            " ubuntu@"
+            f" {self._username}@"
             f"{self._ip}"
             f' "source /opt/ros/{self.ros_distro}/setup.bash && '
             'ros2 launch rosbridge_server rosbridge_websocket_launch.xml &"'
@@ -225,7 +239,7 @@ class CloudInstance(abc.ABC):
 
     def configure_DDS(self):
         # configure DDS
-        self.cyclone_builder = CycloneConfigBuilder(["10.0.0.1"])
+        self.cyclone_builder = CycloneConfigBuilder(["10.0.0.1"], username=self._username)
         self.cyclone_builder.generate_config_file()
         self.scp.send_file("/tmp/cyclonedds.xml", "~/cyclonedds.xml")
 
@@ -233,9 +247,9 @@ class CloudInstance(abc.ABC):
         cmd_builder = BashBuilder()
         cmd_builder.append(f"source /opt/ros/{self.ros_distro}/setup.bash")
         cmd_builder.append(
-            "cd /home/ubuntu/fog_ws && colcon build --cmake-clean-cache"
+            f"cd /home/{self._username}/fog_ws && colcon build --cmake-clean-cache"
         )
-        cmd_builder.append(". /home/ubuntu/fog_ws/install/setup.bash")
+        cmd_builder.append(f". /home/{self._username}/fog_ws/install/setup.bash")
         cmd_builder.append(self.cyclone_builder.env_cmd)
         ros_domain_id = os.environ.get("ROS_DOMAIN_ID")
         if not ros_domain_id:
