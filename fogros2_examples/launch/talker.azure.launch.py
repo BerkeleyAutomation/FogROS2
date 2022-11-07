@@ -37,7 +37,9 @@ import fogros2
 
 
 def generate_launch_description():
-    """Talker example that launches the listener on Google Compute Engine."""
+    """Install and run azure cli by az login. You may follow the link"""
+    """https://learn.microsoft.com/en-us/cli/azure/install-azure-cli-linux"""
+    """Talker example that launches the listener on Azure."""
     ld = fogros2.FogROSLaunchDescription()
     machine1 = fogros2.AzureCloudInstance(
         resource_group='fogros'
