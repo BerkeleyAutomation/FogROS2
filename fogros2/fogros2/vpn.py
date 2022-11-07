@@ -33,8 +33,8 @@
 
 import os
 
-import wgconfig
-import wgconfig.wgexec as wgexec
+from .wgconfig import WGConfig
+from .wgexec import get_publickey, generate_privatekey
 
 
 class VPN:
@@ -49,8 +49,8 @@ class VPN:
         self.cloud_name_to_pub_key_path = dict()
         self.cloud_name_to_priv_key_path = dict()
 
-        self.robot_private_key = wgexec.generate_privatekey()
-        self.robot_public_key = wgexec.get_publickey(self.robot_private_key)
+        self.robot_private_key = generate_privatekey()
+        self.robot_public_key = get_publickey(self.robot_private_key)
 
     def generate_key_pairs(self, machines):
         """
@@ -60,9 +60,9 @@ class VPN:
         """
         for machine in machines:
             name = machine.name
-            cloud_private_key = wgexec.generate_privatekey()
+            cloud_private_key = generate_privatekey()
             self.cloud_name_to_priv_key_path[name] = cloud_private_key
-            cloud_public_key = wgexec.get_publickey(cloud_private_key)
+            cloud_public_key = get_publickey(cloud_private_key)
             self.cloud_name_to_pub_key_path[name] = cloud_public_key
 
     def generate_wg_config_files(self, machines):
@@ -74,7 +74,7 @@ class VPN:
             name = machine.name
             machine_config_pwd = self.cloud_key_path + name
             machine_priv_key = self.cloud_name_to_priv_key_path[name]
-            aws_config = wgconfig.WGConfig(machine_config_pwd)
+            aws_config = WGConfig(machine_config_pwd)
             aws_config.add_attr(None, "PrivateKey", machine_priv_key)
             aws_config.add_attr(None, "ListenPort", 51820)
             aws_config.add_attr(None, "Address", f"10.0.0.{counter:d}/24")
@@ -86,7 +86,7 @@ class VPN:
             counter += 1
 
         # generate robot configs
-        robot_config = wgconfig.WGConfig(self.robot_key_path)
+        robot_config = WGConfig(self.robot_key_path)
         robot_config.add_attr(None, "PrivateKey", self.robot_private_key)
         robot_config.add_attr(None, "ListenPort", 51820)
         robot_config.add_attr(None, "Address", "10.0.0.1/24")
