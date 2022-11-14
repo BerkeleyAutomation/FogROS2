@@ -104,7 +104,7 @@ class CloudInstance(abc.ABC):
             with open(os.path.join(self._working_dir, "info"), "w+") as f:
                 json.dump(info_dict, f)
         return info_dict
-    
+
     def force_start_vpn(self):
         return True
 
@@ -217,9 +217,9 @@ class CloudInstance(abc.ABC):
         make_zip_file(workspace_path, zip_dst)
         self.scp.execute_cmd("echo removing old workspace")
         self.scp.execute_cmd("rm -rf ros_workspace.zip ros2_ws fog_ws")
-        #self.scp.send_file(f"{zip_dst}.zip", "/home/ubuntu/")
+        # self.scp.send_file(f"{zip_dst}.zip", "/home/ubuntu/")
         self.scp.send_file(f"{zip_dst}.tar", "/home/ubuntu/")
-        #self.scp.execute_cmd("unzip -q /home/ubuntu/ros_workspace.zip")
+        # self.scp.execute_cmd("unzip -q /home/ubuntu/ros_workspace.zip")
         self.scp.execute_cmd("tar -xf /home/ubuntu/ros_workspace.tar")
         self.scp.execute_cmd("echo successfully extracted new workspace")
 

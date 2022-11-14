@@ -44,8 +44,9 @@ from ..util import extract_bash_column
 
 from ..cloud_instance import CloudInstance
 
+
 class KubeInstance(CloudInstance):
-    """Generic Kubernetes CloudInstance"""
+    """Generic Kubernetes CloudInstance."""
 
     def __init__(
         self,
@@ -95,7 +96,7 @@ class KubeInstance(CloudInstance):
             with open(os.path.join(self._working_dir, "info"), "w+") as f:
                 json.dump(info_dict, f)
         return info_dict
-    
+
     def force_start_vpn(self):
         return False
 
@@ -210,7 +211,7 @@ class KubeInstance(CloudInstance):
         # Poll until services are live...
         while True:
             if (
-                not "Running"
+                "Running" not
                 in subprocess.check_output(
                     f"kubectl get pod {self._name}", shell=True
                 ).decode()
@@ -236,8 +237,9 @@ class KubeInstance(CloudInstance):
             f'kubectl get service {vpn_config["metadata"]["name"]}', shell=True
         ).decode()
 
-        return extract_bash_column(ssh_data, "EXTERNAL-IP"), extract_bash_column(vpn_data, "EXTERNAL-IP")
-    
+        return extract_bash_column(ssh_data, "EXTERNAL-IP"),\
+            extract_bash_column(vpn_data, "EXTERNAL-IP")
+
     def create_compute_engine_instance(self):
         # Generate SSH keys
         self._ssh_key_path = os.path.expanduser(f"~/.ssh/{self._name}")

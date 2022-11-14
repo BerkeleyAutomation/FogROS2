@@ -50,7 +50,7 @@ def ami_image():
         return "ami-00f25057ddc9b310b"
     if ubuntu_release == "22.04":
         # "ami-034160df82745c454" is custom AMI
-        return "ami-034160df82745c454" #"ami-0b6030c78f8b2f076" 
+        return "ami-034160df82745c454"  # "ami-0b6030c78f8b2f076"
 
     raise ValueError(f"No AMI for {ubuntu_release}")
 

@@ -101,27 +101,29 @@ class GCPCloudInstance(CloudInstance):
     def create_compute_engine_instance(self):
         os.system(f'gcloud config set project {self._project_id}')
 
-        result = subprocess.check_output(f'gcloud compute instances create {self._name} '
-                                         f'--project={self._project_id} --zone={self.zone} --machine-type={self.type} '
-                                         '--network-interface=network-tier=PREMIUM,subnet=default '
-                                         '--maintenance-policy=MIGRATE --provisioning-model=STANDARD '
-                                         '--scopes=https://www.googleapis.com/auth/devstorage.read_only,'
-                                         'https://www.googleapis.com/auth/logging.write,'
-                                         'https://www.googleapis.com/auth/monitoring.write,'
-                                         'https://www.googleapis.com/auth/servicecontrol,'
-                                         'https://www.googleapis.com/auth/service.management.readonly,'
-                                         'https://www.googleapis.com/auth/trace.append '
-                                         '--create-disk=auto-delete=yes,'
-                                         'boot=yes,'
-                                         f'device-name={self._name},'
-                                         f'image={self.gcp_ami_image},'
-                                         'mode=rw,'
-                                         f'size={self.compute_instance_disk_size},'
-                                         f'type=projects/{self._project_id}/zones/{self.zone}/diskTypes/pd-balanced '
-                                         '--no-shielded-secure-boot '
-                                         '--shielded-vtpm '
-                                         '--shielded-integrity-monitoring '
-                                         '--reservation-affinity=any', shell=True).decode()
+        result = subprocess\
+            .check_output(
+                    f'gcloud compute instances create {self._name} '
+                    f'--project={self._project_id} --zone={self.zone} --machine-type={self.type} '
+                    '--network-interface=network-tier=PREMIUM,subnet=default '
+                    '--maintenance-policy=MIGRATE --provisioning-model=STANDARD '
+                    '--scopes=https://www.googleapis.com/auth/devstorage.read_only,'
+                    'https://www.googleapis.com/auth/logging.write,'
+                    'https://www.googleapis.com/auth/monitoring.write,'
+                    'https://www.googleapis.com/auth/servicecontrol,'
+                    'https://www.googleapis.com/auth/service.management.readonly,'
+                    'https://www.googleapis.com/auth/trace.append '
+                    '--create-disk=auto-delete=yes,'
+                    'boot=yes,'
+                    f'device-name={self._name},'
+                    f'image={self.gcp_ami_image},'
+                    'mode=rw,'
+                    f'size={self.compute_instance_disk_size},'
+                    f'type=projects/{self._project_id}/zones/{self.zone}/diskTypes/pd-balanced '
+                    '--no-shielded-secure-boot '
+                    '--shielded-vtpm '
+                    '--shielded-integrity-monitoring '
+                    '--reservation-affinity=any', shell=True).decode()
 
         # Grab external IP
         ip = extract_bash_column(result, 'EXTERNAL_IP')

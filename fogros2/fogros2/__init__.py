@@ -32,7 +32,7 @@
 # MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 from .aws_cloud_instance import AWSCloudInstance  # noqa: F401
-from .gcp_cloud_instance import GCPCloudInstance
-from .kubernetes.generic import KubeInstance
+from .gcp_cloud_instance import GCPCloudInstance  # noqa: F401
+from .kubernetes.generic import KubeInstance  # noqa: F401
 from .cloud_node import CloudNode  # noqa: F401
 from .launch_description import FogROSLaunchDescription  # noqa: F401

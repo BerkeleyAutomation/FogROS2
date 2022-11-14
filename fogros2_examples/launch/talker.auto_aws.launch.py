@@ -38,19 +38,20 @@ from utils import region_ami_selection, ec2_instance_type_selection
 
 def generic_ubuntu_ami():
     return {
-        "us-west-1": { "ami_image": "ami-02ea247e531eb3ce6" },
-        "us-west-2": { "ami_image": "ami-017fecd1353bcc96e" },
-        "us-east-1": { "ami_image": "ami-08c40ec9ead489470" },
-        "us-east-2": { "ami_image": "ami-097a2df4ac947655f" },
-        "ap-northeast-1": { "ami_image": "ami-03f4fa076d2981b45" }, 
-        "ap-northeast-2": { "ami_image": "ami-0e9bfdb247cc8de84" },
-        "ap-northeast-3": { "ami_image": "ami-08c2ee02329b72f26" },
+        "us-west-1": {"ami_image": "ami-02ea247e531eb3ce6"},
+        "us-west-2": {"ami_image": "ami-017fecd1353bcc96e"},
+        "us-east-1": {"ami_image": "ami-08c40ec9ead489470"},
+        "us-east-2": {"ami_image": "ami-097a2df4ac947655f"},
+        "ap-northeast-1": {"ami_image": "ami-03f4fa076d2981b45"},
+        "ap-northeast-2": {"ami_image": "ami-0e9bfdb247cc8de84"},
+        "ap-northeast-3": {"ami_image": "ami-08c2ee02329b72f26"},
     }
+
 
 def generate_launch_description():
     """Talker example that launches the listener on AWS."""
     ld = fogros2.FogROSLaunchDescription()
-    
+
     region, ami = region_ami_selection.find_nearest_region_and_ami(generic_ubuntu_ami())
 
     ec2_instance_type = ec2_instance_type_selection.find_cheapest_ec2_instance_type(region)

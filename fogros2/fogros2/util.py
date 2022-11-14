@@ -33,9 +33,7 @@
 
 import errno
 import os
-from platform import architecture
-import shutil
-import tarfile 
+import tarfile
 
 
 _work_dir_cache = None
@@ -73,18 +71,8 @@ def instance_dir():
     return _instance_dir_cache
 
 
-# def make_zip_file(dir_name, target_path):
-#     root_dir, workspace_name = os.path.split(dir_name)
-#     print(root_dir, workspace_name)
-#     return shutil.make_archive(
-#         base_dir=workspace_name,
-#         root_dir=root_dir,
-#         format="zip",
-#         base_name=target_path,
-#     )
-
-#Using Tar not Zip
-def make_zip_file(dir_name, target_path): 
+# Using Tar not Zip
+def make_zip_file(dir_name, target_path):
     root_dir, workspace_name = os.path.split(dir_name)
     print(root_dir, workspace_name)
     base_name = os.path.abspath(target_path)
@@ -94,7 +82,8 @@ def make_zip_file(dir_name, target_path):
     archive_name = base_name + '.tar' + ''
     archive_dir = os.path.dirname(archive_name)
 
-    EXCLUDE_FILES = ['.git'] #https://stackoverflow.com/questions/16000794/python-tarfile-and-excludes
+    # https://stackoverflow.com/questions/16000794/python-tarfile-and-excludes
+    EXCLUDE_FILES = ['.git']
 
     if archive_dir and not os.path.exists(archive_dir):
         os.makedirs(archive_dir)
@@ -105,12 +94,10 @@ def make_zip_file(dir_name, target_path):
         tar.close()
     return archive_name
 
-def extract_bash_column(subprocess_output: str, column_name: str, row_number: int = 0):
-    """
-    NAME           TYPE           CLUSTER-IP    EXTERNAL-IP   PORT(S)        AGE
-    ssh-balancer   LoadBalancer   10.0.0.15   <pending>     22:32695/TCP   19s
 
-    This util finds the value of any given column value - ex: CLUSTER-IP -> 10.0.015
+def extract_bash_column(subprocess_output: str, column_name: str, row_number: int = 0):
+    """Find the value of any given column value - ex: CLUSTER-IP -> 10.0.015.
+
     :param subprocess_output: Direct output of subprocess.check_output().decode()
     :param column_name: The column name to search for ex: CLUSTER-IP
     :param row_number: Defaults to the first data row, row_number = 1 is second data row
@@ -127,4 +114,3 @@ def extract_bash_column(subprocess_output: str, column_name: str, row_number: in
         column_index += 1
 
     return output_str
-

@@ -107,7 +107,6 @@ class AWSCloudInstance(CloudInstance):
 
         self.create()
 
-
     def create(self):
         self.logger.info(f"Creating new EC2 instance with name {self._name}")
         self.create_security_group()

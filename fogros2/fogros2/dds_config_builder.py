@@ -61,7 +61,7 @@ class CycloneConfigBuilder(DDSConfigBuilder):
             f"export CYCLONEDDS_URI=file:///home/{username}/cyclonedds.xml"
         )
 
-    def generate_config_file(self, extra_peers = []):
+    def generate_config_file(self, extra_peers=[]):
         interfaces = """
             <Interfaces>
                 <NetworkInterface name="wg0" />
