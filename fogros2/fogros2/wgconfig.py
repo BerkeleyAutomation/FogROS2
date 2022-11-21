@@ -67,11 +67,11 @@ class WGConfig():
         self._interface = None
         self._peers = None
 
-    def read_file(self):
-        """Reads the Wireguard config file into memory"""
-        with open(self.filename, 'r') as wgfile:
-            self.lines = [line.rstrip() for line in wgfile.readlines()]
-        self.invalidate_data()
+    # def read_file(self):
+    #     """Reads the Wireguard config file into memory"""
+    #     with open(self.filename, 'r') as wgfile:
+    #         self.lines = [line.rstrip() for line in wgfile.readlines()]
+    #     self.invalidate_data()
 
     def write_file(self, file=None):
         """Writes a Wireguard config file from memory to file"""
@@ -176,24 +176,24 @@ class WGConfig():
         # Invalidate data cache
         self.invalidate_data()
 
-    def del_peer(self, key):
-        """Removes the peer with the given (public) key"""
-        if not key in self.peers:
-            raise KeyError('The peer to be deleted does not exist')
-        section_firstline = self.peers[key][self.SECTION_FIRSTLINE]
-        section_lastline = self.peers[key][self.SECTION_LASTLINE]
-        # Remove a blank line directly before the peer section
-        if section_firstline > 0:
-            if len(self.lines[section_firstline - 1]) == 0:
-                section_firstline -= 1
-        # Only keep needed lines
-        result = []
-        if section_firstline > 0:
-            result.extend(self.lines[0:section_firstline])
-        result.extend(self.lines[(section_lastline + 1):])
-        self.lines = result
-        # Invalidate data cache
-        self.invalidate_data()
+    # def del_peer(self, key):
+    #     """Removes the peer with the given (public) key"""
+    #     if not key in self.peers:
+    #         raise KeyError('The peer to be deleted does not exist')
+    #     section_firstline = self.peers[key][self.SECTION_FIRSTLINE]
+    #     section_lastline = self.peers[key][self.SECTION_LASTLINE]
+    #     # Remove a blank line directly before the peer section
+    #     if section_firstline > 0:
+    #         if len(self.lines[section_firstline - 1]) == 0:
+    #             section_firstline -= 1
+    #     # Only keep needed lines
+    #     result = []
+    #     if section_firstline > 0:
+    #         result.extend(self.lines[0:section_firstline])
+    #     result.extend(self.lines[(section_lastline + 1):])
+    #     self.lines = result
+    #     # Invalidate data cache
+    #     self.invalidate_data()
 
     def get_sectioninfo(self, key):
         """Get first and last line of the section identified by the given key ("None" for interface section)"""
@@ -237,40 +237,40 @@ class WGConfig():
         # Invalidate data cache
         self.invalidate_data()
 
-    def del_attr(self, key, attr, value=None, remove_leading_comments=True):
-        """Removes an attribute/value pair from the given peer ("None" for adding an interface attribute); set 'value' to 'None' to remove all values"""
-        section_firstline, section_lastline = self.get_sectioninfo(key)
-        # Find all lines with matching attribute name and (if requested) value
-        line_found = []
-        for i in range(section_firstline + 1, section_lastline + 1):
-            line_attr, line_value, line_comment = self.parse_line(self.lines[i])
-            if attr == line_attr:
-                if (value is None) or (value in line_value):
-                    line_found.append(i)
-        if len(line_found) == 0:
-            raise ValueError('The attribute/value to be deleted is not present')
-        # Process all relevant lines
-        for i in reversed(line_found): # reversed so that non-processed indices stay valid
-            if value is None:
-                del(self.lines[i])
-            else:
-                line_attr, line_value, line_comment = self.parse_line(self.lines[i])
-                line_value.remove(value)
-                if len(line_value) > 0: # keep remaining values in that line
-                    self.lines[i] = line_attr + ' = ' + ', '.join(line_value) + line_comment
-                else: # otherwise line is no longer needed
-                    del(self.lines[i])
-        # Handle leading comments
-        if remove_leading_comments:
-            i = line_found[0] - 1
-            while i > 0:
-                if len(self.lines[i]) and (self.lines[i][0] == '#'):
-                    del(self.lines[i])
-                    i -= 1
-                else:
-                    break
-        # Invalidate data cache
-        self.invalidate_data()
+    # def del_attr(self, key, attr, value=None, remove_leading_comments=True):
+    #     """Removes an attribute/value pair from the given peer ("None" for adding an interface attribute); set 'value' to 'None' to remove all values"""
+    #     section_firstline, section_lastline = self.get_sectioninfo(key)
+    #     # Find all lines with matching attribute name and (if requested) value
+    #     line_found = []
+    #     for i in range(section_firstline + 1, section_lastline + 1):
+    #         line_attr, line_value, line_comment = self.parse_line(self.lines[i])
+    #         if attr == line_attr:
+    #             if (value is None) or (value in line_value):
+    #                 line_found.append(i)
+    #     if len(line_found) == 0:
+    #         raise ValueError('The attribute/value to be deleted is not present')
+    #     # Process all relevant lines
+    #     for i in reversed(line_found): # reversed so that non-processed indices stay valid
+    #         if value is None:
+    #             del(self.lines[i])
+    #         else:
+    #             line_attr, line_value, line_comment = self.parse_line(self.lines[i])
+    #             line_value.remove(value)
+    #             if len(line_value) > 0: # keep remaining values in that line
+    #                 self.lines[i] = line_attr + ' = ' + ', '.join(line_value) + line_comment
+    #             else: # otherwise line is no longer needed
+    #                 del(self.lines[i])
+    #     # Handle leading comments
+    #     if remove_leading_comments:
+    #         i = line_found[0] - 1
+    #         while i > 0:
+    #             if len(self.lines[i]) and (self.lines[i][0] == '#'):
+    #                 del(self.lines[i])
+    #                 i -= 1
+    #             else:
+    #                 break
+    #     # Invalidate data cache
+    #     self.invalidate_data()
 
     @property
     def interface(self):

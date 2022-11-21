@@ -135,14 +135,14 @@ class CloudInstance(abc.ABC):
         )
 
     def pip_install(self, args):
-        self.scp.execute_cmd(f"python3 -m pip install {args}")
+        self.scp.execute_cmd(f"sudo pip3 install {args}")
 
     def install_cloud_dependencies(self):
         self.apt_install("wireguard unzip docker.io python3-pip ros-humble-rmw-cyclonedds-cpp")
         self.pip_install("boto3")
         self.pip_install("paramiko")
         self.pip_install("scp")
-        self.pip_install("wgconfig")
+        # self.pip_install("wgconfig")
 
     def install_ros(self):
         # setup sources

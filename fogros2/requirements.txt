@@ -1,4 +1,4 @@
 boto3
 scp
-wgconfig
+# wgconfig
 paramiko
