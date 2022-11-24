@@ -73,17 +73,3 @@ def get_publickey(wg_private):
         return None
     out = out.strip()  # remove trailing newline
     return out
-
-
-def generate_keypair():
-    wg_private = generate_privatekey()
-    wg_public = get_publickey(wg_private)
-    return wg_private, wg_public
-
-
-def generate_presharedkey():
-    out, err, returncode = execute('wg genpsk', suppressoutput=True)
-    if (returncode != 0) or (len(err) > 0):
-        return None
-    out = out.strip()  # remove trailing newline
-    return out
