@@ -19,8 +19,9 @@ def get_all_instances():
             response = client.describe_instances()
             output = jmespath.search("Reservations[].Instances[].[NetworkInterfaces[0].OwnerId, InstanceId, InstanceType, \
                 State.Name, Placement.AvailabilityZone, PrivateIpAddress, PublicIpAddress, KeyName, [Tags[?Key=='Name'].Value] [0][0]]", response)
-            if output: result.append(output)
-            
+            if output and any("FogROS" in instance[7] for instance in output): 
+                result.append(output)
+
     return result
 
 def get_running_instances():
