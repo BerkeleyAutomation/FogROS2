@@ -159,6 +159,7 @@ ros2 fog delete all
 1. Warning: _2 packages has stderr outputs: fogros2 fogros2_examples_ after running colcon build. This warning occurs in Ubuntu 22.04 (jammy) builds, but does not affect functionality. See https://github.com/BerkeleyAutomation/FogROS2/issues/45. Your installation should still work.  
 2. _[WARN] [1652044293.921367226] [fogros2.scp]: [Errno None] Unable to connect to port 22 on xx.xx.xx.xxx, retrying..._ . This warning occurs when AWS has not yet started the instance. This message should eventually be replaced by _SCP Connected!_ once the instance is started.
 3. _WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behavior with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv_. This warning is often seen when installing packages on the cloud instance, but can be ignored.
+4. _docker: permission denied..._ . Depending on your permissions, you may need to run docker commands with _sudo_. 
 
 ## Running Examples:
 We have used FogROS for 3 example use-cases (motion planning, grasp planning, and SLAM map building). Please see our [examples repo](https://github.com/BerkeleyAutomation/fogros2-examples) for these and how to run them.
