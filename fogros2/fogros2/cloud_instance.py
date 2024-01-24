@@ -247,7 +247,7 @@ class CloudInstance(abc.ABC):
         cmd_builder = BashBuilder()
         cmd_builder.append(f"source /opt/ros/{self.ros_distro}/setup.bash")
         cmd_builder.append(
-            f"cd /home/{self._username}/fog_ws && colcon build --cmake-clean-cache"
+            f"cd /home/{self._username}/fog_ws && /home/{self._username}/.local/bin/colcon build --cmake-clean-cache"
         )
         cmd_builder.append(f". /home/{self._username}/fog_ws/install/setup.bash")
         cmd_builder.append(self.cyclone_builder.env_cmd)
