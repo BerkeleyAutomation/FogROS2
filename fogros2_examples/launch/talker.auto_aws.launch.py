@@ -33,7 +33,7 @@
 
 from launch_ros.actions import Node
 import fogros2
-from utils import region_ami_selection, ec2_instance_type_selection
+from utils import region_ami_selection, ec2_instance_type_selection, check_running_instances
 
 
 def generic_ubuntu_ami():
@@ -57,6 +57,12 @@ def generate_launch_description():
     ec2_instance_type = ec2_instance_type_selection.find_cheapest_ec2_instance_type(region)
 
     print(region, ami, ec2_instance_type)
+
+    all_instances = check_running_instances.get_all_instances()
+    running_instances = check_running_instances.get_running_instances()
+    print("All instances: ", all_instances)
+    print("Running instances: ", running_instances)
+
     machine1 = fogros2.AWSCloudInstance(
         region=region, ec2_instance_type=ec2_instance_type, ami_image=ami
     )
